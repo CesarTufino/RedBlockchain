@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="65fb8b6b-9a5b-4263-a7e4-c78a31d37f41" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/PoS/test.java" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2DsJDUMQcLFc1qwa0soOwV3DCd9" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "D:/Daniel Alejandro/Nube/OneDrive/Ps/J/BlockchainV2",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "preferences.sourceCode.Java"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="PoS.test" />
+      <module name="BlockchainV2" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="PoS.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.test" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="65fb8b6b-9a5b-4263-a7e4-c78a31d37f41" name="Changes" comment="" />
+      <created>1661481740435</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1661481740435</updated>
+      <workItem from="1661481741690" duration="1349000" />
+      <workItem from="1661530916820" duration="3000" />
+      <workItem from="1661531375815" duration="396000" />
+      <workItem from="1661625670919" duration="2609000" />
+      <workItem from="1661655659735" duration="650000" />
+      <workItem from="1661704488599" duration="4052000" />
+      <workItem from="1661716155051" duration="1477000" />
+      <workItem from="1661788981696" duration="78000" />
+      <workItem from="1661811024476" duration="7737000" />
+      <workItem from="1661874838319" duration="179000" />
+      <workItem from="1661894342263" duration="5506000" />
+      <workItem from="1661956017074" duration="2658000" />
+      <workItem from="1661981408149" duration="2285000" />
+      <workItem from="1661986612701" duration="3126000" />
+      <workItem from="1662073329206" duration="1212000" />
+      <workItem from="1662131776955" duration="301000" />
+      <workItem from="1662437160637" duration="81000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
