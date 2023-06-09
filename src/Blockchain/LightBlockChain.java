@@ -6,12 +6,12 @@ import java.util.ArrayList;
 
 /**
  * Clase LightBlockChain.
- * 
+ * Blockchain formado por LightBlocks.
  */
 public class LightBlockChain extends Blockchain {
 
     /**
-     * Lista de los Bloques ligeros.
+     * Lista de los LightBlocks.
      */
     private final ArrayList<LightBlock> LightBlkchain = new ArrayList<>();
 
@@ -25,7 +25,7 @@ public class LightBlockChain extends Blockchain {
     }
 
     /**
-     * Método para agregar un nuevo bloque ligero.
+     * Método para agregar un nuevo LightBlock.
      * Si el LightBlockChain tiene 10 bloques, se elimina 
      * el bloque inicial para añadir el nuevo.
      * 

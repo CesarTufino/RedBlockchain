@@ -7,8 +7,8 @@ import java.net.*;
 public class P2P {
     public static void main(String[] args) throws IOException {
         final String host = "26.20.111.124";
-        final int puertoEnvio = 12345;
-        final int puertoRecepcion = 12346;
+        final int puertoEnvio = 12346;
+        final int puertoRecepcion = 12345;
 
         ServerThread serverThread = new ServerThread(puertoRecepcion);
         serverThread.start();

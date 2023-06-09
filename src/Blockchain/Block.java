@@ -9,16 +9,15 @@ import java.util.Objects;
 
 /**
  * Clase que representa los Bloques de un Blockchain.
- * 
  */
 public class Block {
 
     /**
-     * Encabezado del bloque.
+     * Header del bloque.
      */
     private final Header header;
     /**
-     * Pie de pagina del bloque.
+     * Footer del bloque.
      */
     private final Footer footer;
     /**
@@ -42,7 +41,7 @@ public class Block {
      * Constructor del Bloque.
      *
      * @param blockPrev Último bloque, en la cadena de bloques, necesario para obtener el hash.
-     * @param transaction Lista de transacciones que se agregarán a un nuevo bloque.
+     * @param transaction Lista de transacciones que se agregarán al nuevo bloque.
      */
     public Block(Block blockPrev, Block blockIDPrev, List<Transaction> transaction, String blockID) {
         this.transactions = new ArrayList<>(transaction);
@@ -86,7 +85,7 @@ public class Block {
     }
 
     /**
-     * Getter de header
+     * Getter header
      *
      * @return header
      */
@@ -95,7 +94,7 @@ public class Block {
     }
 
     /**
-     * Getter de blockId
+     * Getter blockId
      *
      * @return blockId
      */
@@ -104,7 +103,7 @@ public class Block {
     }
 
     /**
-     * Getter de footer
+     * Getter footer
      *
      * @return footer
      */
@@ -113,7 +112,7 @@ public class Block {
     }
 
     /**
-     * Getter de nodeID
+     * Getter nodeID
      *
      * @return nodeId
      */
@@ -122,7 +121,7 @@ public class Block {
     }
 
     /**
-     * Setter de nodeID.
+     * Setter nodeID.
      *
      * @param nodeID ID de nodo minero.
      */
@@ -131,7 +130,7 @@ public class Block {
     }
 
     /**
-     * Getter del nodeAdress.
+     * Getter nodeAdress.
      *
      * @return nodeAddress.
      */
@@ -140,7 +139,7 @@ public class Block {
     }
 
     /**
-     * Setter de nodeAddress.
+     * Setter nodeAddress.
      *
      * @param nodeAddress Dirección del nodo minero.
      */
@@ -149,7 +148,7 @@ public class Block {
     }
 
     /**
-     * Getter de transaction.
+     * Getter transaction.
      *
      * @return transaction.
      */

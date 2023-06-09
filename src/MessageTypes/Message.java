@@ -5,7 +5,6 @@ import java.util.List;
 
 /**
  * Clase Message.
- * 
  */
 public class Message {
 
@@ -64,7 +63,7 @@ public class Message {
     }
 
     /**
-     * Getter de fromAddress.
+     * Getter fromAddress.
      *
      * @return fromAddress.
      */
@@ -73,7 +72,7 @@ public class Message {
     }
 
     /**
-     * Getter de toAddress.
+     * Getter toAddress.
      *
      * @return toAddress.
      */
@@ -82,7 +81,7 @@ public class Message {
     }
 
     /**
-     * Getter de timeStamp.
+     * Getter timeStamp.
      *
      * @return timeStamp.
      */
@@ -91,7 +90,7 @@ public class Message {
     }
 
     /**
-     * Getter de type.
+     * Getter type.
      *
      * @return typ.
      */
@@ -100,7 +99,7 @@ public class Message {
     }
 
     /**
-     * Getter de signature.
+     * Getter signature.
      *
      * @return signature.
      */
@@ -109,7 +108,7 @@ public class Message {
     }
 
     /**
-     * Getter de messageContent.
+     * Getter messageContent.
      *
      * @return messageContent.
      */

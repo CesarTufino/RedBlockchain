@@ -12,7 +12,7 @@ import java.util.*;
  * Clase Network.
  * Simula una red (Broadcast P2P).
  */
-public class  Network {
+public class Network {
 
     /**
      * Dificultad inicial.

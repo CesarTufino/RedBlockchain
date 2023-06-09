@@ -11,8 +11,7 @@ import Utils.RsaUtil;
 import java.util.*;
 
 /**
- * Clase ValidatorNode
- * 
+ * Clase ValidatorNode.
  */
 public class ValidatorNode extends PoS.FullNode {
 

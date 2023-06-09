@@ -8,13 +8,12 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Clase ValidatorParaL
- * 
+ * Clase ValidatorParaL.
  */
 public class ValidatorParaL implements Runnable {
     
     /**
-     *
+     * Variable sin uso.
      */
     private final static int SLOTS_MAX = 10;
     /**

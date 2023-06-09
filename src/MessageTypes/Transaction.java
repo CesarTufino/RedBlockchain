@@ -6,8 +6,7 @@ import Utils.RsaUtil;
 import java.security.PrivateKey;
 
 /**
- * Clase Transaction
- * 
+ * Clase Transaction.
  */
 public class Transaction {
 
@@ -83,7 +82,7 @@ public class Transaction {
     }
 
     /**
-     * Getter de fromAddress.
+     * Getter fromAddress.
      *
      * @return fromAddress.
      */
@@ -92,7 +91,7 @@ public class Transaction {
     }
 
     /**
-     * Getter de toAddress.
+     * Getter toAddress.
      *
      * @return toAddress.
      */
@@ -101,7 +100,7 @@ public class Transaction {
     }
 
     /**
-     * Getter de amount.
+     * Getter amount.
      *
      * @return amount.
      */
@@ -110,7 +109,7 @@ public class Transaction {
     }
 
     /**
-     * Getter de timeStamp.
+     * Getter timeStamp.
      *
      * @return timeStamp.
      */
@@ -119,7 +118,7 @@ public class Transaction {
     }
 
     /**
-     * Getter de signature.
+     * Getter signature.
      *
      * @return signature.
      */
@@ -137,7 +136,7 @@ public class Transaction {
     }
 
     /**
-     * Getter de transactionFee.
+     * Getter transactionFee.
      *
      * @return transactionFee.
      */
@@ -146,7 +145,7 @@ public class Transaction {
     }
 
     /**
-     * Getter de transactionID.
+     * Getter transactionID.
      *
      * @return transactionID.
      */
@@ -155,7 +154,7 @@ public class Transaction {
     }
 
     /**
-     * Getter de confirmedTrans.
+     * Getter confirmedTrans.
      *
      * @return Si la transacción está confirmada.
      */

@@ -8,7 +8,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Clase Blockchain.
- * 
  */
 public class Blockchain {
 
@@ -40,7 +39,6 @@ public class Blockchain {
      * Representación de la red.
      */
     private final Network network;
-
 
     /**
      * Constructor del Blockchain.
@@ -94,7 +92,6 @@ public class Blockchain {
             return searchPrevBlockByID(blockID, --i);
         }
     }
-
 
     /**
      * Método que agrega un bloque al blockchain físico y 

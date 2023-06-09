@@ -3,7 +3,6 @@ package Blockchain;
 /**
  * Clase LightBlock
  * Versión más ligera del Bloque: solo tiene el hash sin la transacción en el bloque.
- * 
  */
 public class LightBlock extends Header {
 

@@ -4,7 +4,6 @@ import java.util.Objects;
 
 /**
  * Clase Header.
- * 
  */
 public class Header {
 
@@ -50,7 +49,7 @@ public class Header {
     }
 
     /**
-     * Getter del headerHashPrev.
+     * Getter headerHashPrev.
      *
      * @return headerHashPrev.
      */
@@ -59,7 +58,7 @@ public class Header {
     }
 
     /**
-     * Getter del PrevIDHash.
+     * Getter PrevIDHash.
      *
      * @return PrevIDHash.
      */
@@ -68,7 +67,7 @@ public class Header {
     }
 
     /**
-     * Getter del timeStamp
+     * Getter timeStamp
      *
      * @return timeStamp.
      */

@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 /**
  * Clase Validator.
- * 
  */
 public class Validator implements Runnable {
 
@@ -19,7 +18,7 @@ public class Validator implements Runnable {
      */
     double probaV = 0;
     /**
-     * 
+     * Variable sin uso.
      */
     private final static int SLOTS_MAX = 10;
     /**
@@ -35,11 +34,11 @@ public class Validator implements Runnable {
      */
     private ValidatorNode validator = null;
     /**
-     * 
+     * Variable sin uso.
      */
     private int incremBlock = 0;
     /**
-     *
+     * Variable sin uso.
      */
     private int testIncrement = 0;
 

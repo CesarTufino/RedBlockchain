@@ -13,8 +13,7 @@ import Utils.RsaUtil;
 import java.util.HashMap;
 
 /**
- * Clase LightNode
- * 
+ * Clase LightNode.
  */
 public class LightNode extends Node {
 

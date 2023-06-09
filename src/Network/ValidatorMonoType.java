@@ -10,12 +10,11 @@ import java.util.stream.Collectors;
 
 /**
  * Clase ValidatorMonoType.
- * 
  */
 public class ValidatorMonoType implements Runnable {
     
     /**
-     *
+     * Variable sin uso.
      */
     private final static int SLOTS_MAX = 10;
     /**

@@ -6,7 +6,7 @@ import Network.Network;
 import Network.Node;
 
 /**
- * Clase FullNode extending Node
+ * Clase FullNode extending Node.
  * Esta clase simula un nodo que descarga todo el blockchain actuando como uno de los servidores de la red.
  */
 public class FullNode extends Node {
@@ -22,7 +22,7 @@ public class FullNode extends Node {
     }
 
     /**
-     * Método para recibir un bloque
+     * Método para recibir un bloque.
      * 
      * @param block Bloque recibido.
      * @param signature Firma.

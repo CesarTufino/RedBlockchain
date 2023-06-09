@@ -1,8 +1,7 @@
 package Blockchain;
 
 /**
- * Clase Footer
- * 
+ * Clase Footer.
  */
 public class Footer {
 
@@ -10,7 +9,6 @@ public class Footer {
      * Hash del Footer.
      */
     private String hash;
-
     /**
      * Constructor del Footer.
      * Crea un Footer con un hash vacío.
@@ -30,7 +28,7 @@ public class Footer {
     }
 
     /**
-     * Getter del hash.
+     * Getter hash.
      *
      * @return hash.
      */
@@ -39,7 +37,7 @@ public class Footer {
     }
 
     /**
-     * Setter del hash
+     * Setter hash
      *
      * @param hash Hash.
      */
