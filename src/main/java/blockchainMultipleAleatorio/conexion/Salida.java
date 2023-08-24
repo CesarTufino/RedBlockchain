@@ -7,6 +7,7 @@ import java.util.Set;
 
 import blockchainMultipleAleatorio.nodo.*;
 import blockchainMultipleAleatorio.mensajes.*;
+import direcciones.Direccion;
 
 public class Salida {
     private Nodo miNodo;
@@ -17,26 +18,12 @@ public class Salida {
 
     public Salida(Nodo miNodo) {
         this.miNodo = miNodo;
-        
-        // Test Tipo 1
         // Nodo 1
-        direcciones.put("192.168.0.103", 12341);
+        direcciones.put(Direccion.DIRECCION1.getDireccionIP(), 12341);
         // Nodo 2
-        direcciones.put("192.168.0.100", 12342);
+        direcciones.put(Direccion.DIRECCION2.getDireccionIP(), 12342);
         // Nodo 3
-        direcciones.put("192.168.0.101", 12343);
-        ////////////////////////////////////////////
-        /*
-        
-        // Test Tipo 2
-        // Nodo 1
-        direcciones.put("26.20.111.124", 12341);
-        // Nodo 2
-        direcciones.put("26.37.38.157", 12342);
-        // Nodo 3
-        direcciones.put("26.143.218.218", 12343);
-        */
-        ///////////////////////////////////////////
+        direcciones.put(Direccion.DIRECCION3.getDireccionIP(), 12343);
     }
 
     public void broadcastMensaje(Mensaje m) {

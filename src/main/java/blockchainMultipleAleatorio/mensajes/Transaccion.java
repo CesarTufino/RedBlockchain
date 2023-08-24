@@ -3,7 +3,7 @@ package blockchainMultipleAleatorio.mensajes;
 import java.io.Serializable;
 import java.security.PrivateKey;
 
-import blockchainMultipleAleatorio.utils.*;
+import utils.*;
 
 /**
  * Clase Transaction.

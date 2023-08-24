@@ -3,7 +3,8 @@ package blockchainMultiple.mensajes;
 import java.io.Serializable;
 import java.security.PrivateKey;
 
-import blockchainMultiple.utils.*;
+import utils.HashUtil;
+import utils.RsaUtil;
 
 /**
  * Clase Transaction.

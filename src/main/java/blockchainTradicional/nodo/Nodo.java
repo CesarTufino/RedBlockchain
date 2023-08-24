@@ -1,15 +1,20 @@
 package blockchainTradicional.nodo;
 
+import java.net.InetAddress;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import blockchainTradicional.conexion.Salida;
-import blockchainTradicional.mensajes.*;
 import blockchainTradicional.blockchain.*;
-import blockchainTradicional.utils.*;
+import blockchainTradicional.mensajes.Mensaje;
+import blockchainTradicional.mensajes.Transaccion;
+import org.apache.commons.net.ntp.NTPUDPClient;
+import org.apache.commons.net.ntp.TimeInfo;
+import utils.*;
 
 public class Nodo {
 
@@ -17,17 +22,21 @@ public class Nodo {
     private PublicKey clavePublica;
     private PrivateKey clavePrivada;
     private String direccion;
-    private final int id;
-    private final double tarifaDeTransaccion = 0.1;
-    private final int dineroInicial = 100000000;
+    private int id;
+    private final double TARIFA_TRANSACCION = 0.1;
+    private final int DINERO_INICIAL = 100000000;
     private double billetera;
     private double montoDeApuesta;
     private long tiempoDeApuesta;
-    private final int cantidadMaximaDeTransacciones = 10;
-    private final ArrayList<Transaccion> transaccionesPendientes = new ArrayList<>();
-    private final ArrayList<Transaccion> transaccionesFraudulentas = new ArrayList<>();
+    private final int TRANSACCIONES_MAXIMAS_POR_BLOQUE = 10;
+    private ArrayList<Transaccion> transaccionesPendientes = new ArrayList<>();
+    private ArrayList<Transaccion> transaccionesFraudulentas = new ArrayList<>();
     private Red red = null;
-    private final String type1 = "Type1";
+    private final String TYPE1 = "Type1";
+
+    private NTPUDPClient ntpClient = new NTPUDPClient();
+    private InetAddress inetAddress;
+    private TimeInfo timeInfo;
 
     public Nodo(int id, String direccion) {
         KeyPair keys = null;
@@ -40,7 +49,7 @@ public class Nodo {
         this.clavePublica = keys.getPublic();
         this.clavePrivada = keys.getPrivate();
         this.direccion = direccion;
-        this.billetera = dineroInicial;
+        this.billetera = DINERO_INICIAL;
         this.montoDeApuesta = 0;
         this.salida = new Salida(this);
     }
@@ -64,7 +73,7 @@ public class Nodo {
     public Red getRed() {
         return red;
     }
-    
+
     public int getId() {
         return id;
     }
@@ -79,21 +88,23 @@ public class Nodo {
 
     public void enviarDinero(double monto, String direccionDestinatario) {
         System.out.println("Inicio de transacción");
-        if (billetera - monto * (1 + tarifaDeTransaccion) < 0) {
+        if (billetera - monto * (1 + TARIFA_TRANSACCION) < 0) {
             System.out.println("-Transacción rechazada-");
             return;
         }
-        Transaccion transaccion = new Transaccion(direccion, direccionDestinatario, monto,
-                System.currentTimeMillis(), tarifaDeTransaccion, clavePrivada);
-        Mensaje mensaje = null;
+
         try {
-            mensaje = new Mensaje(direccion, direccionDestinatario, RsaUtil.sign(transaccion.toString(), clavePrivada),
-                    System.currentTimeMillis(), 0, transaccion);
+            timeInfo = ntpClient.getTime(inetAddress);
+            long actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+            Transaccion transaccion = new Transaccion(direccion, direccionDestinatario, monto,
+                    actualTime, TARIFA_TRANSACCION, clavePrivada);
+            Mensaje mensaje = new Mensaje(direccion, direccionDestinatario, RsaUtil.sign(transaccion.toString(), clavePrivada),
+                    actualTime, 0, transaccion);
+            // System.out.println("Mensaje creado");
+            salida.broadcastMensaje(mensaje);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // System.out.println("Mensaje creado");
-        salida.broadcastMensaje(mensaje);
     }
 
     public void recibirDinero(double monto) {
@@ -173,7 +184,7 @@ public class Nodo {
     public void generarBloque() {
         // System.out.println("---------------------------------------------------");
         List<Transaccion> transaccionesDelBloque = new ArrayList<>();
-        for (int i = 0; (i < cantidadMaximaDeTransacciones) && (i < transaccionesPendientes.size()); i++) {
+        for (int i = 0; (i < TRANSACCIONES_MAXIMAS_POR_BLOQUE) && (i < transaccionesPendientes.size()); i++) {
             transaccionesDelBloque.add(transaccionesPendientes.get(i));
         }
         long inicioBusqueda = System.nanoTime();
@@ -184,12 +195,15 @@ public class Nodo {
         bloque.setDireccionNodo(this.direccion);
         // System.out.println("Block has been forged by " + this.name);
         try {
+
             List<Object> contenidoMensaje = new ArrayList<>();
             contenidoMensaje.add(bloque);
+            timeInfo = ntpClient.getTime(inetAddress);
+            long actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
             // messageContent.add(blockchain);
             Mensaje mensaje = new Mensaje(this.direccion, "ALL",
                     RsaUtil.sign(HashUtil.SHA256(bloque.toString()), this.clavePrivada),
-                    System.currentTimeMillis(),
+                    actualTime,
                     1, contenidoMensaje);
             salida.broadcastMensaje(mensaje);
         } catch (Exception e) {
@@ -200,12 +214,20 @@ public class Nodo {
     }
 
     public void apostar(double monto) {
+        long actualTime = 0;
+        try {
+            timeInfo = ntpClient.getTime(inetAddress);
+            actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (billetera < monto) {
             System.out.println(id + " no tiene suficiente dinero para apostar en wallet1");
+            return;
         }
         montoDeApuesta = monto;
         billetera -= monto;
-        tiempoDeApuesta = System.currentTimeMillis();
+        tiempoDeApuesta = actualTime;
         System.out.println(id + " deposita " + monto + " como apuesta");
     }
 
@@ -215,7 +237,7 @@ public class Nodo {
 
     public void actualizarNbTrans(int cantidad) {
         HashMap<String, Integer> nbTrans = (HashMap<String, Integer>) red.getNbTrans();
-        red.setNbTrans(nbTrans.get(type1) + cantidad);
+        red.setNbTrans(nbTrans.get(TYPE1) + cantidad);
     }
 
     public void actualizarST(double st) {
@@ -225,7 +247,7 @@ public class Nodo {
     public void actualizarNBOfBlock() {
         red.NB_OF_BLOCK_OF_TYPE1_CREATED.add(red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + 1);
         // Último en ejecutarse
-        
+
     }
 
     public boolean comprobarCantidadMinimaDeNodos() {

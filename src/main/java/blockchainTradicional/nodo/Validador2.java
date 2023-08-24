@@ -1,4 +1,4 @@
-package blockchainMultiple.nodo;
+package blockchainTradicional.nodo;
 
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.TimeInfo;
@@ -8,22 +8,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 
-public class Validador extends Thread {
+public class Validador2 extends Thread {
 
     private Red red = null;
     private Nodo miNodo = null;
     private final String ANSI_GREEN = "\u001B[32m";
     private final String ANSI_BLUE = "\u001B[34m";
     private final String ANSI_RESET = "\u001B[0m";
-    private final String type1 = "Type1";
-    private final String type2 = "Type2";
     private String ntpServer = "pool.ntp.org";
     private NTPUDPClient ntpClient = new NTPUDPClient();
     private InetAddress inetAddress;
     private TimeInfo timeInfo;
 
-
-    public Validador(Red infoRed, Nodo miNodo) {
+    public Validador2(Red infoRed, Nodo miNodo) {
         this.red = infoRed;
         this.miNodo = miNodo;
         try {
@@ -37,15 +34,18 @@ public class Validador extends Thread {
         try {
             long lastBlockTime;
             long actualTime;
+            long inicio;
+            long fin;
             while (true) {
+                timeInfo = ntpClient.getTime(inetAddress);
+                inicio = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+
                 imprimirInformacion();
 
                 String[] seleccionados = determinarSeleccionadosPoS();
 
                 if (seleccionados[0].equals(miNodo.getDireccion())) {
-                    lastBlockTime = red.getBlockchain()
-                            .buscarBloquePrevioLogico(type1, red.getBlockchain().obtenerCantidadDeBloques() - 1)
-                            .getHeader().getMarcaDeTiempo();
+                    lastBlockTime = red.getBlockchain().obtenerUltimoBloque().getHeader().getMarcaDeTiempo();
                     while (true) {
                         timeInfo = ntpClient.getTime(inetAddress);
                         actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
@@ -54,34 +54,16 @@ public class Validador extends Thread {
                         }
                     }
                     System.out.println(ANSI_GREEN + "/////////////// Se crea el Bloque Tipo 1 ////////////" + ANSI_RESET);
-                    miNodo.generarBloque(type1);
+                    miNodo.generarBloque();
                 }
 
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                if (seleccionados[1].equals(miNodo.getDireccion())) {
-                    lastBlockTime = red.getBlockchain()
-                            .buscarBloquePrevioLogico(type2, red.getBlockchain().obtenerCantidadDeBloques() - 1)
-                            .getHeader().getMarcaDeTiempo();
-                    while (true) {
-                        timeInfo = ntpClient.getTime(inetAddress);
-                        actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-                        if (actualTime - lastBlockTime > 10000) { // Garantiza los 10 segundos minimos
-                            break;
-                        }
+                while (true) {
+                    timeInfo = ntpClient.getTime(inetAddress);
+                    fin = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                    if (fin - inicio > 10000) {
+                        break;
                     }
-                    System.out.println(ANSI_GREEN + "/////////////// Se crea el Bloque Tipo 2 ////////////" + ANSI_RESET);
-                    miNodo.generarBloque(type2);
                 }
-
-                timeInfo = ntpClient.getTime(inetAddress);
-                actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-                long tiempoParaContinuar = 10000 - (actualTime % 10000);
-                Thread.sleep(tiempoParaContinuar);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,17 +77,15 @@ public class Validador extends Thread {
 
     private void imprimirInformacion() {
         System.out.println(red.getStats());
-        if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + red.NB_OF_BLOCK_OF_TYPE2_CREATED.size() > 201) {
-            if (miNodo.getId() == 1) {
-                try {
-                    BufferedWriter archivo = new BufferedWriter(
-                            new FileWriter("Blockchain V2 (Multiple) - Resultado.txt", true));
-                    archivo.write(red.getStats());
-                    archivo.newLine();
-                    archivo.close();
-                    System.out.println("Archivo guardado");
-                } catch (IOException e) {
-                }
+        if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() > 20) {
+            try {
+                BufferedWriter archivo = new BufferedWriter(
+                        new FileWriter("Blockchain V1 (Tradicional) - Resultado.txt", true));
+                archivo.write(red.getStats());
+                archivo.newLine();
+                archivo.close();
+                System.out.println("Archivo guardado");
+            } catch (IOException e) {
             }
             System.exit(0);
         }

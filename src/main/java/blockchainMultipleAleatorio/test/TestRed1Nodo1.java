@@ -3,6 +3,7 @@ package blockchainMultipleAleatorio.test;
 import java.io.IOException;
 import blockchainMultipleAleatorio.conexion.Entrada;
 import blockchainMultipleAleatorio.nodo.*;
+import direcciones.Direccion;
 
 public class TestRed1Nodo1 {
 
@@ -10,7 +11,7 @@ public class TestRed1Nodo1 {
         String type1 = "Type1";
         String type2 = "Type2";
         int puertoRecepcion = 12341; // A donde se va a enviar
-        Nodo nodo = new Nodo(1, "192.168.0.103"); // Mi nodo
+        Nodo nodo = new Nodo(1, Direccion.DIRECCION1.getDireccionIP()); // Mi nodo
         // Poner el stake
         nodo.apostar(30, type1);
         nodo.apostar(40, type2);
@@ -32,11 +33,11 @@ public class TestRed1Nodo1 {
         for (int i = 0; i < 700; i++) {
             int a = (int) (((Math.random()) * 2) + 1);
             if (a == 1)
-                nodo.enviarDinero(1.23, "192.168.0.101", type1);
+                nodo.enviarDinero(1.23, Direccion.DIRECCION3.getDireccionIP(), type1);
             else
-                nodo.enviarDinero(3.47, "192.168.0.100", type2);
+                nodo.enviarDinero(3.47, Direccion.DIRECCION2.getDireccionIP(), type2);
             try {
-                Thread.sleep(2000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 System.out.println(e);
             }

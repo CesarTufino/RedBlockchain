@@ -3,7 +3,7 @@ package blockchainTradicional.mensajes;
 import java.io.Serializable;
 import java.security.PrivateKey;
 
-import blockchainTradicional.utils.*;
+import utils.*;
 
 /**
  * Clase Transaccion.

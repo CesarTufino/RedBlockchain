@@ -3,7 +3,7 @@ package blockchainMultipleDisparejo.mensajes;
 import java.io.Serializable;
 import java.security.PrivateKey;
 
-import blockchainMultipleDisparejo.utils.*;
+import utils.*;
 
 /**
  * Clase Transaction.

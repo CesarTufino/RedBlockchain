@@ -1,5 +1,6 @@
 package blockchainMultipleDisparejo.nodo;
 
+import java.net.InetAddress;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -10,7 +11,9 @@ import java.util.List;
 import blockchainMultipleDisparejo.conexion.Salida;
 import blockchainMultipleDisparejo.mensajes.*;
 import blockchainMultipleDisparejo.blockchain.*;
-import blockchainMultipleDisparejo.utils.*;
+import org.apache.commons.net.ntp.NTPUDPClient;
+import org.apache.commons.net.ntp.TimeInfo;
+import utils.*;
 
 public class Nodo {
 
@@ -19,20 +22,24 @@ public class Nodo {
     private PrivateKey clavePrivada;
     private String direccion;
     private final int id;
-    private final double tarifaDeTransaccion = 0.1;
-    private final int dineroInicial = 100000000;
+    private final double TARIFA_TRANSACCION = 0.1;
+    private final int DINERO_INICIAL = 100000000;
     private double billetera1;
     private double billetera2;
     private double montoDeApuesta1;
     private double montoDeApuesta2;
     private long tiempoDeApuesta1;
     private long tiempoDeApuesta2;
-    private final int cantidadMaximaDeTransacciones = 10;
+    private final int TRANSACCIONES_MAXIMAS_POR_BLOQUE = 10;
     private final ArrayList<Transaccion> transaccionesPendientes = new ArrayList<>();
     private final ArrayList<Transaccion> transaccionesFraudulentas = new ArrayList<>();
     private Red red = null;
-    private final String type1 = "Type1";
+    private final String TYPE1 = "Type1";
     //private final String type2 = "Type2";
+
+    private NTPUDPClient ntpClient = new NTPUDPClient();
+    private InetAddress inetAddress;
+    private TimeInfo timeInfo;
 
     public Nodo(int id, String direccion) {
         KeyPair keys = null;
@@ -45,8 +52,8 @@ public class Nodo {
         this.clavePublica = keys.getPublic();
         this.clavePrivada = keys.getPrivate();
         this.direccion = direccion;
-        this.billetera1 = dineroInicial;
-        this.billetera2 = dineroInicial;
+        this.billetera1 = DINERO_INICIAL;
+        this.billetera2 = DINERO_INICIAL;
         this.montoDeApuesta1 = 0;
         this.montoDeApuesta2 = 0;
         this.salida = new Salida(this);
@@ -94,34 +101,35 @@ public class Nodo {
 
     public void enviarDinero(double monto, String direccionDestinatario, String tipo) {
         System.out.println("Inicio de transacción " + tipo);
-        if (tipo.equals(type1)) {
-            if (billetera1 - monto * (1 + tarifaDeTransaccion) < 0) {
+        if (tipo.equals(TYPE1)) {
+            if (billetera1 - monto * (1 + TARIFA_TRANSACCION) < 0) {
                 System.out.println("-Transacción rechazada-");
                 return;
             }
         } else {
-            if (billetera2 - monto * (1 + tarifaDeTransaccion) < 0) {
+            if (billetera2 - monto * (1 + TARIFA_TRANSACCION) < 0) {
                 System.out.println("-Transacción rechazada-");
                 return;
             }
         }
-        Transaccion transaccion = new Transaccion(tipo, this.getDireccion(), direccionDestinatario, monto,
-                System.currentTimeMillis(), tarifaDeTransaccion, clavePrivada);
-        Mensaje mensaje = null;
         try {
-            mensaje = new Mensaje(this.direccion, direccionDestinatario,
+            timeInfo = ntpClient.getTime(inetAddress);
+            long actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+            Transaccion transaccion = new Transaccion(tipo, this.getDireccion(), direccionDestinatario, monto,
+                    actualTime, TARIFA_TRANSACCION, clavePrivada);
+            Mensaje mensaje = new Mensaje(this.direccion, direccionDestinatario,
                     RsaUtil.sign(transaccion.toString(), clavePrivada),
-                    System.currentTimeMillis(), 0, transaccion);
+                    actualTime, 0, transaccion);
+            // System.out.println("Mensaje creado");
+            salida.broadcastMensaje(mensaje);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // System.out.println("Mensaje creado");
-        salida.broadcastMensaje(mensaje);
     }
 
     public void recibirDinero(double monto, String tipo) {
         // System.out.println("Cantidad recibida: " + amount);
-        if (tipo.equals(type1)) {
+        if (tipo.equals(TYPE1)) {
             billetera1 += monto;
             // System.out.println("Nuevo valor: " + wallet1);
         } else {
@@ -204,7 +212,7 @@ public class Nodo {
     public void generarBloque(String tipo) {
         // System.out.println("---------------------------------------------------");
         List<Transaccion> transaccionesDelBloque = new ArrayList<>();
-        for (int i = 0; (i < cantidadMaximaDeTransacciones) && (i < transaccionesPendientes.size()); i++) {
+        for (int i = 0; (i < TRANSACCIONES_MAXIMAS_POR_BLOQUE) && (i < transaccionesPendientes.size()); i++) {
             if (transaccionesPendientes.get(i).getTipo().equals(tipo)) {
                 transaccionesDelBloque.add(transaccionesPendientes.get(i));
             }
@@ -221,12 +229,15 @@ public class Nodo {
         bloque.setDireccionNodo(this.direccion);
         // System.out.println("Block has been forged by " + this.name);
         try {
+
             List<Object> contenidoMensaje = new ArrayList<>();
             contenidoMensaje.add(bloque);
+            timeInfo = ntpClient.getTime(inetAddress);
+            long actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
             // messageContent.add(blockchain);
             Mensaje mensaje = new Mensaje(this.direccion, "ALL",
                     RsaUtil.sign(HashUtil.SHA256(bloque.toString()), this.clavePrivada),
-                    System.currentTimeMillis(),
+                    actualTime,
                     1, contenidoMensaje);
             salida.broadcastMensaje(mensaje);
         } catch (Exception e) {
@@ -237,20 +248,27 @@ public class Nodo {
     }
 
     public void apostar(double monto, String tipo) {
-        if (tipo.equals(type1)) {
+        long actualTime = 0;
+        try {
+            timeInfo = ntpClient.getTime(inetAddress);
+            actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (tipo.equals(TYPE1)) {
             if (billetera1 < monto) {
                 // System.out.println(name + " don't have enough money for stake in wallet1");
             }
             montoDeApuesta1 = monto;
             billetera1 -= monto;
-            tiempoDeApuesta1 = System.currentTimeMillis();
+            tiempoDeApuesta1 = actualTime;
         } else {
             if (billetera2 < monto) {
                 // System.out.println(name + " don't have enough money for stake in wallet2");
             }
             montoDeApuesta2 = monto;
             billetera2 -= monto;
-            tiempoDeApuesta2 = System.currentTimeMillis();
+            tiempoDeApuesta2 = actualTime;
         }
         System.out.println(id + " deposita " + monto + "  como apuesta para " + tipo);
     }
@@ -269,7 +287,7 @@ public class Nodo {
     }
 
     public void actualizarNBOfBlockOfType(String tipo) {
-        if (tipo.equals(type1)) {
+        if (tipo.equals(TYPE1)) {
             red.NB_OF_BLOCK_OF_TYPE1_CREATED.add(red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + 1);
         } else {
             red.NB_OF_BLOCK_OF_TYPE2_CREATED.add(red.NB_OF_BLOCK_OF_TYPE2_CREATED.size() + 1);
@@ -321,7 +339,7 @@ public class Nodo {
     }
 
     public void actualizarExchangeMoneyPorTipo(String tipo, double amount) {
-        if (tipo.equals(type1)) {
+        if (tipo.equals(TYPE1)) {
             red.exchangeMoney1.add(amount);
             red.exchangeMoney2.add(0.);
         } else {

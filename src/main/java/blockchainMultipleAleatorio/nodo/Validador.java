@@ -1,8 +1,12 @@
 package blockchainMultipleAleatorio.nodo;
 
+import org.apache.commons.net.ntp.NTPUDPClient;
+import org.apache.commons.net.ntp.TimeInfo;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.InetAddress;
 
 public class Validador extends Thread {
 
@@ -13,68 +17,76 @@ public class Validador extends Thread {
     private final String ANSI_RESET = "\u001B[0m";
     private final String type1 = "Type1";
     private final String type2 = "Type2";
+    private String ntpServer = "pool.ntp.org";
+    private NTPUDPClient ntpClient = new NTPUDPClient();
+    private InetAddress inetAddress;
+    private TimeInfo timeInfo;
+
 
     public Validador(Red infoRed, Nodo miNodo) {
         this.red = infoRed;
         this.miNodo = miNodo;
+        try {
+            this.inetAddress = InetAddress.getByName(ntpServer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void validar() {
-        long lastBlockTime;
-        long actualTime;
-        while (true) {
-            imprimirInformacion();
-            String[] seleccionados = determinarSeleccionadosPoS();
+        try {
+            long lastBlockTime;
+            long actualTime;
+            while (true) {
+                imprimirInformacion();
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            
-            if (seleccionados[0]!=null && seleccionados[0].equals(miNodo.getDireccion())) {
-                // Garantiza los 10 segundos minimos
-                lastBlockTime = red.getBlockchain()
-                        .buscarBloquePrevioLogico(type1, red.getBlockchain().obtenerCantidadDeBloques() - 1)
-                        .getHeader().getMarcaDeTiempo();
-                while (true) {
-                    actualTime = System.currentTimeMillis();
-                    if (actualTime - lastBlockTime > 10000) { 
-                        break;
+                String[] seleccionados = determinarSeleccionadosPoS();
+
+                if (seleccionados[0] != null && seleccionados[0].equals(miNodo.getDireccion())) {
+                    // Garantiza los 10 segundos minimos
+                    lastBlockTime = red.getBlockchain()
+                            .buscarBloquePrevioLogico(type1, red.getBlockchain().obtenerCantidadDeBloques() - 1)
+                            .getHeader().getMarcaDeTiempo();
+                    while (true) {
+                        timeInfo = ntpClient.getTime(inetAddress);
+                        actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                        if (actualTime - lastBlockTime > 10000) {
+                            break;
+                        }
                     }
+                    System.out.println(ANSI_GREEN + "/////////////// Se crea el Bloque Tipo 1 ////////////" + ANSI_RESET);
+                    miNodo.generarBloque(type1);
                 }
 
-                System.out.println(ANSI_GREEN + "/////////////// Se crea el Bloque Tipo 1 ////////////" + ANSI_RESET);
-                miNodo.generarBloque(type1);
-            }
-
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            if (seleccionados[1]!=null && seleccionados[1].equals(miNodo.getDireccion())) {
-                // Garantiza los 10 segundos minimos
-                lastBlockTime = red.getBlockchain()
-                        .buscarBloquePrevioLogico(type2, red.getBlockchain().obtenerCantidadDeBloques() - 1)
-                        .getHeader().getMarcaDeTiempo();
-                while (true) {
-                    actualTime = System.currentTimeMillis();
-                    if (actualTime - lastBlockTime > 10000) { 
-                        break;
-                    }
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                System.out.println(ANSI_GREEN + "/////////////// Se crea el Bloque Tipo 2 ////////////" + ANSI_RESET);
-                miNodo.generarBloque(type2);
-            }
 
-            long tiempoParaContinuar = 10000 - (System.currentTimeMillis() % 10000);
-            try {
+                if (seleccionados[1] != null && seleccionados[1].equals(miNodo.getDireccion())) {
+                    // Garantiza los 10 segundos minimos
+                    lastBlockTime = red.getBlockchain()
+                            .buscarBloquePrevioLogico(type2, red.getBlockchain().obtenerCantidadDeBloques() - 1)
+                            .getHeader().getMarcaDeTiempo();
+                    while (true) {
+                        timeInfo = ntpClient.getTime(inetAddress);
+                        actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                        if (actualTime - lastBlockTime > 10000) {
+                            break;
+                        }
+                    }
+                    System.out.println(ANSI_GREEN + "/////////////// Se crea el Bloque Tipo 2 ////////////" + ANSI_RESET);
+                    miNodo.generarBloque(type2);
+                }
+
+                timeInfo = ntpClient.getTime(inetAddress);
+                actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                long tiempoParaContinuar = 10000 - (actualTime % 10000);
                 Thread.sleep(tiempoParaContinuar);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -103,13 +115,15 @@ public class Validador extends Thread {
 
     @Override
     public void run() {
-        long tiempoParaIniciar = 10000 - (System.currentTimeMillis() % 10000);
         try {
+            timeInfo = ntpClient.getTime(inetAddress);
+            long actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+            long tiempoParaIniciar = 10000 - (actualTime % 10000);
             Thread.sleep(tiempoParaIniciar);
-        } catch (InterruptedException e) {
+            validar();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        validar();
     }
 
 }

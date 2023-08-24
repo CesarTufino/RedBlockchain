@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import blockchainTradicional.mensajes.Transaccion;
-import blockchainTradicional.utils.HashUtil;
+import utils.HashUtil;
 
 public class Bloque implements Serializable {
 

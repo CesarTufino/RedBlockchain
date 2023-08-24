@@ -3,6 +3,7 @@ package blockchainMultipleDisparejo.test;
 import java.io.IOException;
 import blockchainMultipleDisparejo.conexion.Entrada;
 import blockchainMultipleDisparejo.nodo.*;
+import direcciones.Direccion;
 
 public class TestRed1Nodo2 {
 
@@ -10,7 +11,7 @@ public class TestRed1Nodo2 {
         String type1 = "Type1";
         String type2 = "Type2";
         int puertoRecepcion = 12342; // A donde se va a enviar
-        Nodo nodo = new Nodo(2, "192.168.0.100"); // Mi nodo
+        Nodo nodo = new Nodo(2, Direccion.DIRECCION2.getDireccionIP()); // Mi nodo
         // Poner el stake
         nodo.apostar(25, type1);
         nodo.apostar(45, type2);
@@ -30,9 +31,9 @@ public class TestRed1Nodo2 {
         hiloValidador.start();
         // Generación de transacciones
         for (int i = 0; i < 700; i++) {
-            nodo.enviarDinero(1.23, "192.168.0.103", type1);
+            nodo.enviarDinero(1.23, Direccion.DIRECCION1.getDireccionIP(), type1);
             try {
-                Thread.sleep(2000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 System.out.println(e);
             }
