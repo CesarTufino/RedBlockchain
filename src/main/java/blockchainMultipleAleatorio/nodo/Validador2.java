@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 
-public class Validador extends Thread {
+public class Validador2 extends Thread {
 
     private Red red = null;
     private Nodo miNodo = null;
@@ -22,8 +22,7 @@ public class Validador extends Thread {
     private InetAddress inetAddress;
     private TimeInfo timeInfo;
 
-
-    public Validador(Red infoRed, Nodo miNodo) {
+    public Validador2(Red infoRed, Nodo miNodo) {
         this.red = infoRed;
         this.miNodo = miNodo;
         try {

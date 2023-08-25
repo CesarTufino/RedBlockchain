@@ -63,16 +63,14 @@ public class Seleccionador extends Thread {
     private void imprimirInformacion() {
         System.out.println(red.getStats());
         if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() > 20) {
-            if (miNodo.getId() == 1) {
-                try {
-                    BufferedWriter archivo = new BufferedWriter(
-                            new FileWriter("Blockchain V1 (Tradicional) - Resultado.txt", true));
-                    archivo.write(red.getStats());
-                    archivo.newLine();
-                    archivo.close();
-                    System.out.println("Archivo guardado");
-                } catch (IOException e) {
-                }
+            try {
+                BufferedWriter archivo = new BufferedWriter(
+                        new FileWriter("Blockchain V1 (Tradicional) - Resultado.txt", true));
+                archivo.write(red.getStats());
+                archivo.newLine();
+                archivo.close();
+                System.out.println("Archivo guardado");
+            } catch (IOException e) {
             }
             System.exit(0);
         }

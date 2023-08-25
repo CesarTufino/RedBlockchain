@@ -1,4 +1,4 @@
-package blockchainMultipleAleatorio.nodo;
+package blockchainMultiple.nodo;
 
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.TimeInfo;
@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 
-public class Validador extends Thread {
+public class Validador2 extends Thread {
 
     private Red red = null;
     private Nodo miNodo = null;
@@ -23,7 +23,7 @@ public class Validador extends Thread {
     private TimeInfo timeInfo;
 
 
-    public Validador(Red infoRed, Nodo miNodo) {
+    public Validador2(Red infoRed, Nodo miNodo) {
         this.red = infoRed;
         this.miNodo = miNodo;
         try {
@@ -42,15 +42,14 @@ public class Validador extends Thread {
 
                 String[] seleccionados = determinarSeleccionadosPoS();
 
-                if (seleccionados[0] != null && seleccionados[0].equals(miNodo.getDireccion())) {
-                    // Garantiza los 10 segundos minimos
+                if (seleccionados[0].equals(miNodo.getDireccion())) {
                     lastBlockTime = red.getBlockchain()
                             .buscarBloquePrevioLogico(type1, red.getBlockchain().obtenerCantidadDeBloques() - 1)
                             .getHeader().getMarcaDeTiempo();
                     while (true) {
                         timeInfo = ntpClient.getTime(inetAddress);
                         actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-                        if (actualTime - lastBlockTime > 10000) {
+                        if (actualTime - lastBlockTime > 10000) { // Garantiza los 10 segundos minimos
                             break;
                         }
                     }
@@ -64,15 +63,14 @@ public class Validador extends Thread {
                     e.printStackTrace();
                 }
 
-                if (seleccionados[1] != null && seleccionados[1].equals(miNodo.getDireccion())) {
-                    // Garantiza los 10 segundos minimos
+                if (seleccionados[1].equals(miNodo.getDireccion())) {
                     lastBlockTime = red.getBlockchain()
                             .buscarBloquePrevioLogico(type2, red.getBlockchain().obtenerCantidadDeBloques() - 1)
                             .getHeader().getMarcaDeTiempo();
                     while (true) {
                         timeInfo = ntpClient.getTime(inetAddress);
                         actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-                        if (actualTime - lastBlockTime > 10000) {
+                        if (actualTime - lastBlockTime > 10000) { // Garantiza los 10 segundos minimos
                             break;
                         }
                     }
@@ -100,7 +98,7 @@ public class Validador extends Thread {
         if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + red.NB_OF_BLOCK_OF_TYPE2_CREATED.size() > 201) {
             try {
                 BufferedWriter archivo = new BufferedWriter(
-                        new FileWriter("Blockchain V4 (Multiple Aleatorio) - Resultado.txt", true));
+                        new FileWriter("Blockchain V2 (Multiple) - Resultado.txt", true));
                 archivo.write(red.getStats());
                 archivo.newLine();
                 archivo.close();
