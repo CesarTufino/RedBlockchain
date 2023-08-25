@@ -56,6 +56,7 @@ public class Validador extends Thread {
                 actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
                 long tiempoParaContinuar = 10000 - (actualTime % 10000);
                 Thread.sleep(tiempoParaContinuar);
+                System.out.println("Bandera");
             }
         } catch (Exception e) {
             e.printStackTrace();

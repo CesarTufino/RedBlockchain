@@ -39,6 +39,7 @@ public class Validador3 extends Thread {
                 long tiempoParaIniciar = 10000 - (actualTime % 10000);
                 Thread.sleep(tiempoParaIniciar);
 
+                System.out.println("Bandera");
                 Seleccionador hiloSeleccionador = new Seleccionador(miNodo.getRed(), miNodo);
                 hiloSeleccionador.start();
             }

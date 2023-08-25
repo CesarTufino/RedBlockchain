@@ -64,6 +64,7 @@ public class Validador2 extends Thread {
                         break;
                     }
                 }
+                System.out.println("Bandera");
             }
         } catch (Exception e) {
             e.printStackTrace();
