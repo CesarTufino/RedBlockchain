@@ -32,6 +32,7 @@ public class Nodo {
     private ArrayList<Transaccion> transaccionesPendientes = new ArrayList<>();
     private ArrayList<Transaccion> transaccionesFraudulentas = new ArrayList<>();
     private Red red = null;
+
     private final String TYPE1 = "Type1";
     private String ntpServer = "pool.ntp.org";
     private NTPUDPClient ntpClient = new NTPUDPClient();
