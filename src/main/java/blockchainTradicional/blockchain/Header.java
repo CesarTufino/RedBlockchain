@@ -16,10 +16,6 @@ public class Header  implements Serializable{
      * Fecha de creación del bloque.
      */
     private final long marcaDeTiempo;
-    private String ntpServer = "pool.ntp.org";
-    private NTPUDPClient ntpClient = new NTPUDPClient();
-    private InetAddress inetAddress;
-    private TimeInfo timeInfo;
 
     /**
      * Constructor del Header.
@@ -39,7 +35,11 @@ public class Header  implements Serializable{
     public Header(String hashBloquePrevio) {
         long actualtime = 0;
         try {
-            this.inetAddress = InetAddress.getByName(ntpServer);
+            String ntpServer = "pool.ntp.org";
+            NTPUDPClient ntpClient = new NTPUDPClient();
+            InetAddress inetAddress;
+            TimeInfo timeInfo;
+            inetAddress = InetAddress.getByName(ntpServer);
             timeInfo = ntpClient.getTime(inetAddress);
             actualtime = timeInfo.getMessage().getTransmitTimeStamp().getTime(); // Get the current date
         } catch (Exception e) {
