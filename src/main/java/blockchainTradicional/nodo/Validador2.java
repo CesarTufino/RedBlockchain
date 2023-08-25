@@ -97,7 +97,7 @@ public class Validador2 extends Thread {
             timeInfo = ntpClient.getTime(inetAddress);
             long actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
             long tiempoParaIniciar = 10000 - (actualTime % 10000);
-            Thread.sleep(tiempoParaIniciar + 2000L);
+            Thread.sleep(tiempoParaIniciar);
             validar();
         } catch (Exception e) {
             e.printStackTrace();
