@@ -23,7 +23,7 @@ public class TestRed1Nodo3 {
             System.out.print("");
         }
         // Hilo para validación PoS
-        Validador3 hiloValidador = new Validador3(nodo.getRed(), nodo);
+        Validador hiloValidador = new Validador(nodo.getRed(), nodo);
         hiloValidador.start();
         // Generación de transacciones
         for (int i = 0; i < 700; i++) {

@@ -1,6 +1,10 @@
 package blockchainTradicional.blockchain;
 
+import org.apache.commons.net.ntp.NTPUDPClient;
+import org.apache.commons.net.ntp.TimeInfo;
+
 import java.io.Serializable;
+import java.net.InetAddress;
 
 /**
  * Clase Header.
@@ -12,6 +16,10 @@ public class Header  implements Serializable{
      * Fecha de creación del bloque.
      */
     private final long marcaDeTiempo;
+    private String ntpServer = "pool.ntp.org";
+    private NTPUDPClient ntpClient = new NTPUDPClient();
+    private InetAddress inetAddress;
+    private TimeInfo timeInfo;
 
     /**
      * Constructor del Header.
@@ -29,7 +37,15 @@ public class Header  implements Serializable{
      * @param hashBloquePrevio Hash del header del último bloque.
      */
     public Header(String hashBloquePrevio) {
-        this.marcaDeTiempo = System.currentTimeMillis(); // Get the current date
+        long actualtime = 0;
+        try {
+            this.inetAddress = InetAddress.getByName(ntpServer);
+            timeInfo = ntpClient.getTime(inetAddress);
+            actualtime = timeInfo.getMessage().getTransmitTimeStamp().getTime(); // Get the current date
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.marcaDeTiempo = actualtime;
         this.hashBloquePrevio = hashBloquePrevio; // Get header's hash
     }
 
