@@ -22,12 +22,12 @@ public class Seleccionador extends Thread {
 
     public Seleccionador(Red infoRed, Nodo miNodo) {
         this.red = infoRed;
-        this.miNodo = miNodo;
+        this.miNodo = miNodo;/*
         try {
             this.inetAddress = InetAddress.getByName(ntpServer);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public void validar() {
@@ -41,9 +41,9 @@ public class Seleccionador extends Thread {
             if (seleccionados[0].equals(miNodo.getDireccion())) {
                 lastBlockTime = red.getBlockchain().obtenerUltimoBloque().getHeader().getMarcaDeTiempo();
                 while (true) {
-                    timeInfo = ntpClient.getTime(inetAddress);
-                    actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-                    if (actualTime - lastBlockTime > 10000) { // Garantiza los 10 segundos minimos
+                    //timeInfo = ntpClient.getTime(inetAddress);
+                    //actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                    if (System.currentTimeMillis() - lastBlockTime > 10000) { // Garantiza los 10 segundos minimos
                         break;
                     }
                 }

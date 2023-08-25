@@ -33,7 +33,7 @@ public class Header  implements Serializable{
      * @param hashBloquePrevio Hash del header del último bloque.
      */
     public Header(String hashBloquePrevio) {
-        long actualtime = 0;
+        /*long actualtime = 0;
         try {
             String ntpServer = "pool.ntp.org";
             NTPUDPClient ntpClient = new NTPUDPClient();
@@ -44,8 +44,8 @@ public class Header  implements Serializable{
             actualtime = timeInfo.getMessage().getTransmitTimeStamp().getTime(); // Get the current date
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        this.marcaDeTiempo = actualtime;
+        }*/
+        this.marcaDeTiempo = System.currentTimeMillis();
         this.hashBloquePrevio = hashBloquePrevio; // Get header's hash
     }
 

@@ -22,21 +22,22 @@ public class Validador3 extends Thread {
 
     public Validador3(Red infoRed, Nodo miNodo) {
         this.red = infoRed;
-        this.miNodo = miNodo;
+        this.miNodo = miNodo;/*
         try {
             this.inetAddress = InetAddress.getByName(ntpServer);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override
     public void run() {
         try {
             while (true) {
-                timeInfo = ntpClient.getTime(inetAddress);
-                long actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-                long tiempoParaIniciar = 10000 - (actualTime % 10000);
+
+                //timeInfo = ntpClient.getTime(inetAddress);
+                //long actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                long tiempoParaIniciar = 10000 - (System.currentTimeMillis() % 10000);
                 Thread.sleep(tiempoParaIniciar);
 
                 Seleccionador hiloSeleccionador = new Seleccionador(miNodo.getRed(), miNodo);
