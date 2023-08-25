@@ -252,7 +252,7 @@ public class Nodo {
 
     public boolean comprobarCantidadMinimaDeNodos() {
         // System.out.println(infoRed.comprobarCantidadDeNodos());
-        if (red.obtenerCantidadDeNodos() >= 3) {
+        if (red.obtenerCantidadDeNodos() >= 2) {
             return true;
         }
         return false;
