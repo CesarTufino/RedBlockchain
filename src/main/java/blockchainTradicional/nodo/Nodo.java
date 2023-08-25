@@ -33,7 +33,7 @@ public class Nodo {
     private ArrayList<Transaccion> transaccionesFraudulentas = new ArrayList<>();
     private Red red = null;
     private final String TYPE1 = "Type1";
-
+    private String ntpServer = "pool.ntp.org";
     private NTPUDPClient ntpClient = new NTPUDPClient();
     private InetAddress inetAddress;
     private TimeInfo timeInfo;
@@ -52,6 +52,11 @@ public class Nodo {
         this.billetera = DINERO_INICIAL;
         this.montoDeApuesta = 0;
         this.salida = new Salida(this);
+        try {
+            this.inetAddress = InetAddress.getByName(ntpServer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public PublicKey getClavePublica() {
