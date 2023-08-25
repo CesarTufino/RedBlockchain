@@ -37,10 +37,6 @@ public class Nodo {
     private final String TYPE1 = "Type1";
     //private final String type2 = "Type2";
 
-    private NTPUDPClient ntpClient = new NTPUDPClient();
-    private InetAddress inetAddress;
-    private TimeInfo timeInfo;
-
     public Nodo(int id, String direccion) {
         KeyPair keys = null;
         try {
@@ -113,13 +109,11 @@ public class Nodo {
             }
         }
         try {
-            timeInfo = ntpClient.getTime(inetAddress);
-            long actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
             Transaccion transaccion = new Transaccion(tipo, this.getDireccion(), direccionDestinatario, monto,
-                    actualTime, TARIFA_TRANSACCION, clavePrivada);
+                    System.currentTimeMillis(), TARIFA_TRANSACCION, clavePrivada);
             Mensaje mensaje = new Mensaje(this.direccion, direccionDestinatario,
                     RsaUtil.sign(transaccion.toString(), clavePrivada),
-                    actualTime, 0, transaccion);
+                    System.currentTimeMillis(), 0, transaccion);
             // System.out.println("Mensaje creado");
             salida.broadcastMensaje(mensaje);
         } catch (Exception e) {
@@ -189,12 +183,12 @@ public class Nodo {
                     updateAllWallet(bloque);
                 actualizarST(bloque.getTiempoDeBusqueda());
                 actualizarNBOfBlockOfType(bloque.getTipo());
-                // System.out.println("\n///-----------------------------------///");
-                // System.out.println("Información del bloque recibido:");
+                System.out.println("\n///-----------------------------------///");
+                System.out.println("Información del bloque recibido:");
                 // System.out.println(bloque);
                 // for (Transaccion t : bloque.getTransaction())
                 // System.out.println(t);
-                // System.out.println("///-----------------------------------///\n");
+                System.out.println("///-----------------------------------///\n");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -232,12 +226,10 @@ public class Nodo {
 
             List<Object> contenidoMensaje = new ArrayList<>();
             contenidoMensaje.add(bloque);
-            timeInfo = ntpClient.getTime(inetAddress);
-            long actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
             // messageContent.add(blockchain);
             Mensaje mensaje = new Mensaje(this.direccion, "ALL",
                     RsaUtil.sign(HashUtil.SHA256(bloque.toString()), this.clavePrivada),
-                    actualTime,
+                    System.currentTimeMillis(),
                     1, contenidoMensaje);
             salida.broadcastMensaje(mensaje);
         } catch (Exception e) {
@@ -248,27 +240,20 @@ public class Nodo {
     }
 
     public void apostar(double monto, String tipo) {
-        long actualTime = 0;
-        try {
-            timeInfo = ntpClient.getTime(inetAddress);
-            actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         if (tipo.equals(TYPE1)) {
             if (billetera1 < monto) {
                 // System.out.println(name + " don't have enough money for stake in wallet1");
             }
             montoDeApuesta1 = monto;
             billetera1 -= monto;
-            tiempoDeApuesta1 = actualTime;
+            tiempoDeApuesta1 = System.currentTimeMillis();
         } else {
             if (billetera2 < monto) {
                 // System.out.println(name + " don't have enough money for stake in wallet2");
             }
             montoDeApuesta2 = monto;
             billetera2 -= monto;
-            tiempoDeApuesta2 = actualTime;
+            tiempoDeApuesta2 = System.currentTimeMillis();
         }
         System.out.println(id + " deposita " + monto + "  como apuesta para " + tipo);
     }

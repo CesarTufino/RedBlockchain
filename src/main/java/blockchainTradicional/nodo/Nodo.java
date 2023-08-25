@@ -1,6 +1,5 @@
 package blockchainTradicional.nodo;
 
-import java.net.InetAddress;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -12,8 +11,6 @@ import blockchainTradicional.conexion.Salida;
 import blockchainTradicional.blockchain.*;
 import blockchainTradicional.mensajes.Mensaje;
 import blockchainTradicional.mensajes.Transaccion;
-import org.apache.commons.net.ntp.NTPUDPClient;
-import org.apache.commons.net.ntp.TimeInfo;
 import utils.*;
 
 public class Nodo {
@@ -34,10 +31,6 @@ public class Nodo {
     private Red red = null;
 
     private final String TYPE1 = "Type1";
-    private String ntpServer = "pool.ntp.org";
-    private NTPUDPClient ntpClient = new NTPUDPClient();
-    private InetAddress inetAddress;
-    private TimeInfo timeInfo;
 
     public Nodo(int id, String direccion) {
         KeyPair keys = null;
@@ -52,12 +45,7 @@ public class Nodo {
         this.direccion = direccion;
         this.billetera = DINERO_INICIAL;
         this.montoDeApuesta = 0;
-        this.salida = new Salida(this);/*
-        try {
-            this.inetAddress = InetAddress.getByName(ntpServer);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
+        this.salida = new Salida(this);
     }
 
     public PublicKey getClavePublica() {
@@ -100,8 +88,6 @@ public class Nodo {
         }
 
         try {
-            //timeInfo = ntpClient.getTime(inetAddress);
-            //long actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
             Transaccion transaccion = new Transaccion(direccion, direccionDestinatario, monto,
                     System.currentTimeMillis(), TARIFA_TRANSACCION, clavePrivada);
             Mensaje mensaje = new Mensaje(direccion, direccionDestinatario, RsaUtil.sign(transaccion.toString(), clavePrivada),
@@ -168,11 +154,11 @@ public class Nodo {
                     updateAllWallet(bloque);
                 actualizarST(bloque.getTiempoDeBusqueda());
                 actualizarNBOfBlock();
-                // System.out.println("\n///-----------------------------------///");
-                // System.out.println("Información del bloque recibido:");
+                System.out.println("\n///-----------------------------------///");
+                System.out.println("Información del bloque recibido:");
                 // System.out.println(b);
                 // for (Transaccion t : b.getTransaction()) System.out.println(t);
-                // System.out.println("///-----------------------------------///\n");
+                System.out.println("///-----------------------------------///\n");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -204,9 +190,6 @@ public class Nodo {
 
             List<Object> contenidoMensaje = new ArrayList<>();
             contenidoMensaje.add(bloque);
-            //timeInfo = ntpClient.getTime(inetAddress);
-            //long actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-            // messageContent.add(blockchain);
             Mensaje mensaje = new Mensaje(this.direccion, "ALL",
                     RsaUtil.sign(HashUtil.SHA256(bloque.toString()), this.clavePrivada),
                     System.currentTimeMillis(),
@@ -220,13 +203,6 @@ public class Nodo {
     }
 
     public void apostar(double monto) {
-        /*long actualTime = 0;
-        try {
-            timeInfo = ntpClient.getTime(inetAddress);
-            actualTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
         if (billetera < monto) {
             System.out.println(id + " no tiene suficiente dinero para apostar en wallet1");
             return;

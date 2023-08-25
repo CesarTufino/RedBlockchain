@@ -52,14 +52,5 @@ public class Blockchain implements Serializable {
         WTT1.add((double) (bloque.getHeader().getMarcaDeTiempo() - prevBlock.getHeader().getMarcaDeTiempo()) / 1000);
         bloques.add(bloque);
     }
-
-    /**
-     * Método que devuelve el tamaño del blockchain.
-     *
-     * @return Tamaño del blockchain.
-     */
-    public int obtenerCantidadDeBloques() {
-        return bloques.size();
-    }
-
+    
 }
