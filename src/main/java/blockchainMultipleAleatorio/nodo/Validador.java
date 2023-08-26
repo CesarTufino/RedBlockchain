@@ -23,47 +23,36 @@ public class Validador extends Thread {
     public void validar() {
         try {
             long lastBlockTime;
-            while (true) {
-                imprimirInformacion();
+            imprimirInformacion();
 
-                String[] seleccionados = determinarSeleccionadosPoS();
+            String[] seleccionados = determinarSeleccionadosPoS();
 
-                if (seleccionados[0] != null && seleccionados[0].equals(miNodo.getDireccion())) {
-                    // Garantiza los 10 segundos minimos
-                    lastBlockTime = red.getBlockchain()
-                            .buscarBloquePrevioLogico(type1, red.getBlockchain().obtenerCantidadDeBloques() - 1)
-                            .getHeader().getMarcaDeTiempo();
-                    while (true) {
-                        if (System.currentTimeMillis() - lastBlockTime > 10000) {
-                            break;
-                        }
+            if (seleccionados[0] != null && seleccionados[0].equals(miNodo.getDireccion())) {
+                // Garantiza los 10 segundos minimos
+                lastBlockTime = red.getBlockchain()
+                        .buscarBloquePrevioLogico(type1, red.getBlockchain().obtenerCantidadDeBloques() - 1)
+                        .getHeader().getMarcaDeTiempo();
+                while (true) {
+                    if (System.currentTimeMillis() - lastBlockTime > 10000) {
+                        break;
                     }
-                    System.out.println(ANSI_GREEN + "/////////////// Se crea el Bloque Tipo 1 ////////////" + ANSI_RESET);
-                    miNodo.generarBloque(type1);
                 }
+                System.out.println(ANSI_GREEN + "/////////////// Se crea el Bloque Tipo 1 ////////////" + ANSI_RESET);
+                miNodo.generarBloque(type1);
+            }
 
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                if (seleccionados[1] != null && seleccionados[1].equals(miNodo.getDireccion())) {
-                    // Garantiza los 10 segundos minimos
-                    lastBlockTime = red.getBlockchain()
-                            .buscarBloquePrevioLogico(type2, red.getBlockchain().obtenerCantidadDeBloques() - 1)
-                            .getHeader().getMarcaDeTiempo();
-                    while (true) {
-                        if (System.currentTimeMillis() - lastBlockTime > 10000) {
-                            break;
-                        }
+            if (seleccionados[1] != null && seleccionados[1].equals(miNodo.getDireccion())) {
+                // Garantiza los 10 segundos minimos
+                lastBlockTime = red.getBlockchain()
+                        .buscarBloquePrevioLogico(type2, red.getBlockchain().obtenerCantidadDeBloques() - 1)
+                        .getHeader().getMarcaDeTiempo();
+                while (true) {
+                    if (System.currentTimeMillis() - lastBlockTime > 10000) {
+                        break;
                     }
-                    System.out.println(ANSI_GREEN + "/////////////// Se crea el Bloque Tipo 2 ////////////" + ANSI_RESET);
-                    miNodo.generarBloque(type2);
                 }
-
-                long tiempoParaContinuar = 10000 - (System.currentTimeMillis() % 10000);
-                Thread.sleep(tiempoParaContinuar);
+                System.out.println(ANSI_GREEN + "/////////////// Se crea el Bloque Tipo 2 ////////////" + ANSI_RESET);
+                miNodo.generarBloque(type2);
             }
         } catch (Exception e) {
             e.printStackTrace();

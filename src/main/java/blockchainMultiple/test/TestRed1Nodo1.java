@@ -26,9 +26,15 @@ public class TestRed1Nodo1 {
                 break;
             System.out.print("");
         }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // Hilo para validación PoS
         Temporizador hiloTemporizador = new Temporizador(nodo.getRed(), nodo);
         hiloTemporizador.start();
+
         // Generación de transacciones
         for (int i = 0; i < 700; i++) {
             int a = (int) (((Math.random()) * 2) + 1);
