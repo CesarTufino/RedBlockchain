@@ -1,5 +1,8 @@
 package direcciones;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public enum Direccion {
     DIRECCION1("192.168.100.73"), // 26.20.111.124 192.168.0.103
     DIRECCION2("192.168.100.9"), // 26.37.38.157 192.168.0.100 26.194.104.185
@@ -13,5 +16,13 @@ public enum Direccion {
 
     public String getDireccionIP() {
         return direccionIP;
+    }
+
+    public static List<String> getDirecciones(){
+        List<String> listaStrDirecciones = new ArrayList<>();
+        for (Direccion direccion : Direccion.values()){
+            listaStrDirecciones.add(direccion.getDireccionIP());
+        }
+        return listaStrDirecciones;
     }
 }
