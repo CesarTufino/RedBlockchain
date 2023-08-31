@@ -28,7 +28,7 @@ public class Bloque  implements Serializable{
      * 
      * @param bloqueFisicoPrevio Último bloque físico en la cadena de bloques.
      * @param bloqueLogicoPrevio Último bloque lógico en la cadena de bloques.
-     * @param transaccion Lista de transacciones que se agregarán al nuevo bloque.
+     * @param transacciones Lista de transacciones que se agregarán al nuevo bloque.
      * @param tiempoDeBusqueda Tiempo de busqueda del bloque previo
      * 
      */
