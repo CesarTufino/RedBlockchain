@@ -187,7 +187,9 @@ public class Nodo {
     private void compararBloques() {
         if (bloquesEnEspera.get(0).getFooter().getHash().equals(bloquesEnEspera.get(1).getFooter().getHash())){
             agregarBloque(bloquesEnEspera.get(0));
-            agregarBloque(bloquesEnEspera.get(1));
+            System.out.println("Creación correcta");
+        } else{
+            System.out.println("---------------ERROR--------------");
         }
         bloquesEnEspera = new ArrayList<>();
     }
@@ -207,6 +209,7 @@ public class Nodo {
         // System.out.println("---------------------------------------------------");
         for (Transaccion transaccion : transaccionesDelBloque){
             if (!verificarTransaccion(transaccion)){
+                System.out.println("---------------ERROR--------------");
                 return;
             }
         }

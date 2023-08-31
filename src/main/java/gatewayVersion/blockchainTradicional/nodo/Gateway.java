@@ -94,6 +94,8 @@ public class Gateway {
         if (bloquesEnEspera.get(0).getFooter().getHash().equals(bloquesEnEspera.get(1).getFooter().getHash())){
             actualizarTransaccionesPendientes();
             actualizarTransaccionesEscogidas(true);
+        } else{
+            System.out.println("---------------ERROR--------------");
         }
         bloquesEnEspera = new ArrayList<>();
     }
