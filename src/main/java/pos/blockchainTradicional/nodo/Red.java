@@ -23,6 +23,7 @@ public class Red implements Serializable {
      * blockchain lógico.)
      */
     public List<Double> searchTimes = new ArrayList<>();
+    private List<String> nodos = new ArrayList<>();
     /**
      * Intercambios de dinero del primer blockchain lógico.
      */
@@ -68,6 +69,7 @@ public class Red implements Serializable {
         stats += "\nST=" + searchTimes;
         stats += "\nWTT1=" + blockchain.getWTT1();
         stats += "\nType_1_currency_exchanged=" + exchangeMoney1;
+        stats += "\nNodos=" + nodos;
         stats += "\n////////////////////////////////////////////\n";
         return stats;
     }
@@ -84,8 +86,8 @@ public class Red implements Serializable {
         this.nbTrans.put(type1, nb);
     }
 
-    public String[] getNodosSeleccionados() {
-        String[] direccionesSeleccionadas = new String[1];
+    public String getNodosSeleccionados() {
+        String direccionesSeleccionada = "";
         Map<String, Double> probabilidades1 = new HashMap<>();
         double suma1 = 0, sumaAcumulada1 = 0, numeroPseudoaleatorio1 = 0;
         long semilla1 = 0;
@@ -104,15 +106,15 @@ public class Red implements Serializable {
         for (String direccion : probabilidades1.keySet()) {
             sumaAcumulada1 += probabilidades1.get(direccion);
             if (numeroPseudoaleatorio1 <= sumaAcumulada1) {
-                direccionesSeleccionadas[0] = direccion;
+                direccionesSeleccionada = direccion;
                 mapStakeTime1.put(direccion, mapStakeTime1.get(direccion) + 10000);
                 break;
             }
         }
 
         System.out.println(
-                "Nodo seleccionado: 1:" + direccionesSeleccionadas[0]);
-        return direccionesSeleccionadas;
+                "Nodo seleccionado: 1:" + direccionesSeleccionada);
+        return direccionesSeleccionada;
     }
 
     public Blockchain getBlockchain() {
@@ -123,12 +125,11 @@ public class Red implements Serializable {
         blockchain.agregarBloque(bloque);
     }
 
-    public Map<String, Long> getMapStakeTime1() {
-        return mapStakeTime1;
-    }
-
     public int obtenerCantidadDeNodos() {
         return keyTable.keySet().size();
     }
 
+    public List<String> getNodos(){
+        return nodos;
+    }
 }

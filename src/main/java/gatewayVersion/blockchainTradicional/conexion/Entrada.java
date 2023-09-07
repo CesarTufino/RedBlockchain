@@ -11,13 +11,13 @@ public class Entrada extends Thread {
     private Nodo nodo;
     private Gateway gateway;
 
-    public Entrada(Nodo nodo, int puerto) throws IOException {
-        this.serverSocket = new ServerSocket(puerto);
+    public Entrada(Nodo nodo) throws IOException {
+        this.serverSocket = new ServerSocket(nodo.getDireccion().getPuerto());
         this.nodo = nodo;
     }
 
-    public Entrada(Gateway gateway, int puerto) throws IOException {
-        this.serverSocket = new ServerSocket(puerto);
+    public Entrada(Gateway gateway) throws IOException {
+        this.serverSocket = new ServerSocket(gateway.getDireccion().getPuerto());
         this.gateway = gateway;
     }
 
@@ -25,11 +25,10 @@ public class Entrada extends Thread {
         while (true) {
             try {
                 Socket socket = serverSocket.accept();
-                //System.out.println("Conexion aceptada");
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 Object obj = ois.readObject();
                 Procesador procesador;
-                if (nodo == null) {
+                if (nodo != null) {
                     procesador = new Procesador(nodo, obj);
                 } else{
                     procesador = new Procesador(gateway, obj);
@@ -37,7 +36,7 @@ public class Entrada extends Thread {
                 procesador.start();
                 ois.close();
             } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
     }

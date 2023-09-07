@@ -2,16 +2,13 @@ package gatewayVersion.blockchainTradicional.test;
 
 import java.io.IOException;
 
-import gatewayVersion.blockchainTradicional.conexion.Entrada;
 import gatewayVersion.blockchainTradicional.nodo.Nodo;
-import gatewayVersion.blockchainTradicional.nodo.Temporizador;
 import direcciones.Direccion;
 
 public class TestRed1Nodo3 {
 
     public static void main(String[] args) throws IOException {
-        int puertoRecepcion = 12343;
-        Nodo nodo = new Nodo(3, Direccion.DIRECCION3.getDireccionIP(), puertoRecepcion); // Mi nodo
+        Nodo nodo = new Nodo(3, Direccion.DIRECCION_3); // Mi nodo
         nodo.iniciarProceso();
         // Espera hasta que exitan tres nodos en la red
         while (true) {
@@ -26,7 +23,7 @@ public class TestRed1Nodo3 {
         }
         // Generación de transacciones
         for (int i = 0; i < 700; i++) {
-            nodo.enviarDinero(3.47, Direccion.DIRECCION1.getDireccionIP());
+            nodo.enviarDinero(3.47, Direccion.DIRECCION_1.getDireccionIP());
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {

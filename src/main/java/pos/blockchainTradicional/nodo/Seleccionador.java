@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class Validador extends Thread {
+public class Seleccionador extends Thread {
 
     private Red red = null;
     private Nodo miNodo = null;
@@ -12,7 +12,7 @@ public class Validador extends Thread {
     private final String ANSI_BLUE = "\u001B[34m";
     private final String ANSI_RESET = "\u001B[0m";
 
-    public Validador(Red infoRed, Nodo miNodo) {
+    public Seleccionador(Red infoRed, Nodo miNodo) {
         this.red = infoRed;
         this.miNodo = miNodo;
     }
@@ -22,9 +22,10 @@ public class Validador extends Thread {
             long lastBlockTime;
             imprimirInformacion();
 
-            String[] seleccionados = determinarSeleccionadosPoS();
+            String nodoSeleccionado = determinarSeleccionadosPoS();
+            red.getNodos().add(nodoSeleccionado);
 
-            if (seleccionados[0].equals(miNodo.getDireccion())) {
+            if (nodoSeleccionado.equals(miNodo.getDireccion())) {
                 lastBlockTime = red.getBlockchain().obtenerUltimoBloque().getHeader().getMarcaDeTiempo();
                 while (true) {
                     if (System.currentTimeMillis() - lastBlockTime > 10000) { // Garantiza los 10 segundos minimos
@@ -39,7 +40,7 @@ public class Validador extends Thread {
         }
     }
 
-    private String[] determinarSeleccionadosPoS() {
+    private String determinarSeleccionadosPoS() {
         System.out.println(ANSI_BLUE + "/////////////// Seleccionando nodos //////////" + ANSI_RESET);
         return red.getNodosSeleccionados();
     }

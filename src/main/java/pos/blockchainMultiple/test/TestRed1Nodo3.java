@@ -13,7 +13,7 @@ public class TestRed1Nodo3 {
         String type1 = "Type1";
         String type2 = "Type2";
         int puertoRecepcion = 12343; // A donde se va a enviar
-        Nodo nodo = new Nodo(3, Direccion.DIRECCION3.getDireccionIP()); // Mi nodo
+        Nodo nodo = new Nodo(3, Direccion.DIRECCION_3.getDireccionIP()); // Mi nodo
         // Poner el stake
         nodo.apostar(20, type1);
         nodo.apostar(50, type2);
@@ -37,7 +37,7 @@ public class TestRed1Nodo3 {
         hiloTemporizador.start();
         // Generación de transacciones
         for (int i = 0; i < 700; i++) {
-            nodo.enviarDinero(3.47, Direccion.DIRECCION1.getDireccionIP(), type2);
+            nodo.enviarDinero(3.47, Direccion.DIRECCION_1.getDireccionIP(), type2);
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {

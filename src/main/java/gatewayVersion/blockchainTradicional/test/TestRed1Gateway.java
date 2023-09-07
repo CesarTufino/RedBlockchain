@@ -10,8 +10,7 @@ import java.io.IOException;
 public class TestRed1Gateway {
 
     public static void main(String[] args) throws IOException {
-        int puertoRecepcion = 12344;
-        Gateway gateway = new Gateway("", puertoRecepcion);
+        Gateway gateway = new Gateway(Direccion.DIRECCION_GATEWAY);
         gateway.iniciarProceso();
     }
 }

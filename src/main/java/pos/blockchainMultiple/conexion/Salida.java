@@ -21,11 +21,11 @@ public class Salida {
     public Salida(Nodo miNodo) {
         this.miNodo = miNodo;
         // Nodo 1
-        direcciones.put(Direccion.DIRECCION1.getDireccionIP(), 12341);
+        direcciones.put(Direccion.DIRECCION_1.getDireccionIP(), 12341);
         // Nodo 2
-        direcciones.put(Direccion.DIRECCION2.getDireccionIP(), 12342);
+        direcciones.put(Direccion.DIRECCION_2.getDireccionIP(), 12342);
         // Nodo 3
-        direcciones.put(Direccion.DIRECCION3.getDireccionIP(), 12343);
+        direcciones.put(Direccion.DIRECCION_3.getDireccionIP(), 12343);
     }
 
     public void broadcastMensaje(Mensaje m) {

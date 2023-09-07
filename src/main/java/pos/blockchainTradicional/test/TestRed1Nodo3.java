@@ -11,7 +11,7 @@ public class TestRed1Nodo3 {
 
     public static void main(String[] args) throws IOException {
         int puertoRecepcion = 12343; // A donde se va a enviar
-        Nodo nodo = new Nodo(3, Direccion.DIRECCION3.getDireccionIP()); // Mi nodo
+        Nodo nodo = new Nodo(3, Direccion.DIRECCION_3.getDireccionIP()); // Mi nodo
         nodo.apostar(20);// Poner el stake
         // Hilo para escuchar
         Entrada serverThread = new Entrada(nodo, puertoRecepcion);
@@ -30,11 +30,11 @@ public class TestRed1Nodo3 {
             e.printStackTrace();
         }
         // Hilo para validación PoS
-        Temporizador hiloTemporizador = new Temporizador(nodo.getRed(), nodo);
+        Temporizador hiloTemporizador = new Temporizador(nodo);
         hiloTemporizador.start();
         // Generación de transacciones
         for (int i = 0; i < 700; i++) {
-            nodo.enviarDinero(3.47, Direccion.DIRECCION1.getDireccionIP());
+            nodo.enviarDinero(3.47, Direccion.DIRECCION_1.getDireccionIP());
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {

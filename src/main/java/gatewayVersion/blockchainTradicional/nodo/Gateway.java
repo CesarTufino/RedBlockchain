@@ -1,13 +1,12 @@
 package gatewayVersion.blockchainTradicional.nodo;
 
+import direcciones.Direccion;
 import gatewayVersion.blockchainTradicional.blockchain.Bloque;
 import gatewayVersion.blockchainTradicional.conexion.Entrada;
 import gatewayVersion.blockchainTradicional.conexion.Salida;
 import gatewayVersion.blockchainTradicional.mensajes.InfoNodo;
 import gatewayVersion.blockchainTradicional.mensajes.Mensaje;
 import gatewayVersion.blockchainTradicional.mensajes.Transaccion;
-import utils.HashUtil;
-import utils.RsaUtil;
 
 import java.io.IOException;
 import java.security.PublicKey;
@@ -21,21 +20,40 @@ public class Gateway {
     private final int TRANSACCIONES_MAXIMAS_POR_BLOQUE = 10;
     private ArrayList<Transaccion> transaccionesPendientes = new ArrayList<>();
     private ArrayList<Transaccion> transaccionesEscogidas = new ArrayList<>();
-    private String direccion;
+    private Direccion direccion;
     private Map<String, PublicKey> keyTable = new HashMap<>();
 
     private Map<String, Integer> puertos = new HashMap<>();
-    private int puertoRecepcion;
+    private List<String> nodosSeleccionados = new ArrayList<>();
+    private List<String> nodosPosibles = new ArrayList<>();
     private Salida salida;
     private List<Bloque> bloquesEnEspera = new ArrayList<>();
+    private long tiempoDeCreacionDeUltimoBloque;
 
-    public Gateway(String direccion, int puertoRecepcion) {
+    public Gateway(Direccion direccion) {
         this.direccion = direccion;
-        this.puertoRecepcion = puertoRecepcion;
         this.salida = new Salida();
     }
 
+    public long getTiempoDeCreacionDeUltimoBloque() {
+        return tiempoDeCreacionDeUltimoBloque;
+    }
 
+    public List<String> getNodosSeleccionados() {
+        return nodosSeleccionados;
+    }
+
+    public List<String> getNodosPosibles() {
+        return nodosPosibles;
+    }
+
+    public Direccion getDireccion() {
+        return direccion;
+    }
+
+    public Map<String, Integer> getPuertos() {
+        return puertos;
+    }
 
     public void iniciarProceso() throws IOException {
         empezarAEscuchar();
@@ -57,7 +75,7 @@ public class Gateway {
     }
 
     private void empezarAEscuchar() throws IOException {
-        Entrada hiloEntrada = new Entrada(this, puertoRecepcion);
+        Entrada hiloEntrada = new Entrada(this);
         hiloEntrada.start();
     }
 
@@ -92,6 +110,7 @@ public class Gateway {
 
     private void compararBloques() {
         if (bloquesEnEspera.get(0).getFooter().getHash().equals(bloquesEnEspera.get(1).getFooter().getHash())){
+            tiempoDeCreacionDeUltimoBloque = bloquesEnEspera.get(0).getHeader().getMarcaDeTiempo();
             actualizarTransaccionesPendientes();
             actualizarTransaccionesEscogidas(true);
         } else{
@@ -126,21 +145,23 @@ public class Gateway {
 
     public void agregarNodo(InfoNodo infoNodo){
         String direccion = infoNodo.getDireccion();
-
         try {
             keyTable.put(direccion, infoNodo.getClavePublica());
-            puertos.put(direccion, infoNodo.getPuerto());
         } catch (Exception e) {
             e.printStackTrace();
         }
+        puertos.put(direccion, infoNodo.getPuerto());
+        nodosPosibles.add(direccion);
     }
 
-    public void mandarCrearBloque(String direccionDeNodo, List<Transaccion> transacciones) {
-        int puerto = 1;
+    public void mandarCrearBloque(String direccionDeNodo, int puerto, List<Transaccion> transacciones) {
         salida.mandarACrearBloque(direccionDeNodo, puerto, transacciones);
     }
 
-    public List<String> getDireccionesDeNodos(){
-        return puertos.keySet().stream().toList();
+    public void reiniciarNodosPosibles() {
+        for (String direccion : nodosSeleccionados) {
+            nodosPosibles.add(direccion);
+        }
+        nodosSeleccionados = new ArrayList<>();
     }
 }

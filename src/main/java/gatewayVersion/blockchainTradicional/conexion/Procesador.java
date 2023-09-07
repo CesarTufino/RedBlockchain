@@ -1,5 +1,6 @@
 package gatewayVersion.blockchainTradicional.conexion;
 
+import direcciones.Direccion;
 import gatewayVersion.blockchainTradicional.mensajes.InfoNodo;
 import gatewayVersion.blockchainTradicional.mensajes.Mensaje;
 import gatewayVersion.blockchainTradicional.mensajes.Transaccion;
@@ -28,17 +29,17 @@ public class Procesador extends Thread {
         // Mensajes
         if (objeto instanceof Mensaje) {
             Mensaje message = (Mensaje) objeto;
-            if (nodo != null){
+            if (nodo != null) {
                 nodo.recibirMensaje(message);
             }
-            if (gateway != null){
+            if (gateway != null) {
                 gateway.recibirMensaje(message);
             }
         }
         if (objeto instanceof List<?>) {
             System.out.println("Se han recibido un grupo de transacciones");
             List<Transaccion> transacciones = (List<Transaccion>) objeto;
-            if (nodo != null){
+            if (nodo != null) {
                 nodo.generarBloque(transacciones);
             }
         }
@@ -46,11 +47,10 @@ public class Procesador extends Thread {
         if (objeto instanceof InfoNodo) {
             System.out.println("Se ha recibido la información de un nodo");
             InfoNodo infoNodo = (InfoNodo) objeto;
-
-            if (nodo != null){
+            if (nodo != null) {
                 nodo.getRed().addNode(infoNodo);
             }
-            if (gateway != null){
+            if (gateway != null) {
                 gateway.agregarNodo(infoNodo);
             }
         }
@@ -61,15 +61,10 @@ public class Procesador extends Thread {
             nodo.setRed(infoRed);
         }
         // Strings
-        if (objeto instanceof String) {
-            String peticion = (String) objeto;
-            // System.out.println("Petición " + peticion);
-            if (peticion.length() >= 7) {
-                switch (peticion.substring(0, 7)) {
-                    case "InfoRed":
-                        nodo.enviarInfoRed(peticion.substring(7));
-                }
-            }
+        if (objeto instanceof Direccion) {
+            System.out.println("Se envia red");
+            Direccion direccion = (Direccion) objeto;
+            nodo.enviarInfoRed(direccion);
         }
     }
 
