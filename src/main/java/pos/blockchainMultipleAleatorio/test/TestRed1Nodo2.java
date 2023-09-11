@@ -38,7 +38,11 @@ public class TestRed1Nodo2 {
         hiloTemporizador.start();
         // Generación de transacciones
         for (int i = 0; i < 700; i++) {
-            nodo.enviarDinero(1.23, Direccion.DIRECCION_1.getDireccionIP(), type1);
+            int a = (int) (((Math.random()) * 2) + 1);
+            if (a == 1)
+                nodo.enviarDinero(1.23, Direccion.DIRECCION_3.getDireccionIP(), type1);
+            else
+                nodo.enviarDinero(3.47, Direccion.DIRECCION_1.getDireccionIP(), type2);
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {

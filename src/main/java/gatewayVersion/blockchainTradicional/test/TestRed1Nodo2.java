@@ -21,9 +21,13 @@ public class TestRed1Nodo2 {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        // Generación de transacciones
+        /// Generación de transacciones
         for (int i = 0; i < 700; i++) {
-            nodo.enviarDinero(1.23, Direccion.DIRECCION_1.getDireccionIP());
+            int a = (int) (((Math.random()) * 2) + 1);
+            if (a == 1)
+                nodo.enviarDinero(1.23, Direccion.DIRECCION_3.getDireccionIP());
+            else
+                nodo.enviarDinero(3.47, Direccion.DIRECCION_1.getDireccionIP());
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {

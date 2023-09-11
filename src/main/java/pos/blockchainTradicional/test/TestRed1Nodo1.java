@@ -34,9 +34,9 @@ public class TestRed1Nodo1 {
         for (int i = 0; i < 700; i++) {
             int a = (int) (((Math.random()) * 2) + 1);
             if (a == 1)
-                nodo.enviarDinero(1.23, Direccion.DIRECCION_3.getDireccionIP());
+                nodo.enviarDinero(1.23, Direccion.DIRECCION_2.getDireccionIP());
             else
-                nodo.enviarDinero(3.47, Direccion.DIRECCION_2.getDireccionIP());
+                nodo.enviarDinero(3.47, Direccion.DIRECCION_3.getDireccionIP());
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {

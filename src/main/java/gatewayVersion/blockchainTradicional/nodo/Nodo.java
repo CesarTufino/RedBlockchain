@@ -30,10 +30,9 @@ public class Nodo {
     private final int DINERO_INICIAL = 100000000;
     private double billetera;
     private Red red = null;
-    private String direccionGateway = "localhost";
-    private int puertoGateway = 12344;
     private List<Bloque> bloquesEnEspera = new ArrayList<>();
     private final String TYPE1 = "Type1";
+
 
     public Nodo(int id, Direccion direccion) {
         try {
@@ -101,7 +100,7 @@ public class Nodo {
             salida.broadcastInformacionNodo(red.getPuertos(), infoNodo);
         }
         red.addNode(infoNodo);
-        salida.enviarInfoNodo(direccionGateway, puertoGateway, infoNodo);
+        salida.enviarInfoNodo(Direccion.DIRECCION_GATEWAY.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getPuerto(), infoNodo);
     }
 
     public void enviarInfoRed(Direccion direccion) {
@@ -120,7 +119,7 @@ public class Nodo {
             Mensaje mensaje = new Mensaje(direccion.getDireccionIP(), direccionDestinatario, RsaUtil.sign(transaccion.toString(), clavePrivada),
                     System.currentTimeMillis(), 0, transaccion);
             // System.out.println("Mensaje creado");
-            salida.enviarMensaje(direccionGateway, puertoGateway, mensaje);
+            salida.enviarMensaje(Direccion.DIRECCION_GATEWAY.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getPuerto(), mensaje);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -190,9 +189,15 @@ public class Nodo {
     private void compararBloques() {
         if (bloquesEnEspera.get(0).getFooter().getHash().equals(bloquesEnEspera.get(1).getFooter().getHash())) {
             System.out.println("Creación correcta");
-            agregarBloque(bloquesEnEspera.get(0));
-            red.getNodosEscogidos1().add(bloquesEnEspera.get(0).getIdNodo());
-            red.getNodosEscogidos2().add(bloquesEnEspera.get(1).getIdNodo());
+            if (bloquesEnEspera.get(0).getIdNodo()>bloquesEnEspera.get(1).getIdNodo()){
+                red.getNodosEscogidos1().add(bloquesEnEspera.get(1).getIdNodo());
+                red.getNodosEscogidos2().add(bloquesEnEspera.get(0).getIdNodo());
+                agregarBloque(bloquesEnEspera.get(1));
+            } else{
+                red.getNodosEscogidos1().add(bloquesEnEspera.get(0).getIdNodo());
+                red.getNodosEscogidos2().add(bloquesEnEspera.get(1).getIdNodo());
+                agregarBloque(bloquesEnEspera.get(0));
+            }
             imprimirInformacion();
         } else {
             System.out.println("---------------ERROR--------------");
