@@ -160,9 +160,9 @@ public class Nodo {
         try {
             if (RsaUtil.verify(HashUtil.SHA256(bloque.toString()), firma,
                     red.obtenerClavePublicaPorDireccion(direccionDelNodo))) {
-                if (bloque.getTipo().equals(TYPE1)){
+                if (bloque.getTipo().equals(TYPE1)) {
                     bloquesEnEsperaTipo1.add(bloque);
-                } else{
+                } else {
                     bloquesEnEsperaTipo2.add(bloque);
                 }
                 System.out.println("Bloque recibido");
@@ -179,7 +179,7 @@ public class Nodo {
     }
 
     private void compararBloques(String tipo) {
-        if (tipo.equals(TYPE1)){
+        if (tipo.equals(TYPE1)) {
             if (bloquesEnEsperaTipo1.get(0).getFooter().getHash().equals(bloquesEnEsperaTipo1.get(1).getFooter().getHash())) {
                 System.out.println("Creación correcta");
                 if (bloquesEnEsperaTipo1.get(0).getIdNodo() > bloquesEnEsperaTipo1.get(1).getIdNodo()) {
@@ -196,7 +196,7 @@ public class Nodo {
                 System.out.println("---------------ERROR--------------");
             }
             bloquesEnEsperaTipo1 = new ArrayList<>();
-        } else{
+        } else {
             if (bloquesEnEsperaTipo2.get(0).getFooter().getHash().equals(bloquesEnEsperaTipo2.get(1).getFooter().getHash())) {
                 System.out.println("Creación correcta");
                 if (bloquesEnEsperaTipo2.get(0).getIdNodo() > bloquesEnEsperaTipo2.get(1).getIdNodo()) {
@@ -268,7 +268,7 @@ public class Nodo {
         // System.out.println("---------------------------------------------------");
     }
 
-    public void actualizarNbTransPorTipo(String tipo,int cantidad) {
+    public void actualizarNbTransPorTipo(String tipo, int cantidad) {
         HashMap<String, Integer> nbTransParType = (HashMap<String, Integer>) red.getNbTransParType();
         red.setNbTransParType(tipo, nbTransParType.get(TYPE1) + cantidad);
     }
@@ -340,16 +340,14 @@ public class Nodo {
     private void imprimirInformacion() {
         System.out.println(red.getStats());
         if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + red.NB_OF_BLOCK_OF_TYPE2_CREATED.size() > 201) {
-            if (id == 1) {
-                try {
-                    BufferedWriter archivo = new BufferedWriter(
-                            new FileWriter("Blockchain V1 (Tradicional) - Resultado.txt", true));
-                    archivo.write(red.getStats());
-                    archivo.newLine();
-                    archivo.close();
-                    System.out.println("Archivo guardado");
-                } catch (IOException e) {
-                }
+            try {
+                BufferedWriter archivo = new BufferedWriter(
+                        new FileWriter("Blockchain V2 (Gateway/Multiple) - Resultado.txt", true));
+                archivo.write(red.getStats());
+                archivo.newLine();
+                archivo.close();
+                System.out.println("Archivo guardado");
+            } catch (IOException e) {
             }
             System.exit(0);
         }

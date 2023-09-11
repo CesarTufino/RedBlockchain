@@ -23,7 +23,7 @@ public class Red implements Serializable {
      * blockchain lógico.)
      */
     public List<Double> searchTimes = new ArrayList<>();
-    private List<String> nodos = new ArrayList<>();
+    private List<Integer> nodos = new ArrayList<>();
     /**
      * Intercambios de dinero del primer blockchain lógico.
      */
@@ -69,7 +69,7 @@ public class Red implements Serializable {
         stats += "\nST=" + searchTimes;
         stats += "\nWTT1=" + blockchain.getWTT1();
         stats += "\nType_1_currency_exchanged=" + exchangeMoney1;
-        stats += "\nNodos=" + nodos;
+        stats += "\nNodos_escogidos1Tipo1=" + nodos;
         stats += "\n////////////////////////////////////////////\n";
         return stats;
     }
@@ -129,7 +129,7 @@ public class Red implements Serializable {
         return keyTable.keySet().size();
     }
 
-    public List<String> getNodos(){
+    public List<Integer> getNodos(){
         return nodos;
     }
 }

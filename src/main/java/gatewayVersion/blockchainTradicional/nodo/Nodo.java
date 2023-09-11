@@ -189,11 +189,11 @@ public class Nodo {
     private void compararBloques() {
         if (bloquesEnEspera.get(0).getFooter().getHash().equals(bloquesEnEspera.get(1).getFooter().getHash())) {
             System.out.println("Creación correcta");
-            if (bloquesEnEspera.get(0).getIdNodo()>bloquesEnEspera.get(1).getIdNodo()){
+            if (bloquesEnEspera.get(0).getIdNodo() > bloquesEnEspera.get(1).getIdNodo()) {
                 red.getNodosEscogidos1().add(bloquesEnEspera.get(1).getIdNodo());
                 red.getNodosEscogidos2().add(bloquesEnEspera.get(0).getIdNodo());
                 agregarBloque(bloquesEnEspera.get(1));
-            } else{
+            } else {
                 red.getNodosEscogidos1().add(bloquesEnEspera.get(0).getIdNodo());
                 red.getNodosEscogidos2().add(bloquesEnEspera.get(1).getIdNodo());
                 agregarBloque(bloquesEnEspera.get(0));
@@ -242,7 +242,7 @@ public class Nodo {
                     1, contenidoMensaje);
             System.out.println("Envio de bloque");
             salida.broadcastMensaje(mensaje, red.getPuertos());
-            salida.enviarMensaje(Direccion.DIRECCION_GATEWAY.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getPuerto(),mensaje);
+            salida.enviarMensaje(Direccion.DIRECCION_GATEWAY.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getPuerto(), mensaje);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error signing");
@@ -311,16 +311,14 @@ public class Nodo {
     private void imprimirInformacion() {
         System.out.println(red.getStats());
         if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() > 200) {
-            if (id == 1) {
-                try {
-                    BufferedWriter archivo = new BufferedWriter(
-                            new FileWriter("Blockchain V1 (Tradicional) - Resultado.txt", true));
-                    archivo.write(red.getStats());
-                    archivo.newLine();
-                    archivo.close();
-                    System.out.println("Archivo guardado");
-                } catch (IOException e) {
-                }
+            try {
+                BufferedWriter archivo = new BufferedWriter(
+                        new FileWriter("Blockchain V1 (Gateway/Tradicional) - Resultado.txt", true));
+                archivo.write(red.getStats());
+                archivo.newLine();
+                archivo.close();
+                System.out.println("Archivo guardado");
+            } catch (IOException e) {
             }
             System.exit(0);
         }

@@ -26,7 +26,7 @@ public class Salida {
         try {
             socket = new Socket();
             socket.bind(null);
-            InetSocketAddress isa = new InetSocketAddress("localhost", puerto);
+            InetSocketAddress isa = new InetSocketAddress(direccion, puerto);
             socket.connect(isa);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(mensaje);
@@ -44,7 +44,7 @@ public class Salida {
         try {
             socket = new Socket();
             socket.bind(null);
-            InetSocketAddress isa = new InetSocketAddress("localhost", puerto);
+            InetSocketAddress isa = new InetSocketAddress(direccion, puerto);
             socket.connect(isa, timeout);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(infoNodo);
@@ -57,7 +57,7 @@ public class Salida {
         Socket socket = new Socket();
         try {
             socket.bind(null);
-            InetSocketAddress isa = new InetSocketAddress("localhost", puerto);
+            InetSocketAddress isa = new InetSocketAddress(direccion, puerto);
             socket.connect(isa, timeout);
             // System.out.println("Conexion iniciada");
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
@@ -73,7 +73,7 @@ public class Salida {
         try {
             socket = new Socket();
             socket.bind(null);
-            InetSocketAddress isa = new InetSocketAddress("localhost", puerto);
+            InetSocketAddress isa = new InetSocketAddress(direccion, puerto);
             socket.connect(isa, timeout);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(infoRed);
@@ -87,7 +87,7 @@ public class Salida {
         try {
             socket = new Socket();
             socket.bind(null);
-            InetSocketAddress isa = new InetSocketAddress("localhost", puerto);
+            InetSocketAddress isa = new InetSocketAddress(direccion, puerto);
             socket.connect(isa);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(paquete);

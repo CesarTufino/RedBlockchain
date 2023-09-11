@@ -81,26 +81,11 @@ public class Gateway {
         return transaccionesPendientesTipo2;
     }
 
-    public void iniciarProceso() throws IOException {
-        empezarAEscuchar();
-        while (true) {
-            if (comprobarCantidadMinimaDeNodos()) break;
-            System.out.print("");
-        }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Temporizador hiloTemporizador = new Temporizador(this);
-        hiloTemporizador.start();
-    }
-
-    private boolean comprobarCantidadMinimaDeNodos() {
+    public boolean comprobarCantidadMinimaDeNodos() {
         return puertos.keySet().size() >= 4;
     }
 
-    private void empezarAEscuchar() throws IOException {
+    public void empezarAEscuchar() throws IOException {
         Entrada hiloEntrada = new Entrada(this);
         hiloEntrada.start();
     }

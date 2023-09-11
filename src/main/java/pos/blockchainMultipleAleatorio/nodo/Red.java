@@ -35,6 +35,8 @@ public class Red implements Serializable {
      * Intercambios de dinero del segundo blockchain lógico.
      */
     public List<Double> exchangeMoney2 = new ArrayList<>();
+    private List<Integer> nodosEscogidos1Tipo1 = new ArrayList<>();
+    private List<Integer> nodosEscogidos1Tipo2 = new ArrayList<>();
     /**
      * Identificador del primer blockchain lógico.
      */
@@ -87,6 +89,8 @@ public class Red implements Serializable {
         stats += "\nWTT2=" + blockchain.getWTT2();
         stats += "\nType_1_currency_exchanged=" + exchangeMoney1;
         stats += "\nType_2_currency_exchanged=" + exchangeMoney2;
+        stats += "\nNodos_escogidos1Tipo1=" + nodosEscogidos1Tipo1;
+        stats += "\nNodos_escogidos1Tipo2=" + nodosEscogidos1Tipo2;
         stats += "\n////////////////////////////////////////////\n";
         return stats;
     }
@@ -199,4 +203,11 @@ public class Red implements Serializable {
         return (cantidadTransaccionesTipo1 / (cantidadTransaccionesTipo1 + cantidadTransaccionesTipo2)) * 100;
     }
 
+    public List<Integer> getNodosEscogidos1Tipo1() {
+        return nodosEscogidos1Tipo1;
+    }
+
+    public List<Integer> getNodosEscogidos1Tipo2() {
+        return nodosEscogidos1Tipo2;
+    }
 }

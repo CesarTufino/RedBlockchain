@@ -1,10 +1,10 @@
-package pos.blockchainMultipleAleatorio.nodo;
+package pos.blockchainMultipleDisparejo.nodo;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class Validador extends Thread {
+public class Seleccionador extends Thread {
 
     private Red red = null;
     private Nodo miNodo = null;
@@ -15,7 +15,7 @@ public class Validador extends Thread {
     private final String type1 = "Type1";
     private final String type2 = "Type2";
 
-    public Validador(Red infoRed, Nodo miNodo) {
+    public Seleccionador(Red infoRed, Nodo miNodo) {
         this.red = infoRed;
         this.miNodo = miNodo;
     }
@@ -37,6 +37,7 @@ public class Validador extends Thread {
                         break;
                     }
                 }
+
                 System.out.println(ANSI_GREEN + "/////////////// Se crea el Bloque Tipo 1 ////////////" + ANSI_RESET);
                 miNodo.generarBloque(type1);
             }
@@ -69,7 +70,7 @@ public class Validador extends Thread {
         if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + red.NB_OF_BLOCK_OF_TYPE2_CREATED.size() > 201) {
             try {
                 BufferedWriter archivo = new BufferedWriter(
-                        new FileWriter("Blockchain V4 (Multiple Aleatorio) - Resultado.txt", true));
+                        new FileWriter("Blockchain V3 (Multiple Disparejo) - Resultado.txt", true));
                 archivo.write(red.getStats());
                 archivo.newLine();
                 archivo.close();

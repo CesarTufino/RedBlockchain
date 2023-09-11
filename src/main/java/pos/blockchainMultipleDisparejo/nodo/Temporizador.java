@@ -22,8 +22,8 @@ public class Temporizador extends Thread {
             while (true) {
                 long tiempoParaIniciar = 10000 - (System.currentTimeMillis() % 10000);
                 Thread.sleep(tiempoParaIniciar);
-                Validador hiloValidador = new Validador(miNodo.getRed(), miNodo);
-                hiloValidador.start();
+                Seleccionador hiloSeleccionador = new Seleccionador(miNodo.getRed(), miNodo);
+                hiloSeleccionador.start();
             }
         } catch (Exception e) {
             e.printStackTrace();

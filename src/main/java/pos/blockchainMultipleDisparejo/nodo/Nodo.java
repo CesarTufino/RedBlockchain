@@ -188,6 +188,13 @@ public class Nodo {
                 // for (Transaccion t : bloque.getTransaction())
                 // System.out.println(t);
                 System.out.println("///-----------------------------------///\n");
+                if (bloque.getTipo().equals(TYPE1)){
+                    red.getNodosEscogidos1Tipo1().add(bloque.getIdNodo());
+                    red.getNodosEscogidos1Tipo2().add(-1);
+                } else{
+                    red.getNodosEscogidos1Tipo1().add(-1);
+                    red.getNodosEscogidos1Tipo2().add(bloque.getIdNodo());
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -159,6 +159,7 @@ public class Nodo {
                 // System.out.println(b);
                 // for (Transaccion t : b.getTransaction()) System.out.println(t);
                 System.out.println("///-----------------------------------///\n");
+                red.getNodos().add(bloque.getIdNodo());
             }
         } catch (Exception e) {
             e.printStackTrace();

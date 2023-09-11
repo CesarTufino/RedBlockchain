@@ -1,10 +1,10 @@
-package pos.blockchainMultipleDisparejo.nodo;
+package pos.blockchainMultiple.nodo;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class Validador extends Thread {
+public class Seleccionador extends Thread {
 
     private Red red = null;
     private Nodo miNodo = null;
@@ -15,7 +15,7 @@ public class Validador extends Thread {
     private final String type1 = "Type1";
     private final String type2 = "Type2";
 
-    public Validador(Red infoRed, Nodo miNodo) {
+    public Seleccionador(Red infoRed, Nodo miNodo) {
         this.red = infoRed;
         this.miNodo = miNodo;
     }
@@ -27,28 +27,31 @@ public class Validador extends Thread {
 
             String[] seleccionados = determinarSeleccionadosPoS();
 
-            if (seleccionados[0] != null && seleccionados[0].equals(miNodo.getDireccion())) {
-                // Garantiza los 10 segundos minimos
+            if (seleccionados[0].equals(miNodo.getDireccion())) {
                 lastBlockTime = red.getBlockchain()
                         .buscarBloquePrevioLogico(type1, red.getBlockchain().obtenerCantidadDeBloques() - 1)
                         .getHeader().getMarcaDeTiempo();
                 while (true) {
-                    if (System.currentTimeMillis() - lastBlockTime > 10000) {
+                    if (System.currentTimeMillis() - lastBlockTime > 10000) { // Garantiza los 10 segundos minimos
                         break;
                     }
                 }
-
                 System.out.println(ANSI_GREEN + "/////////////// Se crea el Bloque Tipo 1 ////////////" + ANSI_RESET);
                 miNodo.generarBloque(type1);
             }
 
-            if (seleccionados[1] != null && seleccionados[1].equals(miNodo.getDireccion())) {
-                // Garantiza los 10 segundos minimos
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if (seleccionados[1].equals(miNodo.getDireccion())) {
                 lastBlockTime = red.getBlockchain()
                         .buscarBloquePrevioLogico(type2, red.getBlockchain().obtenerCantidadDeBloques() - 1)
                         .getHeader().getMarcaDeTiempo();
                 while (true) {
-                    if (System.currentTimeMillis() - lastBlockTime > 10000) {
+                    if (System.currentTimeMillis() - lastBlockTime > 10000) { // Garantiza los 10 segundos minimos
                         break;
                     }
                 }
@@ -70,7 +73,7 @@ public class Validador extends Thread {
         if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + red.NB_OF_BLOCK_OF_TYPE2_CREATED.size() > 201) {
             try {
                 BufferedWriter archivo = new BufferedWriter(
-                        new FileWriter("Blockchain V3 (Multiple Disparejo) - Resultado.txt", true));
+                        new FileWriter("Blockchain V2 (Multiple) - Resultado.txt", true));
                 archivo.write(red.getStats());
                 archivo.newLine();
                 archivo.close();
@@ -85,4 +88,5 @@ public class Validador extends Thread {
     public void run() {
         validar();
     }
+
 }

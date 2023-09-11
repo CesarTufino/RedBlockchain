@@ -23,7 +23,6 @@ public class Seleccionador extends Thread {
             imprimirInformacion();
 
             String nodoSeleccionado = determinarSeleccionadosPoS();
-            red.getNodos().add(nodoSeleccionado);
 
             if (nodoSeleccionado.equals(miNodo.getDireccion())) {
                 lastBlockTime = red.getBlockchain().obtenerUltimoBloque().getHeader().getMarcaDeTiempo();
