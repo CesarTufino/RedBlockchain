@@ -313,7 +313,7 @@ public class Nodo {
         if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() > 200) {
             try {
                 BufferedWriter archivo = new BufferedWriter(
-                        new FileWriter("Blockchain V1 (Gateway/Tradicional) - Resultado.txt", true));
+                        new FileWriter("Blockchain V1 (Gateway-Tradicional) - Resultado.txt", true));
                 archivo.write(red.getStats());
                 archivo.newLine();
                 archivo.close();

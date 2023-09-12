@@ -35,10 +35,12 @@ public class Gateway {
     private long tiempoDeCreacionDeUltimoBloqueTipo1;
     private long tiempoDeCreacionDeUltimoBloqueTipo2;
     private final String TYPE1 = "Type1";
+    private int contadorDeBloques;
 
     public Gateway(Direccion direccion) {
         this.direccion = direccion;
         this.salida = new Salida();
+        this.contadorDeBloques = 0;
     }
 
     public long getTiempoDeCreacionDeUltimoBloqueTipo1() {
@@ -126,12 +128,13 @@ public class Gateway {
         }
     }
 
-    private void compararBloques(String tipo) {
-        if (tipo.equals("Type1")) {
+    private synchronized void compararBloques(String tipo) {
+        if (tipo.equals(TYPE1)) {
             if (bloquesEnEsperaTipo1.get(0).getFooter().getHash().equals(bloquesEnEsperaTipo1.get(1).getFooter().getHash())) {
                 tiempoDeCreacionDeUltimoBloqueTipo1 = bloquesEnEsperaTipo1.get(0).getHeader().getMarcaDeTiempo();
                 actualizarTransaccionesPendientes(tipo);
                 actualizarTransaccionesEscogidas(true, tipo);
+                contadorDeBloques++;
             } else {
                 System.out.println("---------------ERROR--------------");
             }
@@ -141,12 +144,16 @@ public class Gateway {
                 tiempoDeCreacionDeUltimoBloqueTipo2 = bloquesEnEsperaTipo2.get(0).getHeader().getMarcaDeTiempo();
                 actualizarTransaccionesPendientes(tipo);
                 actualizarTransaccionesEscogidas(true, tipo);
+                contadorDeBloques++;
             } else {
                 System.out.println("---------------ERROR--------------");
             }
             bloquesEnEsperaTipo2 = new ArrayList<>();
-        }
 
+        }
+        if (contadorDeBloques==200){
+            System.exit(0);
+        }
     }
 
     public synchronized void recibirTransaccion(Transaccion transaccion) {

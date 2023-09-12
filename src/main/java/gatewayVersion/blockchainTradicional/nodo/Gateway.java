@@ -29,10 +29,12 @@ public class Gateway {
     private Salida salida;
     private List<Bloque> bloquesEnEspera = new ArrayList<>();
     private long tiempoDeCreacionDeUltimoBloque;
+    private int contadorDeBloques;
 
     public Gateway(Direccion direccion) {
         this.direccion = direccion;
         this.salida = new Salida();
+        this.contadorDeBloques = 0;
     }
 
     public long getTiempoDeCreacionDeUltimoBloque() {
@@ -93,11 +95,15 @@ public class Gateway {
         }
     }
 
-    private void compararBloques() {
+    private synchronized void compararBloques() {
         if (bloquesEnEspera.get(0).getFooter().getHash().equals(bloquesEnEspera.get(1).getFooter().getHash())){
             tiempoDeCreacionDeUltimoBloque = bloquesEnEspera.get(0).getHeader().getMarcaDeTiempo();
             actualizarTransaccionesPendientes();
             actualizarTransaccionesEscogidas(true);
+            contadorDeBloques++;
+            if (contadorDeBloques==200){
+                System.exit(0);
+            }
         } else{
             System.out.println("---------------ERROR--------------");
         }

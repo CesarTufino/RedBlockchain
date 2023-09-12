@@ -142,7 +142,7 @@ public class Nodo {
         int tipoDeMensaje = mensaje.getTipo();
         List<Object> contenido = mensaje.getContenido();
         if (tipoDeMensaje == 1) {
-            // System.out.println("Bloque recibido");
+            System.out.println("Bloque recibido");
             Bloque bloque = (Bloque) contenido.get(0);
             String direccionDelNodo = mensaje.getDireccionRemitente();
             String firma = mensaje.getFirma();
@@ -178,7 +178,7 @@ public class Nodo {
         }
     }
 
-    private void compararBloques(String tipo) {
+    private synchronized void compararBloques(String tipo) {
         if (tipo.equals(TYPE1)) {
             if (bloquesEnEsperaTipo1.get(0).getFooter().getHash().equals(bloquesEnEsperaTipo1.get(1).getFooter().getHash())) {
                 System.out.println("Creación correcta");
@@ -251,7 +251,6 @@ public class Nodo {
         bloque.setDireccionNodo(this.direccion.getDireccionIP());
         // System.out.println("Block has been forged by " + this.name);
         try {
-
             List<Object> contenidoMensaje = new ArrayList<>();
             contenidoMensaje.add(bloque);
             Mensaje mensaje = new Mensaje(this.direccion.getDireccionIP(), "ALL",
@@ -342,7 +341,7 @@ public class Nodo {
         if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + red.NB_OF_BLOCK_OF_TYPE2_CREATED.size() > 201) {
             try {
                 BufferedWriter archivo = new BufferedWriter(
-                        new FileWriter("Blockchain V2 (Gateway/Multiple) - Resultado.txt", true));
+                        new FileWriter("Blockchain V2 (Gateway-Multiple) - Resultado.txt", true));
                 archivo.write(red.getStats());
                 archivo.newLine();
                 archivo.close();

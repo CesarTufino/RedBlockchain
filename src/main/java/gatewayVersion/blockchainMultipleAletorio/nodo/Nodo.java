@@ -191,6 +191,8 @@ public class Nodo {
                     red.getNodosEscogidos2Tipo1().add(bloquesEnEsperaTipo1.get(1).getIdNodo());
                     agregarBloque(bloquesEnEsperaTipo1.get(0));
                 }
+                red.getNodosEscogidos1Tipo2().add(-1);
+                red.getNodosEscogidos2Tipo2().add(-1);
                 imprimirInformacion();
             } else {
                 System.out.println("---------------ERROR--------------");
@@ -208,6 +210,8 @@ public class Nodo {
                     red.getNodosEscogidos2Tipo2().add(bloquesEnEsperaTipo2.get(1).getIdNodo());
                     agregarBloque(bloquesEnEsperaTipo2.get(0));
                 }
+                red.getNodosEscogidos1Tipo1().add(-1);
+                red.getNodosEscogidos2Tipo1().add(-1);
                 imprimirInformacion();
             } else {
                 System.out.println("---------------ERROR--------------");
@@ -342,7 +346,7 @@ public class Nodo {
         if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + red.NB_OF_BLOCK_OF_TYPE2_CREATED.size() > 201) {
             try {
                 BufferedWriter archivo = new BufferedWriter(
-                        new FileWriter("Blockchain V4 (Gateway/Aleatorio) - Resultado.txt", true));
+                        new FileWriter("Blockchain V4 (Gateway-Aleatorio) - Resultado.txt", true));
                 archivo.write(red.getStats());
                 archivo.newLine();
                 archivo.close();
