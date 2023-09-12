@@ -28,6 +28,7 @@ public class Seleccionador extends Thread {
         int numeroPseudoaleatorio = rnd.nextInt(gateway.getTransaccionesPendientesTipo1().size()+gateway.getTransaccionesPendientesTipo2().size());
 
         if (numeroPseudoaleatorio > gateway.getTransaccionesPendientesTipo1().size()){
+            System.out.println("Se envía a crear 1");
             List<Transaccion> transaccionesTipo1 = gateway.escogerTransacciones("Type1");
             Paquete paquete1 = new Paquete("Type1",transaccionesTipo1);
             while (true) {
@@ -38,6 +39,7 @@ public class Seleccionador extends Thread {
             gateway.mandarCrearBloque(direccionNodoSeleccionado1, gateway.getPuertos().get(direccionNodoSeleccionado1), paquete1);
             gateway.mandarCrearBloque(direccionNodoSeleccionado2, gateway.getPuertos().get(direccionNodoSeleccionado2), paquete1);
         } else{
+            System.out.println("Se envía a crear 2");
             List<Transaccion> transaccionesTipo2 = gateway.escogerTransacciones("Type2");
             Paquete paquete2 = new Paquete("Type2",transaccionesTipo2);
             while (true) {
@@ -55,10 +57,10 @@ public class Seleccionador extends Thread {
         int semilla = secureRandom.nextInt();
         Random rnd = new Random(semilla);
         int numeroPseudoaleatorio = rnd.nextInt(gateway.getNodosPosibles().size());
-        String direccionSeleciconada = gateway.getNodosPosibles().get(numeroPseudoaleatorio);
-        gateway.getNodosSeleccionados().add(direccionSeleciconada);
-        gateway.getNodosPosibles().remove(direccionSeleciconada);
-        return direccionSeleciconada;
+        String direccionSeleccionada = gateway.getNodosPosibles().get(numeroPseudoaleatorio);
+        gateway.getNodosSeleccionados().add(direccionSeleccionada);
+        gateway.getNodosPosibles().remove(direccionSeleccionada);
+        return direccionSeleccionada;
     }
 
     @Override
