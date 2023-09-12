@@ -129,11 +129,6 @@ public class Gateway {
     private synchronized void compararBloques(String tipo) {
         if (tipo.equals(TYPE1)) {
             if (bloquesEnEsperaTipo1.get(0).getFooter().getHash().equals(bloquesEnEsperaTipo1.get(1).getFooter().getHash())) {
-                if (bloquesEnEsperaTipo1.get(0).getIdNodo() > bloquesEnEsperaTipo1.get(1).getIdNodo()){
-                    tiempoDeCreacionDeUltimoBloqueTipo1 = bloquesEnEsperaTipo1.get(1).getHeader().getMarcaDeTiempo();
-                } else{
-                    tiempoDeCreacionDeUltimoBloqueTipo1 = bloquesEnEsperaTipo1.get(0).getHeader().getMarcaDeTiempo();
-                }
                 actualizarTransaccionesPendientes(tipo);
                 actualizarTransaccionesEscogidas(true, tipo);
                 contadorDeBloques++;
@@ -143,11 +138,7 @@ public class Gateway {
             bloquesEnEsperaTipo1 = new ArrayList<>();
         } else {
             if (bloquesEnEsperaTipo2.get(0).getFooter().getHash().equals(bloquesEnEsperaTipo2.get(1).getFooter().getHash())) {
-                if (bloquesEnEsperaTipo2.get(0).getIdNodo() > bloquesEnEsperaTipo2.get(1).getIdNodo()){
-                    tiempoDeCreacionDeUltimoBloqueTipo2 = bloquesEnEsperaTipo2.get(1).getHeader().getMarcaDeTiempo();
-                } else{
-                    tiempoDeCreacionDeUltimoBloqueTipo2 = bloquesEnEsperaTipo2.get(0).getHeader().getMarcaDeTiempo();
-                }
+
                 actualizarTransaccionesPendientes(tipo);
                 actualizarTransaccionesEscogidas(true, tipo);
                 contadorDeBloques++;

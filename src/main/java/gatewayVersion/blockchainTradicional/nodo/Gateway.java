@@ -97,7 +97,11 @@ public class Gateway {
 
     private synchronized void compararBloques() {
         if (bloquesEnEspera.get(0).getFooter().getHash().equals(bloquesEnEspera.get(1).getFooter().getHash())){
-            tiempoDeCreacionDeUltimoBloque = bloquesEnEspera.get(0).getHeader().getMarcaDeTiempo();
+            if (bloquesEnEspera.get(0).getIdNodo() > bloquesEnEspera.get(1).getIdNodo()) {
+                tiempoDeCreacionDeUltimoBloque = bloquesEnEspera.get(1).getHeader().getMarcaDeTiempo();
+            } else{
+                tiempoDeCreacionDeUltimoBloque = bloquesEnEspera.get(0).getHeader().getMarcaDeTiempo();
+            }
             actualizarTransaccionesPendientes();
             actualizarTransaccionesEscogidas(true);
             contadorDeBloques++;

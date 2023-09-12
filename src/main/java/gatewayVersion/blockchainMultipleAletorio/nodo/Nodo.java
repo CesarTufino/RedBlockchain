@@ -160,17 +160,17 @@ public class Nodo {
         try {
             if (RsaUtil.verify(HashUtil.SHA256(bloque.toString()), firma,
                     red.obtenerClavePublicaPorDireccion(direccionDelNodo))) {
+                System.out.println("Bloque recibido :" + bloquesEnEsperaTipo1.size() + "/2, " + bloquesEnEsperaTipo2.size()+"/2");
                 if (bloque.getTipo().equals(TYPE1)) {
                     bloquesEnEsperaTipo1.add(bloque);
+                    if (bloquesEnEsperaTipo1.size() == 2) {
+                        compararBloques(bloque.getTipo());
+                    }
                 } else {
                     bloquesEnEsperaTipo2.add(bloque);
-                }
-                System.out.println("Bloque recibido :" + bloquesEnEsperaTipo1.size() + "/2, " + bloquesEnEsperaTipo2.size()+"/2");
-                if (bloquesEnEsperaTipo1.size() == 2) {
-                    compararBloques(bloque.getTipo());
-                }
-                if (bloquesEnEsperaTipo2.size() == 2) {
-                    compararBloques(bloque.getTipo());
+                    if (bloquesEnEsperaTipo2.size() == 2) {
+                        compararBloques(bloque.getTipo());
+                    }
                 }
             }
         } catch (Exception e) {
@@ -237,10 +237,18 @@ public class Nodo {
         String tipo = paquete.getTipo();
         List<Transaccion> transaccionesDelBloque = paquete.getTransacciones();
         for (Transaccion transaccion : transaccionesDelBloque) {
-            System.out.println("Firma: " + transaccion.getFirma());
+            //System.out.println("Firma: " + transaccion.getFirma());
             if (!verificarTransaccion(transaccion)) {
                 System.out.println("---------------ERROR--------------");
                 return;
+            }
+        }
+        while (true) {
+            long lastTime = red.getBlockchain()
+                    .buscarBloquePrevioLogico(tipo, red.getBlockchain().obtenerCantidadDeBloques() - 1)
+                    .getHeader().getMarcaDeTiempo();
+            if (System.currentTimeMillis() - lastTime > 10000) { // Garantiza los 10 segundos minimos
+                break;
             }
         }
         System.out.println("---------------Se crea bloque---------------");

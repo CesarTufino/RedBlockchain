@@ -31,24 +31,15 @@ public class Seleccionador extends Thread {
 
             List<Transaccion> transaccionesTipo1 = gateway.escogerTransacciones("Type1");
             Paquete paquete1 = new Paquete("Type1",transaccionesTipo1);
-            while (true) {
-                if (System.currentTimeMillis() - gateway.getTiempoDeCreacionDeUltimoBloqueTipo1() > 10000) { // Garantiza los 10 segundos minimos
-                    break;
-                }
-            }
+
             System.out.println("Se envía a crear 1.1");
             gateway.mandarCrearBloque(direccionNodoSeleccionado1, gateway.getPuertos().get(direccionNodoSeleccionado1), paquete1);
             System.out.println("Se envía a crear 1.2");
             gateway.mandarCrearBloque(direccionNodoSeleccionado2, gateway.getPuertos().get(direccionNodoSeleccionado2), paquete1);
         } else{
-            System.out.println("Se envía a crear 2");
             List<Transaccion> transaccionesTipo2 = gateway.escogerTransacciones("Type2");
             Paquete paquete2 = new Paquete("Type2",transaccionesTipo2);
-            while (true) {
-                if (System.currentTimeMillis() - gateway.getTiempoDeCreacionDeUltimoBloqueTipo2() > 10000) { // Garantiza los 10 segundos minimos
-                    break;
-                }
-            }
+
             System.out.println("Se envía a crear 2.1");
             gateway.mandarCrearBloque(direccionNodoSeleccionado1, gateway.getPuertos().get(direccionNodoSeleccionado1), paquete2);
             System.out.println("Se envía a crear 2.2");
