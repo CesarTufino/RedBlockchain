@@ -165,7 +165,7 @@ public class Nodo {
                 } else {
                     bloquesEnEsperaTipo2.add(bloque);
                 }
-                System.out.println("Bloque recibido");
+                System.out.println("Bloque recibido :" + bloquesEnEsperaTipo1.size() + "/2, " + bloquesEnEsperaTipo2.size()+"/2");
                 if (bloquesEnEsperaTipo1.size() == 2) {
                     compararBloques(bloque.getTipo());
                 }
@@ -265,6 +265,7 @@ public class Nodo {
             System.out.println("Envio de bloque");
             salida.broadcastMensaje(mensaje, red.getPuertos());
             salida.enviarMensaje(Direccion.DIRECCION_GATEWAY.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getPuerto(), mensaje);
+            System.out.println("Fin de envio de bloque");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error signing");

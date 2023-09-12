@@ -101,10 +101,8 @@ public class Gateway {
             recibirTransaccion(transaccion);
         }
         if (tipoDeMensaje == 1) {
-            // System.out.println("Bloque recibido");
+            System.out.println("Bloque recibido");
             Bloque bloque = (Bloque) contenido.get(0);
-            String direccionDelNodo = mensaje.getDireccionRemitente();
-            String firma = mensaje.getFirma();
             recibirBloque(bloque);
         }
     }
@@ -131,7 +129,11 @@ public class Gateway {
     private synchronized void compararBloques(String tipo) {
         if (tipo.equals(TYPE1)) {
             if (bloquesEnEsperaTipo1.get(0).getFooter().getHash().equals(bloquesEnEsperaTipo1.get(1).getFooter().getHash())) {
-                tiempoDeCreacionDeUltimoBloqueTipo1 = bloquesEnEsperaTipo1.get(0).getHeader().getMarcaDeTiempo();
+                if (bloquesEnEsperaTipo1.get(0).getIdNodo() > bloquesEnEsperaTipo1.get(1).getIdNodo()){
+                    tiempoDeCreacionDeUltimoBloqueTipo1 = bloquesEnEsperaTipo1.get(1).getHeader().getMarcaDeTiempo();
+                } else{
+                    tiempoDeCreacionDeUltimoBloqueTipo1 = bloquesEnEsperaTipo1.get(0).getHeader().getMarcaDeTiempo();
+                }
                 actualizarTransaccionesPendientes(tipo);
                 actualizarTransaccionesEscogidas(true, tipo);
                 contadorDeBloques++;
@@ -141,7 +143,11 @@ public class Gateway {
             bloquesEnEsperaTipo1 = new ArrayList<>();
         } else {
             if (bloquesEnEsperaTipo2.get(0).getFooter().getHash().equals(bloquesEnEsperaTipo2.get(1).getFooter().getHash())) {
-                tiempoDeCreacionDeUltimoBloqueTipo2 = bloquesEnEsperaTipo2.get(0).getHeader().getMarcaDeTiempo();
+                if (bloquesEnEsperaTipo2.get(0).getIdNodo() > bloquesEnEsperaTipo2.get(1).getIdNodo()){
+                    tiempoDeCreacionDeUltimoBloqueTipo2 = bloquesEnEsperaTipo2.get(1).getHeader().getMarcaDeTiempo();
+                } else{
+                    tiempoDeCreacionDeUltimoBloqueTipo2 = bloquesEnEsperaTipo2.get(0).getHeader().getMarcaDeTiempo();
+                }
                 actualizarTransaccionesPendientes(tipo);
                 actualizarTransaccionesEscogidas(true, tipo);
                 contadorDeBloques++;

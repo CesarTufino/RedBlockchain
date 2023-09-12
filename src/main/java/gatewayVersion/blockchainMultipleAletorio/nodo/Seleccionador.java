@@ -28,7 +28,7 @@ public class Seleccionador extends Thread {
         int numeroPseudoaleatorio = rnd.nextInt(gateway.getTransaccionesPendientesTipo1().size()+gateway.getTransaccionesPendientesTipo2().size());
 
         if (numeroPseudoaleatorio > gateway.getTransaccionesPendientesTipo1().size()){
-            System.out.println("Se envía a crear 1");
+
             List<Transaccion> transaccionesTipo1 = gateway.escogerTransacciones("Type1");
             Paquete paquete1 = new Paquete("Type1",transaccionesTipo1);
             while (true) {
@@ -36,7 +36,9 @@ public class Seleccionador extends Thread {
                     break;
                 }
             }
+            System.out.println("Se envía a crear 1.1");
             gateway.mandarCrearBloque(direccionNodoSeleccionado1, gateway.getPuertos().get(direccionNodoSeleccionado1), paquete1);
+            System.out.println("Se envía a crear 1.2");
             gateway.mandarCrearBloque(direccionNodoSeleccionado2, gateway.getPuertos().get(direccionNodoSeleccionado2), paquete1);
         } else{
             System.out.println("Se envía a crear 2");
@@ -47,7 +49,9 @@ public class Seleccionador extends Thread {
                     break;
                 }
             }
+            System.out.println("Se envía a crear 2.1");
             gateway.mandarCrearBloque(direccionNodoSeleccionado1, gateway.getPuertos().get(direccionNodoSeleccionado1), paquete2);
+            System.out.println("Se envía a crear 2.2");
             gateway.mandarCrearBloque(direccionNodoSeleccionado2, gateway.getPuertos().get(direccionNodoSeleccionado2), paquete2);
         }
     }
