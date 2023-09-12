@@ -237,6 +237,7 @@ public class Nodo {
         String tipo = paquete.getTipo();
         List<Transaccion> transaccionesDelBloque = paquete.getTransacciones();
         for (Transaccion transaccion : transaccionesDelBloque) {
+            System.out.println("Firma: " + transaccion.getFirma());
             if (!verificarTransaccion(transaccion)) {
                 System.out.println("---------------ERROR--------------");
                 return;
