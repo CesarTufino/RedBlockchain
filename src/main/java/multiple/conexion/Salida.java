@@ -1,14 +1,14 @@
-package gatewayVersion.blockchainMultipleAletorio.conexion;
+package multiple.conexion;
 
 import java.io.*;
 import java.net.*;
 import java.util.Map;
 
-import direcciones.Direccion;
-import gatewayVersion.blockchainMultipleAletorio.mensajes.InfoNodo;
-import gatewayVersion.blockchainMultipleAletorio.mensajes.Mensaje;
-import gatewayVersion.blockchainMultipleAletorio.mensajes.Paquete;
-import gatewayVersion.blockchainMultipleAletorio.nodo.Red;
+import constantes.Direccion;
+import multiple.mensajes.InfoNodo;
+import multiple.mensajes.Mensaje;
+import multiple.mensajes.Paquete;
+import multiple.nodo.gatewayVersion.Red;
 
 public class Salida {
     private final int timeout = 1000;

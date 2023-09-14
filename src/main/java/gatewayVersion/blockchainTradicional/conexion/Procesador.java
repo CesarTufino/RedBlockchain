@@ -1,6 +1,6 @@
 package gatewayVersion.blockchainTradicional.conexion;
 
-import direcciones.Direccion;
+import constantes.Direccion;
 import gatewayVersion.blockchainTradicional.mensajes.InfoNodo;
 import gatewayVersion.blockchainTradicional.mensajes.Mensaje;
 import gatewayVersion.blockchainTradicional.mensajes.Transaccion;

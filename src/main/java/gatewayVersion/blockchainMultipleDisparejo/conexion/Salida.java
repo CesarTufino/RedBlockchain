@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.Map;
 
-import direcciones.Direccion;
+import constantes.Direccion;
 import gatewayVersion.blockchainMultipleDisparejo.mensajes.InfoNodo;
 import gatewayVersion.blockchainMultipleDisparejo.mensajes.Mensaje;
 import gatewayVersion.blockchainMultipleDisparejo.mensajes.Paquete;

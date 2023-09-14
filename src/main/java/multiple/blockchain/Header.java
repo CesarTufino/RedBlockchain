@@ -1,4 +1,4 @@
-package gatewayVersion.blockchainMultipleAletorio.blockchain;
+package multiple.blockchain;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -8,19 +8,16 @@ import java.util.Objects;
  */
 public class Header  implements Serializable {
 
-    protected final String hashBloqueFisicoPrevio;
-    protected final String hashBloqueLogicoPrevio;
-    /**
-     * Fecha de creación del bloque.
-     */
-    private final long marcaDeTiempo;
+    private final String hashBloqueFisicoPrevio;
+    private final String hashBloqueLogicoPrevio;
+    private final long marcaDeTiempoDeCreacion;
 
     /**
      * Constructor del Header.
      * Utilizado para el header del primer bloque.
      */
     public Header() {
-        marcaDeTiempo = System.currentTimeMillis();
+        marcaDeTiempoDeCreacion = System.currentTimeMillis();
         hashBloqueFisicoPrevio = "";
         hashBloqueLogicoPrevio = "";
     }
@@ -33,8 +30,8 @@ public class Header  implements Serializable {
      * @param hashBloqueLogicoPrevio Hash del header del último bloque lógico.
      */
     public Header(String hashBloqueFisicoPrevio, String hashBloqueLogicoPrevio) {
-        this.marcaDeTiempo = System.currentTimeMillis(); // Get the current date
-        this.hashBloqueFisicoPrevio = hashBloqueFisicoPrevio; // Get header's hash
+        this.marcaDeTiempoDeCreacion = System.currentTimeMillis();
+        this.hashBloqueFisicoPrevio = hashBloqueFisicoPrevio;
         this.hashBloqueLogicoPrevio = Objects.requireNonNullElse(hashBloqueLogicoPrevio, "");
     }
 
@@ -46,13 +43,13 @@ public class Header  implements Serializable {
         return hashBloqueLogicoPrevio;
     }
 
-    public long getMarcaDeTiempo() {
-        return this.marcaDeTiempo;
+    public long getMarcaDeTiempoDeCreacion() {
+        return this.marcaDeTiempoDeCreacion;
     }
 
     @Override
     public String toString() {
-        return "\nTS : " + marcaDeTiempo + "\nHashBloqueFisicoPrevio :" + this.hashBloqueFisicoPrevio
+        return "\nTS : " + marcaDeTiempoDeCreacion + "\nHashBloqueFisicoPrevio :" + this.hashBloqueFisicoPrevio
                 + "\nHashBloqueLogicoPrevio : " + this.hashBloqueLogicoPrevio;
     }
 }

@@ -5,11 +5,10 @@ import java.net.*;
 import java.util.List;
 import java.util.Map;
 
-import direcciones.Direccion;
+import constantes.Direccion;
 import gatewayVersion.blockchainTradicional.mensajes.InfoNodo;
 import gatewayVersion.blockchainTradicional.mensajes.Mensaje;
 import gatewayVersion.blockchainTradicional.mensajes.Transaccion;
-import gatewayVersion.blockchainTradicional.nodo.Nodo;
 import gatewayVersion.blockchainTradicional.nodo.Red;
 
 public class Salida {

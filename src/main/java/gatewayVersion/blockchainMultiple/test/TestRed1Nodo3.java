@@ -3,7 +3,7 @@ package gatewayVersion.blockchainMultiple.test;
 import java.io.IOException;
 
 import gatewayVersion.blockchainMultiple.nodo.Nodo;
-import direcciones.Direccion;
+import constantes.Direccion;
 
 public class TestRed1Nodo3 {
 

@@ -1,6 +1,6 @@
 package gatewayVersion.blockchainMultiple.nodo;
 
-import direcciones.Direccion;
+import constantes.Direccion;
 import gatewayVersion.blockchainMultiple.blockchain.Bloque;
 import gatewayVersion.blockchainMultiple.conexion.Entrada;
 import gatewayVersion.blockchainMultiple.conexion.Salida;

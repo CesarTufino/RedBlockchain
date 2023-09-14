@@ -3,7 +3,7 @@ package gatewayVersion.blockchainTradicional.test;
 import java.io.IOException;
 
 import gatewayVersion.blockchainTradicional.nodo.Nodo;
-import direcciones.Direccion;
+import constantes.Direccion;
 
 public class TestRed1Nodo3 {
 

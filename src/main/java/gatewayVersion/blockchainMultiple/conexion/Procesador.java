@@ -1,15 +1,12 @@
 package gatewayVersion.blockchainMultiple.conexion;
 
-import direcciones.Direccion;
+import constantes.Direccion;
 import gatewayVersion.blockchainMultiple.mensajes.InfoNodo;
 import gatewayVersion.blockchainMultiple.mensajes.Mensaje;
 import gatewayVersion.blockchainMultiple.mensajes.Paquete;
-import gatewayVersion.blockchainMultiple.mensajes.Transaccion;
 import gatewayVersion.blockchainMultiple.nodo.Gateway;
 import gatewayVersion.blockchainMultiple.nodo.Nodo;
 import gatewayVersion.blockchainMultiple.nodo.Red;
-
-import java.util.List;
 
 public class Procesador extends Thread {
     private Nodo nodo;

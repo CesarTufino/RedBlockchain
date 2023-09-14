@@ -1,10 +1,10 @@
-package gatewayVersion.blockchainMultipleAletorio.conexion;
+package multiple.conexion;
 
 import java.io.*;
 import java.net.*;
 
-import gatewayVersion.blockchainMultipleAletorio.nodo.Gateway;
-import gatewayVersion.blockchainMultipleAletorio.nodo.Nodo;
+import multiple.nodo.gatewayVersion.Gateway;
+import multiple.nodo.gatewayVersion.Nodo;
 
 public class Entrada extends Thread {
     private ServerSocket serverSocket;

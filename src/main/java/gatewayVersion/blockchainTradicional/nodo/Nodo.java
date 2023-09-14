@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import direcciones.Direccion;
+import constantes.Direccion;
 import gatewayVersion.blockchainTradicional.blockchain.Bloque;
 import gatewayVersion.blockchainTradicional.conexion.Entrada;
 import gatewayVersion.blockchainTradicional.conexion.Salida;

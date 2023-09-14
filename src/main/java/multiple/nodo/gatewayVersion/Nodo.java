@@ -1,4 +1,4 @@
-package gatewayVersion.blockchainMultipleAletorio.nodo;
+package multiple.nodo.gatewayVersion;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -10,15 +10,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import direcciones.Direccion;
-import gatewayVersion.blockchainMultipleAletorio.blockchain.Bloque;
-import gatewayVersion.blockchainMultipleAletorio.conexion.Entrada;
-import gatewayVersion.blockchainMultipleAletorio.conexion.Salida;
-import gatewayVersion.blockchainMultipleAletorio.mensajes.InfoNodo;
-import gatewayVersion.blockchainMultipleAletorio.mensajes.Mensaje;
-import gatewayVersion.blockchainMultipleAletorio.mensajes.Paquete;
-import gatewayVersion.blockchainMultipleAletorio.mensajes.Transaccion;
-import gatewayVersion.blockchainMultipleAletorio.blockchain.Blockchain;
+import constantes.Direccion;
+import constantes.MaximoDeBloques;
+import constantes.Tipo;
+import multiple.blockchain.Bloque;
+import multiple.conexion.Salida;
+import multiple.mensajes.InfoNodo;
+import multiple.mensajes.Mensaje;
+import multiple.mensajes.Paquete;
+import multiple.mensajes.Transaccion;
+import multiple.blockchain.BlockchainMultiple;
 import utils.*;
 
 public class Nodo {
@@ -33,9 +34,7 @@ public class Nodo {
     private double billetera1;
     private double billetera2;
     private Red red = null;
-    private List<Bloque> bloquesEnEsperaTipo1 = new ArrayList<>();
-    private List<Bloque> bloquesEnEsperaTipo2 = new ArrayList<>();
-    private final String TYPE1 = "Type1";
+    private HashMap<Tipo, List<Bloque>> bloquesEnEspera = new HashMap<>();
 
     public Nodo(int id, Direccion direccion) {
         try {
@@ -48,6 +47,9 @@ public class Nodo {
         this.id = id;
         this.direccion = direccion;
         this.billetera1 = DINERO_INICIAL;
+        this.billetera2 = DINERO_INICIAL;
+        bloquesEnEspera.put(Tipo.LOGICO1, new ArrayList<>());
+        bloquesEnEspera.put(Tipo.LOGICO2, new ArrayList<>());
         this.salida = new Salida();
     }
 
@@ -69,14 +71,6 @@ public class Nodo {
 
     public void setRed(Red infoRed) {
         this.red = infoRed;
-    }
-
-    public void iniciarProceso() throws IOException {
-        // Hilo para escuchar
-        Entrada serverThread = new Entrada(this);
-        serverThread.start();
-        // Buscar datos en la red
-        buscarRed();
     }
 
     public void buscarRed() {
@@ -110,11 +104,18 @@ public class Nodo {
         salida.enviarInfoRed(red, direccion.getDireccionIP(), direccion.getPuerto());
     }
 
-    public void enviarDinero(double monto, String direccionDestinatario, String tipo) {
+    public void enviarDinero(double monto, String direccionDestinatario, Tipo tipo) {
         System.out.println("Inicio de transacción");
-        if (billetera1 - monto * (1 + TARIFA_TRANSACCION) < 0) {
-            System.out.println("-Transacción rechazada-");
-            return;
+        if (tipo.equals(Tipo.LOGICO1)) {
+            if (billetera1 - monto * (1 + TARIFA_TRANSACCION) < 0) {
+                System.out.println("-Transacción rechazada-");
+                return;
+            }
+        } else {
+            if (billetera2 - monto * (1 + TARIFA_TRANSACCION) < 0) {
+                System.out.println("-Transacción rechazada-");
+                return;
+            }
         }
         try {
             Transaccion transaccion = new Transaccion(tipo, direccion.getDireccionIP(), direccionDestinatario, monto,
@@ -128,8 +129,8 @@ public class Nodo {
         }
     }
 
-    public void recibirDinero(double monto, String tipo) {
-        if (tipo.equals(TYPE1)) {
+    public void recibirDinero(double monto, Tipo tipo) {
+        if (tipo.equals(Tipo.LOGICO1)) {
             billetera1 += monto;
             // System.out.println("Nuevo valor: " + wallet1);
         } else {
@@ -156,21 +157,15 @@ public class Nodo {
     }
 
     public synchronized void recibirBloque(Bloque bloque, String firma, String direccionDelNodo) {
-        //actualizarListaDeTransacciones(bloque);
         try {
             if (RsaUtil.verify(HashUtil.SHA256(bloque.toString()), firma,
                     red.obtenerClavePublicaPorDireccion(direccionDelNodo))) {
-                System.out.println("Bloque recibido :" + bloquesEnEsperaTipo1.size() + "/2, " + bloquesEnEsperaTipo2.size()+"/2");
-                if (bloque.getTipo().equals(TYPE1)) {
-                    bloquesEnEsperaTipo1.add(bloque);
-                    if (bloquesEnEsperaTipo1.size() == 2) {
-                        compararBloques(bloque.getTipo());
-                    }
-                } else {
-                    bloquesEnEsperaTipo2.add(bloque);
-                    if (bloquesEnEsperaTipo2.size() == 2) {
-                        compararBloques(bloque.getTipo());
-                    }
+                Tipo tipo = bloque.getTipo();
+                bloquesEnEspera.get(tipo).add(bloque);
+                System.out.println("Bloque recibido :" + bloquesEnEspera.get(Tipo.LOGICO1).size() + "/2, "
+                        + bloquesEnEspera.get(Tipo.LOGICO2).size() + "/2");
+                if (bloquesEnEspera.get(tipo).size() == 2) {
+                    compararBloques(tipo);
                 }
             }
         } catch (Exception e) {
@@ -178,52 +173,38 @@ public class Nodo {
         }
     }
 
-    private void compararBloques(String tipo) {
-        if (tipo.equals(TYPE1)) {
-            if (bloquesEnEsperaTipo1.get(0).getFooter().getHash().equals(bloquesEnEsperaTipo1.get(1).getFooter().getHash())) {
-                System.out.println("Creación correcta");
-                if (bloquesEnEsperaTipo1.get(0).getIdNodo() > bloquesEnEsperaTipo1.get(1).getIdNodo()) {
-                    red.getNodosEscogidos1Tipo1().add(bloquesEnEsperaTipo1.get(1).getIdNodo());
-                    red.getNodosEscogidos2Tipo1().add(bloquesEnEsperaTipo1.get(0).getIdNodo());
-                    agregarBloque(bloquesEnEsperaTipo1.get(1));
-                } else {
-                    red.getNodosEscogidos1Tipo1().add(bloquesEnEsperaTipo1.get(0).getIdNodo());
-                    red.getNodosEscogidos2Tipo1().add(bloquesEnEsperaTipo1.get(1).getIdNodo());
-                    agregarBloque(bloquesEnEsperaTipo1.get(0));
-                }
-                red.getNodosEscogidos1Tipo2().add(-1);
-                red.getNodosEscogidos2Tipo2().add(-1);
-                imprimirInformacion();
+    private void compararBloques(Tipo tipo) {
+        List<Bloque> bloquesAComparar = bloquesEnEspera.get(tipo);
+        Bloque primerBloque = bloquesAComparar.get(0);
+        Bloque segundoBloque = bloquesAComparar.get(1);
+        if (primerBloque.getFooter().getHash().equals(segundoBloque.getFooter().getHash())) {
+            System.out.println("Creación correcta");
+            if (primerBloque.getIdNodoMinero() > segundoBloque.getIdNodoMinero()) {
+                red.getNodosEscogidos1().get(tipo).add(segundoBloque.getIdNodoMinero());
+                red.getNodosEscogidos2().get(tipo).add(primerBloque.getIdNodoMinero());
+                agregarBloque(segundoBloque);
             } else {
-                System.out.println("---------------ERROR--------------");
+                red.getNodosEscogidos1().get(tipo).add(primerBloque.getIdNodoMinero());
+                red.getNodosEscogidos2().get(tipo).add(segundoBloque.getIdNodoMinero());
+                agregarBloque(primerBloque);
             }
-            bloquesEnEsperaTipo1 = new ArrayList<>();
         } else {
-            if (bloquesEnEsperaTipo2.get(0).getFooter().getHash().equals(bloquesEnEsperaTipo2.get(1).getFooter().getHash())) {
-                System.out.println("Creación correcta");
-                if (bloquesEnEsperaTipo2.get(0).getIdNodo() > bloquesEnEsperaTipo2.get(1).getIdNodo()) {
-                    red.getNodosEscogidos1Tipo2().add(bloquesEnEsperaTipo2.get(1).getIdNodo());
-                    red.getNodosEscogidos2Tipo2().add(bloquesEnEsperaTipo2.get(0).getIdNodo());
-                    agregarBloque(bloquesEnEsperaTipo2.get(1));
-                } else {
-                    red.getNodosEscogidos1Tipo2().add(bloquesEnEsperaTipo2.get(0).getIdNodo());
-                    red.getNodosEscogidos2Tipo2().add(bloquesEnEsperaTipo2.get(1).getIdNodo());
-                    agregarBloque(bloquesEnEsperaTipo2.get(0));
-                }
-                red.getNodosEscogidos1Tipo1().add(-1);
-                red.getNodosEscogidos2Tipo1().add(-1);
-                imprimirInformacion();
-            } else {
-                System.out.println("---------------ERROR--------------");
-            }
-            bloquesEnEsperaTipo2 = new ArrayList<>();
+            System.out.println("---------------ERROR--------------");
         }
-
+        if (tipo.equals(Tipo.LOGICO1)) {
+            red.getNodosEscogidos1().get(Tipo.LOGICO2).add(-1);
+            red.getNodosEscogidos2().get(Tipo.LOGICO2).add(-1);
+        } else {
+            red.getNodosEscogidos1().get(Tipo.LOGICO1).add(-1);
+            red.getNodosEscogidos2().get(Tipo.LOGICO1).add(-1);
+        }
+        imprimirInformacion();
+        bloquesEnEspera.put(tipo, new ArrayList<>());
     }
 
     public synchronized void agregarBloque(Bloque bloque) {
         red.agregarBloque(bloque);
-        if (!bloque.getDireccionNodo().equals("Master"))
+        if (!bloque.getDireccionNodoMinero().equals("Master"))
             updateAllWallet(bloque);
         actualizarST(bloque.getTiempoDeBusqueda());
         actualizarNBOfBlockOfType(bloque.getTipo());
@@ -234,7 +215,7 @@ public class Nodo {
 
     public void generarBloque(Paquete paquete) throws Exception {
         // System.out.println("---------------------------------------------------");
-        String tipo = paquete.getTipo();
+        Tipo tipo = paquete.getTipo();
         List<Transaccion> transaccionesDelBloque = paquete.getTransacciones();
         for (Transaccion transaccion : transaccionesDelBloque) {
             //System.out.println("Firma: " + transaccion.getFirma());
@@ -243,25 +224,23 @@ public class Nodo {
                 return;
             }
         }
+        System.out.println("---------------Se crea bloque---------------");
+        long inicioBusqueda = System.nanoTime();
+        BlockchainMultiple blockchainMultiple = red.getBlockchain();
+        Bloque bloquePrevioFisico = blockchainMultiple.obtenerUltimoBloque();
+        Bloque bloquePrevioLogico = blockchainMultiple.buscarBloquePrevioLogico(tipo,
+                blockchainMultiple.obtenerCantidadDeBloques() - 1);
+        long finBusqueda = System.nanoTime();
+        long tiempoDelUltimoBloque = bloquePrevioFisico.getHeader().getMarcaDeTiempoDeCreacion();
         while (true) {
-            long lastTime = red.getBlockchain()
-                    .buscarBloquePrevioLogico(tipo, red.getBlockchain().obtenerCantidadDeBloques() - 1)
-                    .getHeader().getMarcaDeTiempo();
-            if (System.currentTimeMillis() - lastTime > 10000) { // Garantiza los 10 segundos minimos
+            if (System.currentTimeMillis() - tiempoDelUltimoBloque > 10000) { // Garantiza los 10 segundos minimos
                 break;
             }
         }
-        System.out.println("---------------Se crea bloque---------------");
-        long inicioBusqueda = System.nanoTime();
-        Blockchain blockchain = red.getBlockchain();
-        Bloque bloquePrevioFisico = blockchain.obtenerUltimoBloque();
-        Bloque bloquePrevioLogico = blockchain.buscarBloquePrevioLogico(tipo,
-                blockchain.obtenerCantidadDeBloques() - 1);
-        long finBusqueda = System.nanoTime();
         Bloque bloque = new Bloque(bloquePrevioFisico, bloquePrevioLogico, transaccionesDelBloque,
                 (double) (finBusqueda - inicioBusqueda), tipo);
-        bloque.setIdNodo(this.id);
-        bloque.setDireccionNodo(this.direccion.getDireccionIP());
+        bloque.setIdNodoMinero(this.id);
+        bloque.setDireccionNodoMinero(this.direccion.getDireccionIP());
         // System.out.println("Block has been forged by " + this.name);
         try {
 
@@ -282,23 +261,16 @@ public class Nodo {
         // System.out.println("---------------------------------------------------");
     }
 
-    public void actualizarNbTransPorTipo(String tipo, int cantidad) {
-        HashMap<String, Integer> nbTransParType = (HashMap<String, Integer>) red.getNbTransParType();
-        red.setNbTransParType(tipo, nbTransParType.get(TYPE1) + cantidad);
-    }
-
     public void actualizarST(double st) {
         red.searchTimes.add(st);
     }
 
-    public void actualizarNBOfBlockOfType(String tipo) {
-        if (tipo.equals(TYPE1)) {
+    public void actualizarNBOfBlockOfType(Tipo tipo) {
+        if (tipo.equals(Tipo.LOGICO1)) {
             red.NB_OF_BLOCK_OF_TYPE1_CREATED.add(red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + 1);
         } else {
             red.NB_OF_BLOCK_OF_TYPE2_CREATED.add(red.NB_OF_BLOCK_OF_TYPE2_CREATED.size() + 1);
         }
-        // Último en ejecutarse
-
     }
 
     public boolean comprobarCantidadMinimaDeNodos() {
@@ -317,7 +289,7 @@ public class Nodo {
         double totalFee = 0;
         List<Transaccion> transacciones = bloque.getTransaction();
         double montoTotal = 0;
-        String tipo = bloque.getTipo();
+        Tipo tipo = bloque.getTipo();
         for (Transaccion transaccion : transacciones) {
             transaccion.confirmar();
             double montoTransaccion = transaccion.getMonto();
@@ -335,14 +307,14 @@ public class Nodo {
             }
         }
         // Actualización del minero.
-        if (bloque.getDireccionNodo().equals(direccion)) {
+        if (bloque.getDireccionNodoMinero().equals(direccion)) {
             recibirDinero(totalFee, tipo);
         }
         actualizarExchangeMoneyPorTipo(tipo, montoTotal);
     }
 
-    public void actualizarExchangeMoneyPorTipo(String tipo, double amount) {
-        if (tipo.equals(TYPE1)) {
+    public void actualizarExchangeMoneyPorTipo(Tipo tipo, double amount) {
+        if (tipo.equals(Tipo.LOGICO1)) {
             red.exchangeMoney1.add(amount);
             red.exchangeMoney2.add(0.);
         } else {
@@ -353,7 +325,7 @@ public class Nodo {
 
     private void imprimirInformacion() {
         System.out.println(red.getStats());
-        if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + red.NB_OF_BLOCK_OF_TYPE2_CREATED.size() > 201) {
+        if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + red.NB_OF_BLOCK_OF_TYPE2_CREATED.size() - 2 == MaximoDeBloques.MAX.getCantidad()) {
             try {
                 BufferedWriter archivo = new BufferedWriter(
                         new FileWriter("Blockchain V4 (Gateway-Aleatorio) - Resultado.txt", true));

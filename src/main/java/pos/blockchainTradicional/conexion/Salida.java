@@ -9,7 +9,7 @@ import pos.blockchainTradicional.mensajes.InfoNodo;
 import pos.blockchainTradicional.mensajes.Mensaje;
 import pos.blockchainTradicional.nodo.Nodo;
 import pos.blockchainTradicional.nodo.Red;
-import direcciones.Direccion;
+import constantes.Direccion;
 
 public class Salida {
     private Nodo miNodo;

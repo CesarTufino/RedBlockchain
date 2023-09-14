@@ -2,14 +2,12 @@ package gatewayVersion.blockchainMultiple.conexion;
 
 import java.io.*;
 import java.net.*;
-import java.util.List;
 import java.util.Map;
 
-import direcciones.Direccion;
+import constantes.Direccion;
 import gatewayVersion.blockchainMultiple.mensajes.InfoNodo;
 import gatewayVersion.blockchainMultiple.mensajes.Mensaje;
 import gatewayVersion.blockchainMultiple.mensajes.Paquete;
-import gatewayVersion.blockchainMultiple.mensajes.Transaccion;
 import gatewayVersion.blockchainMultiple.nodo.Red;
 
 public class Salida {

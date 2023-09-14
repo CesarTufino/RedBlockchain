@@ -1,8 +1,9 @@
-package gatewayVersion.blockchainMultipleAletorio.mensajes;
+package multiple.mensajes;
 
 import java.io.Serializable;
 import java.security.PrivateKey;
 
+import constantes.Tipo;
 import utils.*;
 
 /**
@@ -10,29 +11,24 @@ import utils.*;
  */
 public class Transaccion implements Serializable {
 
-    /**
-     * Tipo de transacción, del blockchain lógico
-     */
-    private final String tipo;
+    private final Tipo tipo;
     private final String hash;
     private final String direccionRemitente;
     private final String direccionDestinatario;
     private final double monto;
     private final double tarifa;
-    /**
-     * Fecha de creación de la transacción.
-     */
-    private final long marcaDeTiempo;
+    private final long marcaDeTiempoDeCreacion;
     private String firma;
     private boolean transaccionConfirmada = false;
 
-    public Transaccion(String tipo, String direccionRemitente, String direccionDestinatario, double monto, long marcaDeTiempo,
+
+    public Transaccion(Tipo tipo, String direccionRemitente, String direccionDestinatario, double monto, long marcaDeTiempoDeCreacion,
                        double tarifa, PrivateKey clavePrivadaRemitente) {
         this.tipo = tipo;
         this.direccionRemitente = direccionRemitente;
         this.direccionDestinatario = direccionDestinatario;
         this.monto = monto;
-        this.marcaDeTiempo = marcaDeTiempo;
+        this.marcaDeTiempoDeCreacion = marcaDeTiempoDeCreacion;
         this.tarifa = tarifa;
         this.hash = HashUtil.SHA256(this.toString());
         try {
@@ -55,8 +51,8 @@ public class Transaccion implements Serializable {
         return monto;
     }
 
-    public long getMarcaDeTiempo() {
-        return marcaDeTiempo;
+    public long getMarcaDeTiempoDeCreacion() {
+        return marcaDeTiempoDeCreacion;
     }
 
     public String getFirma() {
@@ -71,7 +67,7 @@ public class Transaccion implements Serializable {
         return tarifa;
     }
 
-    public String getTipo() {
+    public Tipo getTipo() {
         return tipo;
     }
 
@@ -88,7 +84,7 @@ public class Transaccion implements Serializable {
 
     @Override
     public String toString() {
-        return direccionDestinatario + " envia $" + monto + " a " + direccionRemitente + " Marca de tiempo : " + marcaDeTiempo
+        return direccionDestinatario + " envia $" + monto + " a " + direccionRemitente + " Marca de tiempo : " + marcaDeTiempoDeCreacion
                 + " Tarifa de transaccion : " + tarifa;
     }
 

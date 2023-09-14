@@ -1,4 +1,4 @@
-package gatewayVersion.blockchainMultipleAletorio.blockchain;
+package multiple.blockchain;
 
 import java.io.Serializable;
 

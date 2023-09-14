@@ -1,8 +1,11 @@
-package gatewayVersion.blockchainMultipleAletorio.mensajes;
+package multiple.mensajes;
 
 import java.io.Serializable;
 import java.security.PublicKey;
 
+/**
+ * Clase InfoNofo.
+ */
 public class InfoNodo implements Serializable{
     private String direccion;
     private PublicKey clavePublica;

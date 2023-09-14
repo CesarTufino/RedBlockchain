@@ -1,4 +1,7 @@
-package gatewayVersion.blockchainMultipleAletorio.mensajes;
+package multiple.mensajes;
+
+import constantes.Tipo;
+import multiple.mensajes.Transaccion;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,16 +9,16 @@ import java.util.List;
 
 public class Paquete implements Serializable {
 
-    private final String tipo;
+    private final Tipo tipo;
 
     private List<Transaccion> transacciones = new ArrayList<>();
 
-    public Paquete(String tipo, List<Transaccion> transacciones) {
+    public Paquete(Tipo tipo, List<Transaccion> transacciones) {
         this.tipo = tipo;
         this.transacciones = transacciones;
     }
 
-    public String getTipo() {
+    public Tipo getTipo() {
         return tipo;
     }
 

@@ -1,4 +1,4 @@
-package gatewayVersion.blockchainMultipleAletorio.mensajes;
+package multiple.mensajes;
 
 import java.io.Serializable;
 import java.util.ArrayList;

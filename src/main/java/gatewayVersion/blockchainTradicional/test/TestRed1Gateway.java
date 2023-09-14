@@ -1,7 +1,6 @@
 package gatewayVersion.blockchainTradicional.test;
 
-import direcciones.Direccion;
-import gatewayVersion.blockchainTradicional.conexion.Entrada;
+import constantes.Direccion;
 import gatewayVersion.blockchainTradicional.nodo.Gateway;
 import gatewayVersion.blockchainTradicional.nodo.Temporizador;
 

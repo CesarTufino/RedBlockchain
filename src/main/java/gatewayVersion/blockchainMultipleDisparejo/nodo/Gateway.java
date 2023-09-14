@@ -1,6 +1,6 @@
 package gatewayVersion.blockchainMultipleDisparejo.nodo;
 
-import direcciones.Direccion;
+import constantes.Direccion;
 import gatewayVersion.blockchainMultipleDisparejo.blockchain.Bloque;
 import gatewayVersion.blockchainMultipleDisparejo.conexion.Entrada;
 import gatewayVersion.blockchainMultipleDisparejo.conexion.Salida;

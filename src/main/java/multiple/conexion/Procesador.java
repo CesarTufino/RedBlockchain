@@ -1,12 +1,12 @@
-package gatewayVersion.blockchainMultipleAletorio.conexion;
+package multiple.conexion;
 
-import direcciones.Direccion;
-import gatewayVersion.blockchainMultipleAletorio.mensajes.InfoNodo;
-import gatewayVersion.blockchainMultipleAletorio.mensajes.Mensaje;
-import gatewayVersion.blockchainMultipleAletorio.mensajes.Paquete;
-import gatewayVersion.blockchainMultipleAletorio.nodo.Gateway;
-import gatewayVersion.blockchainMultipleAletorio.nodo.Nodo;
-import gatewayVersion.blockchainMultipleAletorio.nodo.Red;
+import constantes.Direccion;
+import multiple.mensajes.InfoNodo;
+import multiple.mensajes.Mensaje;
+import multiple.mensajes.Paquete;
+import multiple.nodo.gatewayVersion.Gateway;
+import multiple.nodo.gatewayVersion.Nodo;
+import multiple.nodo.gatewayVersion.Red;
 
 public class Procesador extends Thread {
     private Nodo nodo;

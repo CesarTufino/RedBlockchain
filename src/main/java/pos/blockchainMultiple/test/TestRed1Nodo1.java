@@ -5,7 +5,7 @@ import java.io.IOException;
 import pos.blockchainMultiple.conexion.Entrada;
 import pos.blockchainMultiple.nodo.Nodo;
 import pos.blockchainMultiple.nodo.Temporizador;
-import direcciones.Direccion;
+import constantes.Direccion;
 
 public class TestRed1Nodo1 {
 

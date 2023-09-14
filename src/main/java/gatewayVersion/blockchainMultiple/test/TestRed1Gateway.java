@@ -1,6 +1,6 @@
 package gatewayVersion.blockchainMultiple.test;
 
-import direcciones.Direccion;
+import constantes.Direccion;
 import gatewayVersion.blockchainMultiple.nodo.Gateway;
 import gatewayVersion.blockchainMultiple.nodo.Temporizador;
 

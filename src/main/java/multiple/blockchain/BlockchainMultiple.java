@@ -1,34 +1,29 @@
-package gatewayVersion.blockchainMultipleAletorio.blockchain;
+package multiple.blockchain;
+
+import constantes.Tipo;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Blockchain implements Serializable {
+/**
+ * Clase BlockchainMultiple
+ */
+public class BlockchainMultiple implements Serializable {
 
     private List<Bloque> bloques = new CopyOnWriteArrayList<>();
-    /**
-     * Diferencia de tiempo de creación entre los bloques del primer blockchain
-     * lógico.
-     */
-    public List<Double> WTT1 = new CopyOnWriteArrayList<>();
-    /**
-     * Diferencia de tiempo de creación entre los bloques del segundo blockchain
-     * lógico.
-     */
-    public List<Double> WTT2 = new CopyOnWriteArrayList<>();
+    private HashMap<Tipo,List<Double>> tiempoEntreCreacionDeBloques = new HashMap<>();
 
-
-    public Blockchain() {
+    public BlockchainMultiple() {
+        tiempoEntreCreacionDeBloques.put(Tipo.LOGICO1, new CopyOnWriteArrayList<>());
+        tiempoEntreCreacionDeBloques.put(Tipo.LOGICO2, new CopyOnWriteArrayList<>());
         bloques.addAll(crearPrimerBloque());
     }
 
-    public List<Double> getWTT1() {
-        return WTT1;
-    }
-    public List<Double> getWTT2() {
-        return WTT2;
+    public HashMap<Tipo, List<Double>> getTiempoEntreCreacionDeBloques() {
+        return tiempoEntreCreacionDeBloques;
     }
 
     /**
@@ -37,8 +32,8 @@ public class Blockchain implements Serializable {
      * @return Primeros bloques.
      */
     public List<Bloque> crearPrimerBloque() {
-        Bloque primerBloque = new Bloque("Type1");
-        Bloque segundoBloque = new Bloque(primerBloque, "Type2");
+        Bloque primerBloque = new Bloque(Tipo.LOGICO1);
+        Bloque segundoBloque = new Bloque(primerBloque, Tipo.LOGICO2);
         return Arrays.asList(primerBloque, segundoBloque);
     }
 
@@ -58,7 +53,7 @@ public class Blockchain implements Serializable {
      * @param i    Posición desde la que se comienza a buscar.
      * @return Último bloque del blockchain lógico.
      */
-    public Bloque buscarBloquePrevioLogico(String tipo, int i) {
+    public Bloque buscarBloquePrevioLogico(Tipo tipo, int i) {
         if (i < 0) {
             return null;
         }
@@ -78,16 +73,18 @@ public class Blockchain implements Serializable {
      * @param bloque Bloque que se va a añadir.
      */
     public void agregarBloque(Bloque bloque) {
-        String tipo = bloque.getTipo();
+        Tipo tipo = bloque.getTipo();
         Bloque bloquePrevioLogico = buscarBloquePrevioLogico(tipo, this.bloques.size() - 1);
-        if (tipo.equals("Type1")) {
-            WTT1.add((double) (bloque.getHeader().getMarcaDeTiempo() - bloquePrevioLogico.getHeader().getMarcaDeTiempo()) / 1000);
-            WTT2.add((double) 0);
-        } else {
-            WTT1.add((double) 0);
-            WTT2.add((double) (bloque.getHeader().getMarcaDeTiempo() - bloquePrevioLogico.getHeader().getMarcaDeTiempo()) / 1000);
-        }
+
         bloques.add(bloque);
+
+        tiempoEntreCreacionDeBloques.get(tipo).add((double) (bloque.getHeader().getMarcaDeTiempoDeCreacion() - bloquePrevioLogico.getHeader().getMarcaDeTiempoDeCreacion()) / 1000);
+
+        if (tipo.equals(Tipo.LOGICO1)) {
+            tiempoEntreCreacionDeBloques.get(Tipo.LOGICO2).add((double) 0);
+        } else {
+            tiempoEntreCreacionDeBloques.get(Tipo.LOGICO1).add((double) 0);
+        }
     }
 
     /**

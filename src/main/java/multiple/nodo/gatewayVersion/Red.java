@@ -1,4 +1,4 @@
-package gatewayVersion.blockchainMultipleAletorio.nodo;
+package multiple.nodo.gatewayVersion;
 
 import java.io.Serializable;
 import java.security.PublicKey;
@@ -7,10 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import gatewayVersion.blockchainMultipleAletorio.blockchain.Blockchain;
-import gatewayVersion.blockchainMultipleAletorio.blockchain.Bloque;
-import gatewayVersion.blockchainMultipleAletorio.mensajes.InfoNodo;
+import constantes.Tipo;
+import multiple.blockchain.BlockchainMultiple;
+import multiple.blockchain.Bloque;
+import multiple.mensajes.InfoNodo;
 
+/**
+ *  Clase red
+ */
 public class Red implements Serializable {
 
     /**
@@ -26,10 +30,9 @@ public class Red implements Serializable {
      * blockchain lógico.)
      */
     public List<Double> searchTimes = new ArrayList<>();
-    private List<Integer> nodosEscogidos1Tipo1 = new ArrayList<>();
-    private List<Integer> nodosEscogidos2Tipo1 = new ArrayList<>();
-    private List<Integer> nodosEscogidos1Tipo2 = new ArrayList<>();
-    private List<Integer> nodosEscogidos2Tipo2 = new ArrayList<>();
+
+    private HashMap<Tipo, List<Integer>> nodosEscogidos1 = new HashMap<>();
+    private HashMap<Tipo, List<Integer>> nodosEscogidos2 = new HashMap<>();
     /**
      * Intercambios de dinero del primer blockchain lógico.
      */
@@ -39,14 +42,6 @@ public class Red implements Serializable {
      */
     public List<Double> exchangeMoney2 = new ArrayList<>();
     /**
-     * Identificador del primer blockchain lógico.
-     */
-    public final String type1 = "Type1";
-    /**
-     * Identificador del segundo blockchain lógico.
-     */
-    public final String type2 = "Type2";
-    /**
      * Tabla de mapeo de NodeAddress y PublicKey para verificar firmas.
      */
     private Map<String, PublicKey> keyTable = new HashMap<>();
@@ -55,13 +50,17 @@ public class Red implements Serializable {
     /**
      * Número de transacciones de cada blockchain lógico.
      */
-    private Map<String, Integer> nbTransParType = new HashMap<>();
-    private Blockchain blockchain;
+    private Map<Tipo, Integer> nbTransParType = new HashMap<>();
+    private BlockchainMultiple blockchainMultiple;
 
     public Red() {
-        this.blockchain = new Blockchain();
-        nbTransParType.put(type1, 0);
-        nbTransParType.put(type2, 0);
+        this.blockchainMultiple = new BlockchainMultiple();
+        nbTransParType.put(Tipo.LOGICO1, 0);
+        nbTransParType.put(Tipo.LOGICO2, 0);
+        nodosEscogidos1.put(Tipo.LOGICO1,new ArrayList<>());
+        nodosEscogidos1.put(Tipo.LOGICO2,new ArrayList<>());
+        nodosEscogidos2.put(Tipo.LOGICO1,new ArrayList<>());
+        nodosEscogidos2.put(Tipo.LOGICO2,new ArrayList<>());
         NB_OF_BLOCK_OF_TYPE1_CREATED.add(1);
         NB_OF_BLOCK_OF_TYPE2_CREATED.add(1);
     }
@@ -82,14 +81,14 @@ public class Red implements Serializable {
         String stats = "";
         stats += "\n////////////////////////////////////////////";
         stats += "\nST=" + searchTimes;
-        stats += "\nWTT1=" + blockchain.getWTT1();
-        stats += "\nWTT2=" + blockchain.getWTT2();
+        stats += "\nWTT1=" + blockchainMultiple.getTiempoEntreCreacionDeBloques().get(Tipo.LOGICO1);
+        stats += "\nWTT2=" + blockchainMultiple.getTiempoEntreCreacionDeBloques().get(Tipo.LOGICO2);
         stats += "\nType_1_currency_exchanged=" + exchangeMoney1;
         stats += "\nType_2_currency_exchanged=" + exchangeMoney2;
-        stats += "\nNodos_escogidos1Tipo1=" + nodosEscogidos1Tipo1;
-        stats += "\nNodos_escogidos2Tipo1=" + nodosEscogidos2Tipo1;
-        stats += "\nNodos_escogidos1Tipo2=" + nodosEscogidos1Tipo2;
-        stats += "\nNodos_escogidos2Tipo2=" + nodosEscogidos2Tipo2;
+        stats += "\nNodos_escogidos1Tipo1=" + nodosEscogidos1.get(Tipo.LOGICO1);
+        stats += "\nNodos_escogidos2Tipo1=" + nodosEscogidos2.get(Tipo.LOGICO1);
+        stats += "\nNodos_escogidos1Tipo2=" + nodosEscogidos1.get(Tipo.LOGICO2);
+        stats += "\nNodos_escogidos2Tipo2=" + nodosEscogidos2.get(Tipo.LOGICO2);
         stats += "\n////////////////////////////////////////////\n";
         return stats;
     }
@@ -98,20 +97,20 @@ public class Red implements Serializable {
         return keyTable.get(direccion);
     }
 
-    public Map<String, Integer> getNbTransParType() {
+    public Map<Tipo, Integer> getNbTransParType() {
         return nbTransParType;
     }
 
-    public void setNbTransParType(String tipo, int nb) {
+    public void setNbTransParType(Tipo tipo, int nb) {
         this.nbTransParType.put(tipo, nb);
     }
 
-    public Blockchain getBlockchain() {
-        return blockchain;
+    public BlockchainMultiple getBlockchain() {
+        return blockchainMultiple;
     }
 
     public void agregarBloque(Bloque bloque) {
-        blockchain.agregarBloque(bloque);
+        blockchainMultiple.agregarBloque(bloque);
     }
 
 
@@ -123,19 +122,11 @@ public class Red implements Serializable {
         return puertos;
     }
 
-    public List<Integer> getNodosEscogidos1Tipo1() {
-        return nodosEscogidos1Tipo1;
+    public HashMap<Tipo, List<Integer>> getNodosEscogidos1() {
+        return nodosEscogidos1;
     }
 
-    public List<Integer> getNodosEscogidos2Tipo1() {
-        return nodosEscogidos2Tipo1;
-    }
-
-    public List<Integer> getNodosEscogidos1Tipo2() {
-        return nodosEscogidos1Tipo2;
-    }
-
-    public List<Integer> getNodosEscogidos2Tipo2() {
-        return nodosEscogidos2Tipo2;
+    public HashMap<Tipo, List<Integer>> getNodosEscogidos2() {
+        return nodosEscogidos2;
     }
 }

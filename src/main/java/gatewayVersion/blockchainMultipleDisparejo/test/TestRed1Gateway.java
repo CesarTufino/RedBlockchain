@@ -1,6 +1,6 @@
 package gatewayVersion.blockchainMultipleDisparejo.test;
 
-import direcciones.Direccion;
+import constantes.Direccion;
 import gatewayVersion.blockchainMultipleDisparejo.nodo.Gateway;
 import gatewayVersion.blockchainMultipleDisparejo.nodo.Temporizador;
 
