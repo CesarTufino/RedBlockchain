@@ -44,6 +44,13 @@ public class SeleccionadorMultiple extends Thread {
         long tiempoDelUltimoBloqueTipo1;
         long tiempoDelUltimoBloqueTipo2;
         while (true) {
+            while (true){
+                if (!gateway.isSeVerificoPrimeraCreacion()){
+                    break;
+                }
+                System.out.print("");
+            }
+
             System.out.println("Seleccionando...");
             seleccionar(Tipo.LOGICO1);
 
