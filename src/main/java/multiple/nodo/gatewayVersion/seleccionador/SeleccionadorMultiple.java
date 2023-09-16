@@ -51,6 +51,7 @@ public class SeleccionadorMultiple extends Thread {
                 if (gateway.isSeVerificoPrimeraCreacion()){
                     break;
                 }
+                System.out.print("");
             }
 
             tiempoDelUltimoBloqueTipo2 = System.currentTimeMillis();
