@@ -20,7 +20,6 @@ public class SeleccionadorMultiple extends Thread {
     public void seleccionar(Tipo tipo) {
         String direccionNodoSeleccionado1 = gateway.obtenerDireccionNodoPosible();
         String direccionNodoSeleccionado2 = gateway.obtenerDireccionNodoPosible();
-        gateway.reiniciarNodosPosibles();
 
         List<Transaccion> transacciones = gateway.escogerTransacciones(tipo);
         Paquete paquete = new Paquete(tipo, transacciones);
@@ -48,15 +47,14 @@ public class SeleccionadorMultiple extends Thread {
             System.out.println("Seleccionando...");
             seleccionar(Tipo.LOGICO1);
 
-
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
             tiempoDelUltimoBloqueTipo2 = System.currentTimeMillis();
             seleccionar(Tipo.LOGICO2);
+            gateway.reiniciarNodosPosibles();
 
             while (true) {
                 tiempoActual = System.currentTimeMillis();
