@@ -1,0 +1,75 @@
+package multiple.nodo.gatewayVersion.seleccionador;
+
+import constantes.Tipo;
+import multiple.mensajes.Paquete;
+import multiple.mensajes.Transaccion;
+import multiple.nodo.gatewayVersion.Gateway;
+
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.Random;
+
+public class SeleccionadorProbabilidadDeterminada extends Thread {
+
+    private Gateway gateway;
+    private final double PROBABILIDAD_BLOQUES_TIPO_1 = 95;
+
+    public SeleccionadorProbabilidadDeterminada(Gateway gateway) {
+        this.gateway = gateway;
+    }
+
+    public void seleccionar(Tipo tipo) {
+        String direccionNodoSeleccionado1 = gateway.obtenerDireccionNodoPosible();
+        String direccionNodoSeleccionado2 = gateway.obtenerDireccionNodoPosible();
+        gateway.reiniciarNodosPosibles();
+
+        List<Transaccion> transacciones = gateway.escogerTransacciones(tipo);
+        Paquete paquete = new Paquete(tipo, transacciones);
+        System.out.println("Se envía a crear a " + direccionNodoSeleccionado1);
+        gateway.mandarCrearBloque(direccionNodoSeleccionado1, gateway.getPuertos().get(direccionNodoSeleccionado1), paquete);
+        System.out.println("Se envía a crear a "+ direccionNodoSeleccionado2);
+        gateway.mandarCrearBloque(direccionNodoSeleccionado2, gateway.getPuertos().get(direccionNodoSeleccionado2), paquete);
+    }
+
+    @Override
+    public void run() {
+        // tiempo de espera inicial
+        try {
+            long tiempoParaIniciar = 10000 - (System.currentTimeMillis() % 10000);
+            Thread.sleep(tiempoParaIniciar);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        long tiempoInicio;
+        long tiempoActual;
+        long tiempoDelUltimoBloqueTipo1;
+        long tiempoDelUltimoBloqueTipo2;
+        while (true) {
+            System.out.println("Seleccionando...");
+            tiempoInicio = System.currentTimeMillis();
+
+            SecureRandom secureRandom = new SecureRandom();
+            int semilla = secureRandom.nextInt();
+            Random rnd = new Random(semilla);
+            int numeroPseudoaleatorio = rnd.nextInt(100);
+
+            if (numeroPseudoaleatorio < PROBABILIDAD_BLOQUES_TIPO_1) {
+                seleccionar(Tipo.LOGICO1);
+            } else {
+                seleccionar(Tipo.LOGICO2);
+            }
+            while (true) {
+                tiempoActual = System.currentTimeMillis();
+                tiempoDelUltimoBloqueTipo1 = gateway.getTiempoDeCreacionDeUltimoBloque().get(Tipo.LOGICO1);
+                tiempoDelUltimoBloqueTipo2 = gateway.getTiempoDeCreacionDeUltimoBloque().get(Tipo.LOGICO2);
+                if ((tiempoActual - tiempoInicio > 10000) &&
+                        (tiempoActual - tiempoDelUltimoBloqueTipo1  > 10000) &&
+                        (tiempoActual - tiempoDelUltimoBloqueTipo2 > 10000)) {
+                    break;
+                }
+            }
+        }
+    }
+
+}

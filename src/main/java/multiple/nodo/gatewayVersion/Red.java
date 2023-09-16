@@ -9,7 +9,7 @@ import java.util.Map;
 
 import constantes.Tipo;
 import multiple.blockchain.BlockchainMultiple;
-import multiple.blockchain.Bloque;
+import multiple.blockchain.BloqueMultiple;
 import multiple.mensajes.InfoNodo;
 
 /**
@@ -109,8 +109,8 @@ public class Red implements Serializable {
         return blockchainMultiple;
     }
 
-    public void agregarBloque(Bloque bloque) {
-        blockchainMultiple.agregarBloque(bloque);
+    public void agregarBloque(BloqueMultiple bloqueMultiple) {
+        blockchainMultiple.agregarBloque(bloqueMultiple);
     }
 
 

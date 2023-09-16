@@ -3,7 +3,7 @@ package multiple.nodo.gatewayVersion;
 import constantes.Direccion;
 import constantes.MaximoDeBloques;
 import constantes.Tipo;
-import multiple.blockchain.Bloque;
+import multiple.blockchain.BloqueMultiple;
 import multiple.conexion.Salida;
 import multiple.mensajes.InfoNodo;
 import multiple.mensajes.Mensaje;
@@ -23,7 +23,7 @@ public class Gateway {
     private List<String> nodosPosibles = new ArrayList<>();
     private Direccion direccion;
     private Salida salida;
-    private HashMap<Tipo, List<Bloque>> bloquesEnEspera = new HashMap<>();
+    private HashMap<Tipo, List<BloqueMultiple>> bloquesEnEspera = new HashMap<>();
     private Map<String, PublicKey> keyTable = new HashMap<>();
     private Map<String, Integer> puertos = new HashMap<>();
     private Map<Tipo, Long> tiempoDeCreacionDeUltimoBloque = new HashMap<>();
@@ -71,6 +71,10 @@ public class Gateway {
         return puertos;
     }
 
+    public int getContadorDeBloques() {
+        return contadorDeBloques;
+    }
+
     public boolean comprobarCantidadMinimaDeNodos() {
         return puertos.keySet().size() >= 4;
     }
@@ -85,15 +89,15 @@ public class Gateway {
         }
         if (tipoDeMensaje == 1) {
             System.out.println("Bloque recibido");
-            Bloque bloque = (Bloque) contenido.get(0);
-            recibirBloque(bloque);
+            BloqueMultiple bloqueMultiple = (BloqueMultiple) contenido.get(0);
+            recibirBloque(bloqueMultiple);
         }
     }
 
-    public synchronized void recibirBloque(Bloque bloque) {
+    public synchronized void recibirBloque(BloqueMultiple bloqueMultiple) {
         try {
-            Tipo tipo = bloque.getTipo();
-            bloquesEnEspera.get(tipo).add(bloque);
+            Tipo tipo = bloqueMultiple.getTipo();
+            bloquesEnEspera.get(tipo).add(bloqueMultiple);
             if (bloquesEnEspera.get(tipo).size() == 2) {
                 compararBloques(tipo);
             }
@@ -103,28 +107,24 @@ public class Gateway {
     }
 
     private synchronized void compararBloques(Tipo tipo) {
-        List<Bloque> bloquesAComparar = bloquesEnEspera.get(tipo);
-        Bloque primerBloque = bloquesAComparar.get(0);
-        Bloque segundoBloque = bloquesAComparar.get(1);
-        if (primerBloque.getFooter().getHash().equals(segundoBloque.getFooter().getHash())) {
+        List<BloqueMultiple> bloquesAComparar = bloquesEnEspera.get(tipo);
+        BloqueMultiple primerBloqueMultiple = bloquesAComparar.get(0);
+        BloqueMultiple segundoBloqueMultiple = bloquesAComparar.get(1);
+        if (primerBloqueMultiple.getFooter().getHash().equals(segundoBloqueMultiple.getFooter().getHash())) {
             System.out.println("Creación correcta");
-            if (primerBloque.getIdNodoMinero() > segundoBloque.getIdNodoMinero()) {
-                tiempoDeCreacionDeUltimoBloque.put(tipo, segundoBloque.getHeader().getMarcaDeTiempoDeCreacion());
+            if (primerBloqueMultiple.getIdNodoMinero() > segundoBloqueMultiple.getIdNodoMinero()) {
+                tiempoDeCreacionDeUltimoBloque.put(tipo, segundoBloqueMultiple.getHeader().getMarcaDeTiempoDeCreacion());
             } else {
-                tiempoDeCreacionDeUltimoBloque.put(tipo, primerBloque.getHeader().getMarcaDeTiempoDeCreacion());
+                tiempoDeCreacionDeUltimoBloque.put(tipo, primerBloqueMultiple.getHeader().getMarcaDeTiempoDeCreacion());
             }
             actualizarTransaccionesPendientes(tipo);
             actualizarTransaccionesEscogidas(true, tipo);
-            contadorDeBloques++;
+            System.out.println("Cantidad de bloques: " + ++contadorDeBloques);
         } else {
             System.out.println("---------------ERROR--------------");
-
             actualizarTransaccionesEscogidas(false, tipo);
         }
         bloquesEnEspera.put(tipo, new ArrayList<>());
-        if (contadorDeBloques == MaximoDeBloques.MAX.getCantidad()) {
-            System.exit(0);
-        }
     }
 
     public synchronized void recibirTransaccion(Transaccion transaccion) {

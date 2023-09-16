@@ -13,7 +13,7 @@ import java.util.List;
 import constantes.Direccion;
 import constantes.MaximoDeBloques;
 import constantes.Tipo;
-import multiple.blockchain.Bloque;
+import multiple.blockchain.BloqueMultiple;
 import multiple.conexion.Salida;
 import multiple.mensajes.InfoNodo;
 import multiple.mensajes.Mensaje;
@@ -34,9 +34,10 @@ public class Nodo {
     private double billetera1;
     private double billetera2;
     private Red red = null;
-    private HashMap<Tipo, List<Bloque>> bloquesEnEspera = new HashMap<>();
+    private HashMap<Tipo, List<BloqueMultiple>> bloquesEnEspera = new HashMap<>();
+    private final boolean MODO_DOS_BLOQUES_POR_ITERACION;
 
-    public Nodo(int id, Direccion direccion) {
+    public Nodo(int id, Direccion direccion, boolean modoMultiple) {
         try {
             KeyPair keys = RsaUtil.generateKeyPair();
             this.clavePublica = keys.getPublic();
@@ -51,6 +52,7 @@ public class Nodo {
         bloquesEnEspera.put(Tipo.LOGICO1, new ArrayList<>());
         bloquesEnEspera.put(Tipo.LOGICO2, new ArrayList<>());
         this.salida = new Salida();
+        this.MODO_DOS_BLOQUES_POR_ITERACION = modoMultiple;
     }
 
     public PublicKey getClavePublica() {
@@ -144,10 +146,10 @@ public class Nodo {
         List<Object> contenido = mensaje.getContenido();
         if (tipoDeMensaje == 1) {
             // System.out.println("Bloque recibido");
-            Bloque bloque = (Bloque) contenido.get(0);
+            BloqueMultiple bloqueMultiple = (BloqueMultiple) contenido.get(0);
             String direccionDelNodo = mensaje.getDireccionRemitente();
             String firma = mensaje.getFirma();
-            recibirBloque(bloque, firma, direccionDelNodo);
+            recibirBloque(bloqueMultiple, firma, direccionDelNodo);
         }
     }
 
@@ -156,12 +158,12 @@ public class Nodo {
                 red.obtenerClavePublicaPorDireccion(transaccion.getDireccionRemitente()));
     }
 
-    public synchronized void recibirBloque(Bloque bloque, String firma, String direccionDelNodo) {
+    public synchronized void recibirBloque(BloqueMultiple bloqueMultiple, String firma, String direccionDelNodo) {
         try {
-            if (RsaUtil.verify(HashUtil.SHA256(bloque.toString()), firma,
+            if (RsaUtil.verify(HashUtil.SHA256(bloqueMultiple.toString()), firma,
                     red.obtenerClavePublicaPorDireccion(direccionDelNodo))) {
-                Tipo tipo = bloque.getTipo();
-                bloquesEnEspera.get(tipo).add(bloque);
+                Tipo tipo = bloqueMultiple.getTipo();
+                bloquesEnEspera.get(tipo).add(bloqueMultiple);
                 System.out.println("Bloque recibido :" + bloquesEnEspera.get(Tipo.LOGICO1).size() + "/2, "
                         + bloquesEnEspera.get(Tipo.LOGICO2).size() + "/2");
                 if (bloquesEnEspera.get(tipo).size() == 2) {
@@ -174,40 +176,42 @@ public class Nodo {
     }
 
     private void compararBloques(Tipo tipo) {
-        List<Bloque> bloquesAComparar = bloquesEnEspera.get(tipo);
-        Bloque primerBloque = bloquesAComparar.get(0);
-        Bloque segundoBloque = bloquesAComparar.get(1);
-        if (primerBloque.getFooter().getHash().equals(segundoBloque.getFooter().getHash())) {
+        List<BloqueMultiple> bloquesAComparar = bloquesEnEspera.get(tipo);
+        BloqueMultiple primerBloqueMultiple = bloquesAComparar.get(0);
+        BloqueMultiple segundoBloqueMultiple = bloquesAComparar.get(1);
+        if (primerBloqueMultiple.getFooter().getHash().equals(segundoBloqueMultiple.getFooter().getHash())) {
             System.out.println("Creación correcta");
-            if (primerBloque.getIdNodoMinero() > segundoBloque.getIdNodoMinero()) {
-                red.getNodosEscogidos1().get(tipo).add(segundoBloque.getIdNodoMinero());
-                red.getNodosEscogidos2().get(tipo).add(primerBloque.getIdNodoMinero());
-                agregarBloque(segundoBloque);
+            if (!MODO_DOS_BLOQUES_POR_ITERACION){
+                if (tipo.equals(Tipo.LOGICO1)) {
+                    red.getNodosEscogidos1().get(Tipo.LOGICO2).add(-1);
+                    red.getNodosEscogidos2().get(Tipo.LOGICO2).add(-1);
+                } else {
+                    red.getNodosEscogidos1().get(Tipo.LOGICO1).add(-1);
+                    red.getNodosEscogidos2().get(Tipo.LOGICO1).add(-1);
+                }
+            }
+            if (primerBloqueMultiple.getIdNodoMinero() > segundoBloqueMultiple.getIdNodoMinero()) {
+                red.getNodosEscogidos1().get(tipo).add(segundoBloqueMultiple.getIdNodoMinero());
+                red.getNodosEscogidos2().get(tipo).add(primerBloqueMultiple.getIdNodoMinero());
+                agregarBloque(segundoBloqueMultiple);
             } else {
-                red.getNodosEscogidos1().get(tipo).add(primerBloque.getIdNodoMinero());
-                red.getNodosEscogidos2().get(tipo).add(segundoBloque.getIdNodoMinero());
-                agregarBloque(primerBloque);
+                red.getNodosEscogidos1().get(tipo).add(primerBloqueMultiple.getIdNodoMinero());
+                red.getNodosEscogidos2().get(tipo).add(segundoBloqueMultiple.getIdNodoMinero());
+                agregarBloque(primerBloqueMultiple);
             }
         } else {
             System.out.println("---------------ERROR--------------");
         }
-        if (tipo.equals(Tipo.LOGICO1)) {
-            red.getNodosEscogidos1().get(Tipo.LOGICO2).add(-1);
-            red.getNodosEscogidos2().get(Tipo.LOGICO2).add(-1);
-        } else {
-            red.getNodosEscogidos1().get(Tipo.LOGICO1).add(-1);
-            red.getNodosEscogidos2().get(Tipo.LOGICO1).add(-1);
-        }
-        imprimirInformacion();
         bloquesEnEspera.put(tipo, new ArrayList<>());
+        System.out.println(red.getStats());
     }
 
-    public synchronized void agregarBloque(Bloque bloque) {
-        red.agregarBloque(bloque);
-        if (!bloque.getDireccionNodoMinero().equals("Master"))
-            updateAllWallet(bloque);
-        actualizarST(bloque.getTiempoDeBusqueda());
-        actualizarNBOfBlockOfType(bloque.getTipo());
+    public synchronized void agregarBloque(BloqueMultiple bloqueMultiple) {
+        red.agregarBloque(bloqueMultiple);
+        if (!bloqueMultiple.getDireccionNodoMinero().equals("Master"))
+            updateAllWallet(bloqueMultiple);
+        actualizarST(bloqueMultiple.getTiempoDeBusqueda());
+        actualizarNBOfBlockOfType(bloqueMultiple.getTipo());
         System.out.println("\n///-----------------------------------///");
         System.out.println("Bloque agregado");
         System.out.println("///-----------------------------------///\n");
@@ -227,27 +231,27 @@ public class Nodo {
         System.out.println("---------------Se crea bloque---------------");
         long inicioBusqueda = System.nanoTime();
         BlockchainMultiple blockchainMultiple = red.getBlockchain();
-        Bloque bloquePrevioFisico = blockchainMultiple.obtenerUltimoBloque();
-        Bloque bloquePrevioLogico = blockchainMultiple.buscarBloquePrevioLogico(tipo,
+        BloqueMultiple bloqueMultiplePrevioFisico = blockchainMultiple.obtenerUltimoBloque();
+        BloqueMultiple bloqueMultiplePrevioLogico = blockchainMultiple.buscarBloquePrevioLogico(tipo,
                 blockchainMultiple.obtenerCantidadDeBloques() - 1);
         long finBusqueda = System.nanoTime();
-        long tiempoDelUltimoBloque = bloquePrevioFisico.getHeader().getMarcaDeTiempoDeCreacion();
+        long tiempoDelUltimoBloque = bloqueMultiplePrevioFisico.getHeader().getMarcaDeTiempoDeCreacion();
         while (true) {
             if (System.currentTimeMillis() - tiempoDelUltimoBloque > 10000) { // Garantiza los 10 segundos minimos
                 break;
             }
         }
-        Bloque bloque = new Bloque(bloquePrevioFisico, bloquePrevioLogico, transaccionesDelBloque,
+        BloqueMultiple bloqueMultiple = new BloqueMultiple(bloqueMultiplePrevioFisico, bloqueMultiplePrevioLogico, transaccionesDelBloque,
                 (double) (finBusqueda - inicioBusqueda), tipo);
-        bloque.setIdNodoMinero(this.id);
-        bloque.setDireccionNodoMinero(this.direccion.getDireccionIP());
+        bloqueMultiple.setIdNodoMinero(this.id);
+        bloqueMultiple.setDireccionNodoMinero(this.direccion.getDireccionIP());
         // System.out.println("Block has been forged by " + this.name);
         try {
 
             List<Object> contenidoMensaje = new ArrayList<>();
-            contenidoMensaje.add(bloque);
+            contenidoMensaje.add(bloqueMultiple);
             Mensaje mensaje = new Mensaje(this.direccion.getDireccionIP(), "ALL",
-                    RsaUtil.sign(HashUtil.SHA256(bloque.toString()), this.clavePrivada),
+                    RsaUtil.sign(HashUtil.SHA256(bloqueMultiple.toString()), this.clavePrivada),
                     System.currentTimeMillis(),
                     1, contenidoMensaje);
             System.out.println("Envio de bloque");
@@ -283,13 +287,13 @@ public class Nodo {
     /**
      * Método que actualiza las billeteras de todos los nodos que participaron.
      *
-     * @param bloque Bloque.
+     * @param bloqueMultiple Bloque.
      */
-    private void updateAllWallet(Bloque bloque) {
+    private void updateAllWallet(BloqueMultiple bloqueMultiple) {
         double totalFee = 0;
-        List<Transaccion> transacciones = bloque.getTransaction();
+        List<Transaccion> transacciones = bloqueMultiple.getTransaction();
         double montoTotal = 0;
-        Tipo tipo = bloque.getTipo();
+        Tipo tipo = bloqueMultiple.getTipo();
         for (Transaccion transaccion : transacciones) {
             transaccion.confirmar();
             double montoTransaccion = transaccion.getMonto();
@@ -307,7 +311,7 @@ public class Nodo {
             }
         }
         // Actualización del minero.
-        if (bloque.getDireccionNodoMinero().equals(direccion)) {
+        if (bloqueMultiple.getDireccionNodoMinero().equals(direccion)) {
             recibirDinero(totalFee, tipo);
         }
         actualizarExchangeMoneyPorTipo(tipo, montoTotal);
@@ -320,22 +324,6 @@ public class Nodo {
         } else {
             red.exchangeMoney1.add(0.);
             red.exchangeMoney2.add(amount);
-        }
-    }
-
-    private void imprimirInformacion() {
-        System.out.println(red.getStats());
-        if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + red.NB_OF_BLOCK_OF_TYPE2_CREATED.size() - 2 == MaximoDeBloques.MAX.getCantidad()) {
-            try {
-                BufferedWriter archivo = new BufferedWriter(
-                        new FileWriter("Blockchain V4 (Gateway-Aleatorio) - Resultado.txt", true));
-                archivo.write(red.getStats());
-                archivo.newLine();
-                archivo.close();
-                System.out.println("Archivo guardado");
-            } catch (IOException e) {
-            }
-            System.exit(0);
         }
     }
 }

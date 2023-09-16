@@ -13,13 +13,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class BlockchainMultiple implements Serializable {
 
-    private List<Bloque> bloques = new CopyOnWriteArrayList<>();
+    private List<BloqueMultiple> bloqueMultiples = new CopyOnWriteArrayList<>();
     private HashMap<Tipo,List<Double>> tiempoEntreCreacionDeBloques = new HashMap<>();
 
     public BlockchainMultiple() {
         tiempoEntreCreacionDeBloques.put(Tipo.LOGICO1, new CopyOnWriteArrayList<>());
         tiempoEntreCreacionDeBloques.put(Tipo.LOGICO2, new CopyOnWriteArrayList<>());
-        bloques.addAll(crearPrimerBloque());
+        bloqueMultiples.addAll(crearPrimerBloque());
     }
 
     public HashMap<Tipo, List<Double>> getTiempoEntreCreacionDeBloques() {
@@ -31,10 +31,10 @@ public class BlockchainMultiple implements Serializable {
      *
      * @return Primeros bloques.
      */
-    public List<Bloque> crearPrimerBloque() {
-        Bloque primerBloque = new Bloque(Tipo.LOGICO1);
-        Bloque segundoBloque = new Bloque(primerBloque, Tipo.LOGICO2);
-        return Arrays.asList(primerBloque, segundoBloque);
+    public List<BloqueMultiple> crearPrimerBloque() {
+        BloqueMultiple primerBloqueMultiple = new BloqueMultiple(Tipo.LOGICO1);
+        BloqueMultiple segundoBloqueMultiple = new BloqueMultiple(primerBloqueMultiple, Tipo.LOGICO2);
+        return Arrays.asList(primerBloqueMultiple, segundoBloqueMultiple);
     }
 
     /**
@@ -42,8 +42,8 @@ public class BlockchainMultiple implements Serializable {
      *
      * @return Último bloque del blockchain físico.
      */
-    public Bloque obtenerUltimoBloque() {
-        return bloques.get(bloques.size() - 1);
+    public BloqueMultiple obtenerUltimoBloque() {
+        return bloqueMultiples.get(bloqueMultiples.size() - 1);
     }
 
     /**
@@ -53,13 +53,13 @@ public class BlockchainMultiple implements Serializable {
      * @param i    Posición desde la que se comienza a buscar.
      * @return Último bloque del blockchain lógico.
      */
-    public Bloque buscarBloquePrevioLogico(Tipo tipo, int i) {
+    public BloqueMultiple buscarBloquePrevioLogico(Tipo tipo, int i) {
         if (i < 0) {
             return null;
         }
-        Bloque bloque = this.bloques.get(i);
-        if (tipo.equals(bloque.getTipo()))
-            return bloque;
+        BloqueMultiple bloqueMultiple = this.bloqueMultiples.get(i);
+        if (tipo.equals(bloqueMultiple.getTipo()))
+            return bloqueMultiple;
         else {
             return buscarBloquePrevioLogico(tipo, --i);
         }
@@ -70,15 +70,15 @@ public class BlockchainMultiple implements Serializable {
      * guarda la diferencia de tiempo de creación entre el bloque actual y el
      * anterior.
      *
-     * @param bloque Bloque que se va a añadir.
+     * @param bloqueMultiple Bloque que se va a añadir.
      */
-    public void agregarBloque(Bloque bloque) {
-        Tipo tipo = bloque.getTipo();
-        Bloque bloquePrevioLogico = buscarBloquePrevioLogico(tipo, this.bloques.size() - 1);
+    public void agregarBloque(BloqueMultiple bloqueMultiple) {
+        Tipo tipo = bloqueMultiple.getTipo();
+        BloqueMultiple bloqueMultiplePrevioLogico = buscarBloquePrevioLogico(tipo, this.bloqueMultiples.size() - 1);
 
-        bloques.add(bloque);
+        bloqueMultiples.add(bloqueMultiple);
 
-        tiempoEntreCreacionDeBloques.get(tipo).add((double) (bloque.getHeader().getMarcaDeTiempoDeCreacion() - bloquePrevioLogico.getHeader().getMarcaDeTiempoDeCreacion()) / 1000);
+        tiempoEntreCreacionDeBloques.get(tipo).add((double) (bloqueMultiple.getHeader().getMarcaDeTiempoDeCreacion() - bloqueMultiplePrevioLogico.getHeader().getMarcaDeTiempoDeCreacion()) / 1000);
 
         if (tipo.equals(Tipo.LOGICO1)) {
             tiempoEntreCreacionDeBloques.get(Tipo.LOGICO2).add((double) 0);
@@ -93,7 +93,7 @@ public class BlockchainMultiple implements Serializable {
      * @return Tamaño del blockchain físico.
      */
     public int obtenerCantidadDeBloques() {
-        return bloques.size();
+        return bloqueMultiples.size();
     }
     
 }
