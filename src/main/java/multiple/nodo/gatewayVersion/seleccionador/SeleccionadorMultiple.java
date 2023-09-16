@@ -46,9 +46,6 @@ public class SeleccionadorMultiple extends Thread {
         long tiempoDelUltimoBloqueTipo2;
         while (true) {
             System.out.println("Seleccionando...");
-            tiempoInicio = System.currentTimeMillis();
-
-            tiempoDelUltimoBloqueTipo1 = System.currentTimeMillis();
             seleccionar(Tipo.LOGICO1);
 
 
@@ -61,16 +58,11 @@ public class SeleccionadorMultiple extends Thread {
             tiempoDelUltimoBloqueTipo2 = System.currentTimeMillis();
             seleccionar(Tipo.LOGICO2);
 
-
             while (true) {
                 tiempoActual = System.currentTimeMillis();
-                if ((tiempoActual - tiempoInicio > 10000) &&
-                        (tiempoActual - tiempoDelUltimoBloqueTipo1 > 10000) &&
-                        (tiempoActual - tiempoDelUltimoBloqueTipo2 > 10000)) {
+                if ((tiempoActual - tiempoDelUltimoBloqueTipo2 > 10000)) {
                     break;
                 }
-                tiempoDelUltimoBloqueTipo1 = gateway.getTiempoDeCreacionDeUltimoBloque().get(Tipo.LOGICO1);
-                tiempoDelUltimoBloqueTipo2 = gateway.getTiempoDeCreacionDeUltimoBloque().get(Tipo.LOGICO2);
             }
         }
     }
