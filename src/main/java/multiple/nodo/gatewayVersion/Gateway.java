@@ -28,6 +28,7 @@ public class Gateway {
     private Map<String, Integer> puertos = new HashMap<>();
     private Map<Tipo, Long> tiempoDeCreacionDeUltimoBloque = new HashMap<>();
     private int contadorDeBloques;
+    private boolean seVerificoPrimeraCreacion = false;
 
     public Gateway(Direccion direccion) {
         this.direccion = direccion;
@@ -69,6 +70,10 @@ public class Gateway {
 
     public Map<String, Integer> getPuertos() {
         return puertos;
+    }
+
+    public boolean isSeVerificoPrimeraCreacion() {
+        return seVerificoPrimeraCreacion;
     }
 
     public int getContadorDeBloques() {
@@ -120,11 +125,17 @@ public class Gateway {
             actualizarTransaccionesPendientes(tipo);
             actualizarTransaccionesEscogidas(true, tipo);
             System.out.println("Cantidad de bloques: " + ++contadorDeBloques);
+            if (tipo.equals(Tipo.LOGICO1)){
+                seVerificoPrimeraCreacion = true;
+            } else{
+                seVerificoPrimeraCreacion = false;
+            }
         } else {
             System.out.println("---------------ERROR--------------");
             actualizarTransaccionesEscogidas(false, tipo);
         }
         bloquesEnEspera.put(tipo, new ArrayList<>());
+
     }
 
     public synchronized void recibirTransaccion(Transaccion transaccion) {

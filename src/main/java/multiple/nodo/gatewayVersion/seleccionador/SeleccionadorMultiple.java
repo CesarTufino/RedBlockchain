@@ -47,11 +47,12 @@ public class SeleccionadorMultiple extends Thread {
             System.out.println("Seleccionando...");
             seleccionar(Tipo.LOGICO1);
 
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            while (true){
+                if (gateway.isSeVerificoPrimeraCreacion()){
+                    break;
+                }
             }
+
             tiempoDelUltimoBloqueTipo2 = System.currentTimeMillis();
             seleccionar(Tipo.LOGICO2);
             gateway.reiniciarNodosPosibles();
