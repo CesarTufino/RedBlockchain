@@ -13,7 +13,7 @@ import constantes.Direccion;
 public class TestRed1Nodo2 {
 
     public static void main(String[] args) throws IOException {
-        Nodo nodo = new Nodo(2, Direccion.DIRECCION_2, false);
+        Nodo nodo = new Nodo(2, Direccion.DIRECCION_2, true);
         Entrada hiloEntrada = new Entrada(nodo);
         hiloEntrada.start();
         nodo.buscarRed();
