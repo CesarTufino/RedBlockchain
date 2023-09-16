@@ -44,6 +44,7 @@ public class SeleccionadorMultiple extends Thread {
         long tiempoDelUltimoBloqueTipo1;
         long tiempoDelUltimoBloqueTipo2;
         while (true) {
+            tiempoInicio = System.currentTimeMillis();
             while (true){
                 if (!gateway.isSeVerificoPrimeraCreacion()){
                     break;
@@ -61,13 +62,12 @@ public class SeleccionadorMultiple extends Thread {
                 System.out.print("");
             }
 
-            tiempoDelUltimoBloqueTipo2 = System.currentTimeMillis();
             seleccionar(Tipo.LOGICO2);
             gateway.reiniciarNodosPosibles();
 
             while (true) {
                 tiempoActual = System.currentTimeMillis();
-                if ((tiempoActual - tiempoDelUltimoBloqueTipo2 > 10000)) {
+                if ((tiempoActual - tiempoInicio > 10000)) {
                     break;
                 }
             }
