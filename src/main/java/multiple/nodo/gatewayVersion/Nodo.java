@@ -235,11 +235,12 @@ public class Nodo {
         BloqueMultiple bloqueMultiplePrevioLogico = blockchainMultiple.buscarBloquePrevioLogico(tipo,
                 blockchainMultiple.obtenerCantidadDeBloques() - 1);
         long finBusqueda = System.nanoTime();
-        long tiempoDelUltimoBloque = bloqueMultiplePrevioFisico.getHeader().getMarcaDeTiempoDeCreacion();
+        long tiempoDelUltimoBloqueLogico = bloqueMultiplePrevioLogico.getHeader().getMarcaDeTiempoDeCreacion();
         while (true) {
-            if (System.currentTimeMillis() - tiempoDelUltimoBloque > 10000) { // Garantiza los 10 segundos minimos
+            if (System.currentTimeMillis() - tiempoDelUltimoBloqueLogico > 10000) { // Garantiza los 10 segundos minimos
                 break;
             }
+            System.out.print("");
         }
         BloqueMultiple bloqueMultiple = new BloqueMultiple(bloqueMultiplePrevioFisico, bloqueMultiplePrevioLogico, transaccionesDelBloque,
                 (double) (finBusqueda - inicioBusqueda), tipo);

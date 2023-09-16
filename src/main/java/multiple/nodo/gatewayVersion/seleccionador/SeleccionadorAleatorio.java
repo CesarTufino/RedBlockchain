@@ -20,7 +20,6 @@ public class SeleccionadorAleatorio extends Thread {
     public void seleccionar(Tipo tipo) {
         String direccionNodoSeleccionado1 = gateway.obtenerDireccionNodoPosible();
         String direccionNodoSeleccionado2 = gateway.obtenerDireccionNodoPosible();
-        gateway.reiniciarNodosPosibles();
 
         List<Transaccion> transacciones = gateway.escogerTransacciones(tipo);
         Paquete paquete = new Paquete(tipo, transacciones);
@@ -60,6 +59,7 @@ public class SeleccionadorAleatorio extends Thread {
             } else {
                 seleccionar(Tipo.LOGICO2);
             }
+            gateway.reiniciarNodosPosibles();
             while (true) {
                 tiempoActual = System.currentTimeMillis();
                 tiempoDelUltimoBloqueTipo1 = gateway.getTiempoDeCreacionDeUltimoBloque().get(Tipo.LOGICO1);
