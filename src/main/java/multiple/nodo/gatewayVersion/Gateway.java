@@ -8,6 +8,7 @@ import multiple.mensajes.InfoNodo;
 import multiple.mensajes.Mensaje;
 import multiple.mensajes.Paquete;
 import multiple.mensajes.Transaccion;
+import utils.HashUtil;
 import utils.RsaUtil;
 
 import java.security.PublicKey;
@@ -86,19 +87,20 @@ public class Gateway {
 
     public synchronized void recibirMensaje(Mensaje mensaje) throws Exception {
         int tipoDeMensaje = mensaje.getTipoDeContenido();
-        List<Object> contenido = mensaje.getContenido();
-        if (!RsaUtil.verify(contenido.toString(), mensaje.getFirma(),
+        Object contenido = mensaje.getContenido();
+        if (!RsaUtil.verify(HashUtil.SHA256(contenido.toString()), mensaje.getFirma(),
                 keyTable.get(mensaje.getDireccionRemitente()))){
+            System.out.println("Error");
             return;
         }
         if (tipoDeMensaje == 0) {
             // System.out.println("Transaccion recibida");
-            Transaccion transaccion = (Transaccion) (contenido.get(0));
+            Transaccion transaccion = (Transaccion) (contenido);
             recibirTransaccion(transaccion);
         }
         if (tipoDeMensaje == 1) {
-            //System.out.println("Bloque recibido");
-            BloqueMultiple bloqueMultiple = (BloqueMultiple) contenido.get(0);
+            System.out.println("Bloque recibido");
+            BloqueMultiple bloqueMultiple = (BloqueMultiple) contenido;
             recibirBloque(bloqueMultiple);
         }
     }

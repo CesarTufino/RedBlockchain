@@ -15,6 +15,7 @@ public class TestRed1Nodo1 {
         Nodo nodo = new Nodo(1, Direccion.DIRECCION_1);
         Entrada hiloEntrada = new Entrada(nodo);
         hiloEntrada.start();
+        nodo.buscarRed();
         while (true) {
             if (nodo.comprobarCantidadMinimaDeNodos()) break;
             System.out.print("");

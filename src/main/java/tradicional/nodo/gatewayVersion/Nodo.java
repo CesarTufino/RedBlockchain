@@ -106,7 +106,7 @@ public class Nodo {
         try {
             Transaccion transaccion = new Transaccion(direccion.getDireccionIP(), direccionDestinatario, monto,
                     System.currentTimeMillis(), TARIFA_TRANSACCION, clavePrivada);
-            Mensaje mensaje = new Mensaje(direccion.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getDireccionIP(), RsaUtil.sign(transaccion.toString(), clavePrivada),
+            Mensaje mensaje = new Mensaje(direccion.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getDireccionIP(), RsaUtil.sign(HashUtil.SHA256(transaccion.toString()), clavePrivada),
                     System.currentTimeMillis(), 0, transaccion);
             // System.out.println("Mensaje creado");
             salida.enviarMensaje(Direccion.DIRECCION_GATEWAY.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getPuerto(), mensaje);
@@ -121,10 +121,10 @@ public class Nodo {
 
     public synchronized void recibirMensaje(Mensaje mensaje) {
         int tipoDeMensaje = mensaje.getTipoDeContenido();
-        List<Object> contenido = mensaje.getContenido();
+        Object contenido = mensaje.getContenido();
         if (tipoDeMensaje == 1) {
             // System.out.println("Bloque recibido");
-            BloqueTradicional bloqueTradicional = (BloqueTradicional) contenido.get(0);
+            BloqueTradicional bloqueTradicional = (BloqueTradicional) contenido;
             String direccionDelNodo = mensaje.getDireccionRemitente();
             String firma = mensaje.getFirma();
             recibirBloque(bloqueTradicional, firma, direccionDelNodo);
@@ -207,12 +207,10 @@ public class Nodo {
         bloqueTradicional.setDireccionNodoMinero(this.direccion.getDireccionIP());
         // System.out.println("Block has been forged by " + this.name);
         try {
-            List<Object> contenidoMensaje = new ArrayList<>();
-            contenidoMensaje.add(bloqueTradicional);
             Mensaje mensaje = new Mensaje(this.direccion.getDireccionIP(), "ALL",
                     RsaUtil.sign(HashUtil.SHA256(bloqueTradicional.toString()), this.clavePrivada),
                     System.currentTimeMillis(),
-                    1, contenidoMensaje);
+                    1, bloqueTradicional);
             System.out.println("Envio de bloque");
             salida.broadcastMensaje(mensaje, red.getPuertos());
             salida.enviarMensaje(Direccion.DIRECCION_GATEWAY.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getPuerto(), mensaje);

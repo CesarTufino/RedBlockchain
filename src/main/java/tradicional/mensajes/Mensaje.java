@@ -13,7 +13,7 @@ public class Mensaje implements Serializable{
     private final String direccionDestinatario;
     private final long marcaDeTiempoDeCreacion;
     private final String firma;
-    private final List<Object> contenido = new ArrayList<>();
+    private final Object contenido;
     /**
      * Tipo del contenido del mensaje.
      * 0 -> Transaction, 1 -> Block.
@@ -37,13 +37,7 @@ public class Mensaje implements Serializable{
         this.firma = firma;
         this.marcaDeTiempoDeCreacion = marcaDeTiempoDeCreacion;
         this.tipoDeContenido = tipoDeContenido;
-        if (tipoDeContenido == 1) {
-            if (contenido instanceof List) {
-                this.contenido.add(((List<Object>) contenido).get(0));
-            }
-        } else {
-            this.contenido.add(contenido);
-        }
+        this.contenido = contenido;
     }
 
     public String getDireccionRemitente() {
@@ -62,7 +56,7 @@ public class Mensaje implements Serializable{
         return firma;
     }
 
-    public List<Object> getContenido() {
+    public Object getContenido() {
         return contenido;
     }
 }

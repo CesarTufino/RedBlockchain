@@ -47,32 +47,27 @@ public class SeleccionadorMultiple extends Thread {
             System.out.println("Seleccionando...");
             tiempoInicio = System.currentTimeMillis();
             seleccionar(Tipo.LOGICO1);
-
+/*
             while (true){
                 if (gateway.isSeVerificoPrimeraCreacion()){
                     break;
                 }
                 System.out.print("");
-            }
+            }*/
 
-            /*
+
             try {
                 Thread.sleep(1000);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-             */
 
             seleccionar(Tipo.LOGICO2);
             gateway.reiniciarNodosPosibles();
 
             while (true) {
                 tiempoActual = System.currentTimeMillis();
-                tiempoDelUltimoBloqueTipo1 = gateway.getTiempoDeCreacionDeUltimoBloque().get(Tipo.LOGICO1);
-                tiempoDelUltimoBloqueTipo2 = gateway.getTiempoDeCreacionDeUltimoBloque().get(Tipo.LOGICO2);
-                if ((tiempoActual - tiempoInicio > 10000) &&
-                        (tiempoActual - tiempoDelUltimoBloqueTipo1 > 10000) &&
-                        (tiempoActual - tiempoDelUltimoBloqueTipo2 > 10000)) {
+                if ((tiempoActual - tiempoInicio > 10000)) {
                     break;
                 }
             }

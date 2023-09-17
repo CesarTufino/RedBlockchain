@@ -15,6 +15,7 @@ public class TestRed1Nodo2 {
         Nodo nodo = new Nodo(2, Direccion.DIRECCION_2); // Mi nodo
         Entrada hiloEntrada = new Entrada(nodo);
         hiloEntrada.start();
+        nodo.buscarRed();
         // Espera hasta que exitan tres nodos en la red
         while (true) {
             if (nodo.comprobarCantidadMinimaDeNodos())
