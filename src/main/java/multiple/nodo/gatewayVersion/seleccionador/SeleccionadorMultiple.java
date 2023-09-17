@@ -55,7 +55,6 @@ public class SeleccionadorMultiple extends Thread {
                 System.out.print("");
             }*/
 
-
             try {
                 Thread.sleep(1000);
             } catch (Exception e) {
@@ -67,7 +66,11 @@ public class SeleccionadorMultiple extends Thread {
 
             while (true) {
                 tiempoActual = System.currentTimeMillis();
-                if ((tiempoActual - tiempoInicio > 10000)) {
+                tiempoDelUltimoBloqueTipo1 = gateway.getTiempoDeCreacionDeUltimoBloque().get(Tipo.LOGICO1);
+                tiempoDelUltimoBloqueTipo2 = gateway.getTiempoDeCreacionDeUltimoBloque().get(Tipo.LOGICO2);
+                if ((tiempoActual - tiempoInicio > 10000) &&
+                        (tiempoActual - tiempoDelUltimoBloqueTipo1 > 10000) ||
+                        (tiempoActual - tiempoDelUltimoBloqueTipo2 > 10000)) {
                     break;
                 }
             }
