@@ -1,12 +1,12 @@
-package gatewayVersion.blockchainTradicional.conexion;
+package tradicional.conexion;
 
 import constantes.Direccion;
-import gatewayVersion.blockchainTradicional.mensajes.InfoNodo;
-import gatewayVersion.blockchainTradicional.mensajes.Mensaje;
-import gatewayVersion.blockchainTradicional.mensajes.Transaccion;
-import gatewayVersion.blockchainTradicional.nodo.Gateway;
-import gatewayVersion.blockchainTradicional.nodo.Nodo;
-import gatewayVersion.blockchainTradicional.nodo.Red;
+import tradicional.mensajes.InfoNodo;
+import tradicional.mensajes.Mensaje;
+import tradicional.mensajes.Transaccion;
+import tradicional.nodo.gatewayVersion.Gateway;
+import tradicional.nodo.gatewayVersion.Nodo;
+import tradicional.nodo.gatewayVersion.Red;
 
 import java.util.List;
 

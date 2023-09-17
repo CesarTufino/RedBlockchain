@@ -13,13 +13,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class BlockchainMultiple implements Serializable {
 
-    private List<BloqueMultiple> bloqueMultiples = new CopyOnWriteArrayList<>();
+    private List<BloqueMultiple> bloques = new CopyOnWriteArrayList<>();
     private HashMap<Tipo,List<Double>> tiempoEntreCreacionDeBloques = new HashMap<>();
 
     public BlockchainMultiple() {
         tiempoEntreCreacionDeBloques.put(Tipo.LOGICO1, new CopyOnWriteArrayList<>());
         tiempoEntreCreacionDeBloques.put(Tipo.LOGICO2, new CopyOnWriteArrayList<>());
-        bloqueMultiples.addAll(crearPrimerBloque());
+        bloques.addAll(crearPrimerBloque());
     }
 
     public HashMap<Tipo, List<Double>> getTiempoEntreCreacionDeBloques() {
@@ -43,7 +43,7 @@ public class BlockchainMultiple implements Serializable {
      * @return Último bloque del blockchain físico.
      */
     public BloqueMultiple obtenerUltimoBloque() {
-        return bloqueMultiples.get(bloqueMultiples.size() - 1);
+        return bloques.get(bloques.size() - 1);
     }
 
     /**
@@ -57,7 +57,7 @@ public class BlockchainMultiple implements Serializable {
         if (i < 0) {
             return null;
         }
-        BloqueMultiple bloqueMultiple = this.bloqueMultiples.get(i);
+        BloqueMultiple bloqueMultiple = this.bloques.get(i);
         if (tipo.equals(bloqueMultiple.getTipo()))
             return bloqueMultiple;
         else {
@@ -74,9 +74,9 @@ public class BlockchainMultiple implements Serializable {
      */
     public void agregarBloque(BloqueMultiple bloqueMultiple) {
         Tipo tipo = bloqueMultiple.getTipo();
-        BloqueMultiple bloqueMultiplePrevioLogico = buscarBloquePrevioLogico(tipo, this.bloqueMultiples.size() - 1);
+        BloqueMultiple bloqueMultiplePrevioLogico = buscarBloquePrevioLogico(tipo, this.bloques.size() - 1);
 
-        bloqueMultiples.add(bloqueMultiple);
+        bloques.add(bloqueMultiple);
 
         tiempoEntreCreacionDeBloques.get(tipo).add((double) (bloqueMultiple.getHeader().getMarcaDeTiempoDeCreacion() - bloqueMultiplePrevioLogico.getHeader().getMarcaDeTiempoDeCreacion()) / 1000);
 
@@ -93,7 +93,7 @@ public class BlockchainMultiple implements Serializable {
      * @return Tamaño del blockchain físico.
      */
     public int obtenerCantidadDeBloques() {
-        return bloqueMultiples.size();
+        return bloques.size();
     }
     
 }

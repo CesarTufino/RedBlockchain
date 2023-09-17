@@ -1,12 +1,13 @@
-package gatewayVersion.blockchainTradicional.nodo;
+package tradicional.nodo.gatewayVersion;
 
 import constantes.Direccion;
-import gatewayVersion.blockchainTradicional.blockchain.Bloque;
-import gatewayVersion.blockchainTradicional.conexion.Entrada;
-import gatewayVersion.blockchainTradicional.conexion.Salida;
-import gatewayVersion.blockchainTradicional.mensajes.InfoNodo;
-import gatewayVersion.blockchainTradicional.mensajes.Mensaje;
-import gatewayVersion.blockchainTradicional.mensajes.Transaccion;
+import tradicional.blockchain.BloqueTradicional;
+import tradicional.conexion.Entrada;
+import tradicional.conexion.Salida;
+import tradicional.mensajes.InfoNodo;
+import tradicional.mensajes.Mensaje;
+import tradicional.mensajes.Transaccion;
+import utils.RsaUtil;
 
 import java.io.IOException;
 import java.security.PublicKey;
@@ -27,7 +28,7 @@ public class Gateway {
     private List<String> nodosSeleccionados = new ArrayList<>();
     private List<String> nodosPosibles = new ArrayList<>();
     private Salida salida;
-    private List<Bloque> bloquesEnEspera = new ArrayList<>();
+    private List<BloqueTradicional> bloquesEnEspera = new ArrayList<>();
     private long tiempoDeCreacionDeUltimoBloque;
     private int contadorDeBloques;
 
@@ -35,6 +36,7 @@ public class Gateway {
         this.direccion = direccion;
         this.salida = new Salida();
         this.contadorDeBloques = 0;
+        this.tiempoDeCreacionDeUltimoBloque = 0;
     }
 
     public long getTiempoDeCreacionDeUltimoBloque() {
@@ -61,14 +63,17 @@ public class Gateway {
         return puertos.keySet().size() >= 3;
     }
 
-    public void empezarAEscuchar() throws IOException {
-        Entrada hiloEntrada = new Entrada(this);
-        hiloEntrada.start();
+    public int getContadorDeBloques() {
+        return contadorDeBloques;
     }
 
-    public synchronized void recibirMensaje(Mensaje mensaje) {
-        int tipoDeMensaje = mensaje.getTipo();
+    public synchronized void recibirMensaje(Mensaje mensaje) throws Exception {
+        int tipoDeMensaje = mensaje.getTipoDeContenido();
         List<Object> contenido = mensaje.getContenido();
+        if (!RsaUtil.verify(contenido.toString(), mensaje.getFirma(),
+                keyTable.get(mensaje.getDireccionRemitente()))){
+            return;
+        }
         if (tipoDeMensaje == 0) {
             // System.out.println("Transaccion recibida");
             Transaccion transaccion = (Transaccion) (contenido.get(0));
@@ -76,17 +81,14 @@ public class Gateway {
         }
         if (tipoDeMensaje == 1) {
             // System.out.println("Bloque recibido");
-            Bloque bloque = (Bloque) contenido.get(0);
-            String direccionDelNodo = mensaje.getDireccionRemitente();
-            String firma = mensaje.getFirma();
-            recibirBloque(bloque);
+            BloqueTradicional bloqueTradicional = (BloqueTradicional) contenido.get(0);
+            recibirBloque(bloqueTradicional);
         }
     }
 
-    public synchronized void recibirBloque(Bloque bloque) {
-        //actualizarListaDeTransacciones(bloque);
+    public synchronized void recibirBloque(BloqueTradicional bloqueTradicional) {
         try {
-                bloquesEnEspera.add(bloque);
+                bloquesEnEspera.add(bloqueTradicional);
                 if (bloquesEnEspera.size()==2){
                     compararBloques();
                 }
@@ -96,20 +98,21 @@ public class Gateway {
     }
 
     private synchronized void compararBloques() {
-        if (bloquesEnEspera.get(0).getFooter().getHash().equals(bloquesEnEspera.get(1).getFooter().getHash())){
-            if (bloquesEnEspera.get(0).getIdNodo() > bloquesEnEspera.get(1).getIdNodo()) {
-                tiempoDeCreacionDeUltimoBloque = bloquesEnEspera.get(1).getHeader().getMarcaDeTiempo();
+        BloqueTradicional primerBloqueTradicional = bloquesEnEspera.get(0);
+        BloqueTradicional segundoBloqueTradicional = bloquesEnEspera.get(1);
+        if (primerBloqueTradicional.getFooter().getHash().equals(segundoBloqueTradicional.getFooter().getHash())){
+            System.out.println("Creación correcta");
+            if (primerBloqueTradicional.getIdNodoMinero() > segundoBloqueTradicional.getIdNodoMinero()) {
+                tiempoDeCreacionDeUltimoBloque = segundoBloqueTradicional.getHeader().getMarcaDeTiempo();
             } else{
-                tiempoDeCreacionDeUltimoBloque = bloquesEnEspera.get(0).getHeader().getMarcaDeTiempo();
+                tiempoDeCreacionDeUltimoBloque = primerBloqueTradicional.getHeader().getMarcaDeTiempo();
             }
             actualizarTransaccionesPendientes();
             actualizarTransaccionesEscogidas(true);
-            contadorDeBloques++;
-            if (contadorDeBloques==200){
-                System.exit(0);
-            }
+            System.out.println("Cantidad de bloques: " + ++contadorDeBloques);
         } else{
             System.out.println("---------------ERROR--------------");
+            actualizarTransaccionesEscogidas(false);
         }
         bloquesEnEspera = new ArrayList<>();
     }
@@ -159,4 +162,5 @@ public class Gateway {
         }
         nodosSeleccionados = new ArrayList<>();
     }
+
 }

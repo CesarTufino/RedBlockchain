@@ -29,7 +29,7 @@ public class TestRed1Nodo4 {
         }
         // Generación de transacciones
         for (int i = 0; i < 700; i++) {
-            if (nodo.getRed().NB_OF_BLOCK_OF_TYPE1_CREATED.size() + nodo.getRed().NB_OF_BLOCK_OF_TYPE2_CREATED.size() - 2 == MaximoDeBloques.MAX.getCantidad()) {
+            if (nodo.getRed().getBlockchain().obtenerCantidadDeBloques() - 2 == MaximoDeBloques.MAX.getCantidad()) {
                 break;
             }
             int a = (int) (((Math.random()) * 2) + 1);

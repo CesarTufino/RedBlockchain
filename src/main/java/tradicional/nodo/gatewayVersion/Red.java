@@ -1,4 +1,4 @@
-package gatewayVersion.blockchainTradicional.nodo;
+package tradicional.nodo.gatewayVersion;
 
 import java.io.Serializable;
 import java.security.PublicKey;
@@ -6,33 +6,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-import gatewayVersion.blockchainTradicional.blockchain.Blockchain;
-import gatewayVersion.blockchainTradicional.blockchain.Bloque;
-import gatewayVersion.blockchainTradicional.mensajes.InfoNodo;
+import tradicional.blockchain.BlockchainTradicional;
+import tradicional.blockchain.BloqueTradicional;
+import tradicional.mensajes.InfoNodo;
 
 public class Red implements Serializable {
 
     /**
-     * Número de bloques del primer blockchain lógico.
+     * Número de bloques
      **/
-    public List<Integer> NB_OF_BLOCK_OF_TYPE1_CREATED = new ArrayList<>();
+    public List<Integer> NB_OF_BLOCK_CREATED = new ArrayList<>();
     /**
-     * Lista de tiempos (lapso que se demora en encontrar el bloque previo de un
-     * blockchain lógico.)
+     * Lista de tiempos (lapso que se demora en encontrar el bloque previo)
      */
     public List<Double> searchTimes = new ArrayList<>();
     private List<Integer> nodosEscogidos1 = new ArrayList<>();
     private List<Integer> nodosEscogidos2 = new ArrayList<>();
     /**
-     * Intercambios de dinero del primer blockchain lógico.
+     * Intercambios de dinero.
      */
     public List<Double> exchangeMoney1 = new ArrayList<>();
-    /**
-     * Identificador del primer blockchain lógico.
-     */
-    public final String type1 = "Type1";
     /**
      * Tabla de mapeo de NodeAddress y PublicKey para verificar firmas.
      */
@@ -40,15 +34,15 @@ public class Red implements Serializable {
 
     private Map<String, Integer> puertos = new HashMap<>();
     /**
-     * Número de transacciones de cada blockchain lógico.
+     * Número de transacciones
      */
-    private Map<String, Integer> nbTrans = new HashMap<>();
-    private Blockchain blockchain;
+    private int nbTrans;
+    private BlockchainTradicional blockchainTradicional;
 
     public Red() {
-        this.blockchain = new Blockchain();
-        nbTrans.put(type1, 0);
-        NB_OF_BLOCK_OF_TYPE1_CREATED.add(1);
+        this.blockchainTradicional = new BlockchainTradicional();
+        nbTrans = 0;
+        NB_OF_BLOCK_CREATED.add(1);
     }
 
     public void addNode(InfoNodo infoNodo) {
@@ -67,7 +61,7 @@ public class Red implements Serializable {
         String stats = "";
         stats += "\n////////////////////////////////////////////";
         stats += "\nST=" + searchTimes;
-        stats += "\nWTT1=" + blockchain.getWTT1();
+        stats += "\nWTT1=" + blockchainTradicional.getTiempoEntreCreacionDeBloques();
         stats += "\nType_1_currency_exchanged=" + exchangeMoney1;
         stats += "\nNodos_escogidos1=" + nodosEscogidos1;
         stats += "\nNodos_escogidos2=" + nodosEscogidos2;
@@ -79,22 +73,21 @@ public class Red implements Serializable {
         return keyTable.get(direccion);
     }
 
-    public Map<String, Integer> getNbTrans() {
+    public int getNbTrans() {
         return nbTrans;
     }
 
     public void setNbTrans(int nb) {
-        this.nbTrans.put(type1, nb);
+        this.nbTrans = nb;
     }
 
-    public Blockchain getBlockchain() {
-        return blockchain;
+    public BlockchainTradicional getBlockchain() {
+        return blockchainTradicional;
     }
 
-    public void agregarBloque(Bloque bloque) {
-        blockchain.agregarBloque(bloque);
+    public void agregarBloque(BloqueTradicional bloqueTradicional) {
+        blockchainTradicional.agregarBloque(bloqueTradicional);
     }
-
 
     public int obtenerCantidadDeNodos() {
         return keyTable.keySet().size();
@@ -111,4 +104,5 @@ public class Red implements Serializable {
     public List<Integer> getNodosEscogidos2() {
         return nodosEscogidos2;
     }
+
 }

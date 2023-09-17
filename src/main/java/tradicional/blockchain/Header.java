@@ -1,4 +1,4 @@
-package gatewayVersion.blockchainTradicional.blockchain;
+package tradicional.blockchain;
 
 import java.io.Serializable;
 

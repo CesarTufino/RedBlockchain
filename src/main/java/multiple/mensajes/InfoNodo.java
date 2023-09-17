@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.security.PublicKey;
 
 /**
- * Clase InfoNofo.
+ * Clase InfoNodo.
  */
 public class InfoNodo implements Serializable{
     private String direccion;

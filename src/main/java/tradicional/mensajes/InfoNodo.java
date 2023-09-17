@@ -1,4 +1,4 @@
-package gatewayVersion.blockchainTradicional.mensajes;
+package tradicional.mensajes;
 
 import java.io.Serializable;
 import java.security.PublicKey;

@@ -1,4 +1,4 @@
-package gatewayVersion.blockchainTradicional.nodo;
+package tradicional.nodo.gatewayVersion;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import constantes.Direccion;
-import gatewayVersion.blockchainTradicional.blockchain.Bloque;
-import gatewayVersion.blockchainTradicional.conexion.Entrada;
-import gatewayVersion.blockchainTradicional.conexion.Salida;
-import gatewayVersion.blockchainTradicional.mensajes.InfoNodo;
-import gatewayVersion.blockchainTradicional.mensajes.Mensaje;
-import gatewayVersion.blockchainTradicional.mensajes.Transaccion;
+import tradicional.blockchain.BloqueTradicional;
+import tradicional.conexion.Entrada;
+import tradicional.conexion.Salida;
+import tradicional.mensajes.InfoNodo;
+import tradicional.mensajes.Mensaje;
+import tradicional.mensajes.Transaccion;
 import utils.*;
 
 public class Nodo {
@@ -30,9 +30,7 @@ public class Nodo {
     private final int DINERO_INICIAL = 100000000;
     private double billetera;
     private Red red = null;
-    private List<Bloque> bloquesEnEspera = new ArrayList<>();
-    private final String TYPE1 = "Type1";
-
+    private List<BloqueTradicional> bloquesEnEspera = new ArrayList<>();
 
     public Nodo(int id, Direccion direccion) {
         try {
@@ -66,14 +64,6 @@ public class Nodo {
 
     public void setRed(Red infoRed) {
         this.red = infoRed;
-    }
-
-    public void iniciarProceso() throws IOException {
-        // Hilo para escuchar
-        Entrada serverThread = new Entrada(this);
-        serverThread.start();
-        // Buscar datos en la red
-        buscarRed();
     }
 
     public void buscarRed() {
@@ -116,7 +106,7 @@ public class Nodo {
         try {
             Transaccion transaccion = new Transaccion(direccion.getDireccionIP(), direccionDestinatario, monto,
                     System.currentTimeMillis(), TARIFA_TRANSACCION, clavePrivada);
-            Mensaje mensaje = new Mensaje(direccion.getDireccionIP(), direccionDestinatario, RsaUtil.sign(transaccion.toString(), clavePrivada),
+            Mensaje mensaje = new Mensaje(direccion.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getDireccionIP(), RsaUtil.sign(transaccion.toString(), clavePrivada),
                     System.currentTimeMillis(), 0, transaccion);
             // System.out.println("Mensaje creado");
             salida.enviarMensaje(Direccion.DIRECCION_GATEWAY.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getPuerto(), mensaje);
@@ -130,38 +120,14 @@ public class Nodo {
     }
 
     public synchronized void recibirMensaje(Mensaje mensaje) {
-        int tipoDeMensaje = mensaje.getTipo();
+        int tipoDeMensaje = mensaje.getTipoDeContenido();
         List<Object> contenido = mensaje.getContenido();
-        if (tipoDeMensaje == 0) {
-            // System.out.println("Transaccion recibida");
-            Transaccion transaccion = (Transaccion) (contenido.get(0));
-            recibirTransaccion(transaccion);
-        }
         if (tipoDeMensaje == 1) {
             // System.out.println("Bloque recibido");
-            Bloque bloque = (Bloque) contenido.get(0);
+            BloqueTradicional bloqueTradicional = (BloqueTradicional) contenido.get(0);
             String direccionDelNodo = mensaje.getDireccionRemitente();
             String firma = mensaje.getFirma();
-            recibirBloque(bloque, firma, direccionDelNodo);
-        }
-    }
-
-    public synchronized void recibirTransaccion(Transaccion transaccion) {
-        boolean estadoDeLaTransaccion = false;
-        try {
-            estadoDeLaTransaccion = verificarTransaccion(transaccion);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (estadoDeLaTransaccion) {
-            //transaccionesPendientes.add(transaccion);
-            actualizarNbTrans(1);
-            // System.out.println("\n///-----------------------------------///");
-            // System.out.println("Información de la transacción recibida:");
-            // System.out.println(t);
-            // System.out.println("///-----------------------------------///\n");
-        } else {
-            //transaccionesFraudulentas.add(transaccion);
+            recibirBloque(bloqueTradicional, firma, direccionDelNodo);
         }
     }
 
@@ -170,12 +136,11 @@ public class Nodo {
                 red.obtenerClavePublicaPorDireccion(transaccion.getDireccionRemitente()));
     }
 
-    public synchronized void recibirBloque(Bloque bloque, String firma, String direccionDelNodo) {
-        //actualizarListaDeTransacciones(bloque);
+    public synchronized void recibirBloque(BloqueTradicional bloqueTradicional, String firma, String direccionDelNodo) {
         try {
-            if (RsaUtil.verify(HashUtil.SHA256(bloque.toString()), firma,
+            if (RsaUtil.verify(HashUtil.SHA256(bloqueTradicional.toString()), firma,
                     red.obtenerClavePublicaPorDireccion(direccionDelNodo))) {
-                bloquesEnEspera.add(bloque);
+                bloquesEnEspera.add(bloqueTradicional);
                 System.out.println("Bloque recibido");
                 if (bloquesEnEspera.size() == 2) {
                     compararBloques();
@@ -187,29 +152,31 @@ public class Nodo {
     }
 
     private void compararBloques() {
-        if (bloquesEnEspera.get(0).getFooter().getHash().equals(bloquesEnEspera.get(1).getFooter().getHash())) {
+        BloqueTradicional primerBloqueTradicional = bloquesEnEspera.get(0);
+        BloqueTradicional segundoBloqueTradicional = bloquesEnEspera.get(1);
+        if (primerBloqueTradicional.getFooter().getHash().equals(segundoBloqueTradicional.getFooter().getHash())) {
             System.out.println("Creación correcta");
-            if (bloquesEnEspera.get(0).getIdNodo() > bloquesEnEspera.get(1).getIdNodo()) {
-                red.getNodosEscogidos1().add(bloquesEnEspera.get(1).getIdNodo());
-                red.getNodosEscogidos2().add(bloquesEnEspera.get(0).getIdNodo());
-                agregarBloque(bloquesEnEspera.get(1));
+            if (primerBloqueTradicional.getIdNodoMinero() > segundoBloqueTradicional.getIdNodoMinero()) {
+                red.getNodosEscogidos1().add(segundoBloqueTradicional.getIdNodoMinero());
+                red.getNodosEscogidos2().add(primerBloqueTradicional.getIdNodoMinero());
+                agregarBloque(segundoBloqueTradicional);
             } else {
-                red.getNodosEscogidos1().add(bloquesEnEspera.get(0).getIdNodo());
-                red.getNodosEscogidos2().add(bloquesEnEspera.get(1).getIdNodo());
-                agregarBloque(bloquesEnEspera.get(0));
+                red.getNodosEscogidos1().add(primerBloqueTradicional.getIdNodoMinero());
+                red.getNodosEscogidos2().add(segundoBloqueTradicional.getIdNodoMinero());
+                agregarBloque(primerBloqueTradicional);
             }
-            imprimirInformacion();
         } else {
             System.out.println("---------------ERROR--------------");
         }
         bloquesEnEspera = new ArrayList<>();
+        System.out.println(red.getStats());
     }
 
-    public synchronized void agregarBloque(Bloque bloque) {
-        red.agregarBloque(bloque);
-        if (!bloque.getDireccionNodo().equals("Master"))
-            updateAllWallet(bloque);
-        actualizarST(bloque.getTiempoDeBusqueda());
+    public synchronized void agregarBloque(BloqueTradicional bloqueTradicional) {
+        red.agregarBloque(bloqueTradicional);
+        if (!bloqueTradicional.getDireccionNodoMinero().equals("Master"))
+            updateAllWallet(bloqueTradicional);
+        actualizarST(bloqueTradicional.getTiempoDeBusqueda());
         actualizarNBOfBlock();
         System.out.println("\n///-----------------------------------///");
         System.out.println("Bloque agregado");
@@ -226,23 +193,30 @@ public class Nodo {
         }
         System.out.println("---------------Se crea bloque---------------");
         long inicioBusqueda = System.nanoTime();
-        Bloque bloquePrevio = red.getBlockchain().obtenerUltimoBloque();
+        BloqueTradicional bloqueTradicionalPrevio = red.getBlockchain().obtenerUltimoBloque();
         long finBusqueda = System.nanoTime();
-        Bloque bloque = new Bloque(bloquePrevio, transaccionesDelBloque, (double) (finBusqueda - inicioBusqueda));
-        bloque.setIdNodo(this.id);
-        bloque.setDireccionNodo(this.direccion.getDireccionIP());
+        long tiempoDelUltimoBloque = bloqueTradicionalPrevio.getHeader().getMarcaDeTiempo();
+        while (true) {
+            if (System.currentTimeMillis() - tiempoDelUltimoBloque > 10000) { // Garantiza los 10 segundos minimos
+                break;
+            }
+            System.out.print("");
+        }
+        BloqueTradicional bloqueTradicional = new BloqueTradicional(bloqueTradicionalPrevio, transaccionesDelBloque, (double) (finBusqueda - inicioBusqueda));
+        bloqueTradicional.setIdNodoMinero(this.id);
+        bloqueTradicional.setDireccionNodoMinero(this.direccion.getDireccionIP());
         // System.out.println("Block has been forged by " + this.name);
         try {
-
             List<Object> contenidoMensaje = new ArrayList<>();
-            contenidoMensaje.add(bloque);
+            contenidoMensaje.add(bloqueTradicional);
             Mensaje mensaje = new Mensaje(this.direccion.getDireccionIP(), "ALL",
-                    RsaUtil.sign(HashUtil.SHA256(bloque.toString()), this.clavePrivada),
+                    RsaUtil.sign(HashUtil.SHA256(bloqueTradicional.toString()), this.clavePrivada),
                     System.currentTimeMillis(),
                     1, contenidoMensaje);
             System.out.println("Envio de bloque");
             salida.broadcastMensaje(mensaje, red.getPuertos());
             salida.enviarMensaje(Direccion.DIRECCION_GATEWAY.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getPuerto(), mensaje);
+            System.out.println("Fin de envio de bloque");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error signing");
@@ -250,17 +224,12 @@ public class Nodo {
         // System.out.println("---------------------------------------------------");
     }
 
-    public void actualizarNbTrans(int cantidad) {
-        HashMap<String, Integer> nbTrans = (HashMap<String, Integer>) red.getNbTrans();
-        red.setNbTrans(nbTrans.get(TYPE1) + cantidad);
-    }
-
     public void actualizarST(double st) {
         red.searchTimes.add(st);
     }
 
     public void actualizarNBOfBlock() {
-        red.NB_OF_BLOCK_OF_TYPE1_CREATED.add(red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + 1);
+        red.NB_OF_BLOCK_CREATED.add(red.NB_OF_BLOCK_CREATED.size() + 1);
         // Último en ejecutarse
 
     }
@@ -275,11 +244,11 @@ public class Nodo {
     /**
      * Método que actualiza las billeteras de todos los nodos que participaron.
      *
-     * @param bloque Bloque.
+     * @param bloqueTradicional Bloque.
      */
-    private void updateAllWallet(Bloque bloque) {
+    private void updateAllWallet(BloqueTradicional bloqueTradicional) {
         double totalFee = 0;
-        List<Transaccion> transacciones = bloque.getTransaction();
+        List<Transaccion> transacciones = bloqueTradicional.getTransaction();
         double montoTotal = 0;
         for (Transaccion transaccion : transacciones) {
             transaccion.confirmar();
@@ -298,7 +267,7 @@ public class Nodo {
             }
         }
         // Actualización del minero.
-        if (bloque.getDireccionNodo().equals(direccion)) {
+        if (bloqueTradicional.getDireccionNodoMinero().equals(direccion)) {
             recibirDinero(totalFee);
         }
         actualizarExchangeMoney(montoTotal);
@@ -308,19 +277,4 @@ public class Nodo {
         red.exchangeMoney1.add(monto);
     }
 
-    private void imprimirInformacion() {
-        System.out.println(red.getStats());
-        if (red.NB_OF_BLOCK_OF_TYPE1_CREATED.size() > 200) {
-            try {
-                BufferedWriter archivo = new BufferedWriter(
-                        new FileWriter("Blockchain V1 (Gateway-Tradicional) - Resultado.txt", true));
-                archivo.write(red.getStats());
-                archivo.newLine();
-                archivo.close();
-                System.out.println("Archivo guardado");
-            } catch (IOException e) {
-            }
-            System.exit(0);
-        }
-    }
 }

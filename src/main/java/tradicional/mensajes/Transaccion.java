@@ -1,4 +1,4 @@
-package gatewayVersion.blockchainTradicional.mensajes;
+package tradicional.mensajes;
 
 import java.io.Serializable;
 import java.security.PrivateKey;
@@ -15,19 +15,16 @@ public class Transaccion implements Serializable {
     private final String direccionDestinatario;
     private final double monto;
     private final double tarifa;
-    /**
-     * Fecha de creación de la transacción.
-     */
-    private final long marcaDeTiempo;
+    private final long marcaDeTiempoDeCreacion;
     private String firma;
     private boolean transaccionConfirmada = false;
 
-    public Transaccion(String direccionRemitente, String direccionDestinatario, double monto, long marcaDeTiempo,
+    public Transaccion(String direccionRemitente, String direccionDestinatario, double monto, long marcaDeTiempoDeCreacion,
             double tarifa, PrivateKey clavePrivadaRemitente) {
         this.direccionRemitente = direccionRemitente;
         this.direccionDestinatario = direccionDestinatario;
         this.monto = monto;
-        this.marcaDeTiempo = marcaDeTiempo;
+        this.marcaDeTiempoDeCreacion = marcaDeTiempoDeCreacion;
         this.tarifa = tarifa;
         this.hash = HashUtil.SHA256(this.toString());
         try {
@@ -50,8 +47,8 @@ public class Transaccion implements Serializable {
         return monto;
     }
 
-    public long getMarcaDeTiempo() {
-        return marcaDeTiempo;
+    public long getMarcaDeTiempoDeCreacion() {
+        return marcaDeTiempoDeCreacion;
     }
 
     public String getFirma() {
@@ -66,10 +63,6 @@ public class Transaccion implements Serializable {
         return tarifa;
     }
 
-    public boolean isTransaccionConfirmada() {
-        return transaccionConfirmada;
-    }
-
     /**
      * Método para confirmar la transacción.
      */
@@ -80,7 +73,7 @@ public class Transaccion implements Serializable {
     @Override
     public String toString() {
         return direccionDestinatario + " envia $" + monto + " a " + direccionRemitente
-                + " Marca de tiempo : " + marcaDeTiempo 
+                + " Marca de tiempo : " + marcaDeTiempoDeCreacion
                 + " Tarifa de transaccion : " + tarifa;
     }
 

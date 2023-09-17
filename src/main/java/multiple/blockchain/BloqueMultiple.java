@@ -9,7 +9,7 @@ import multiple.mensajes.Transaccion;
 import utils.HashUtil;
 
 /**
- * Clase Bloque.
+ * Clase BloqueMultiple.
  */
 public class BloqueMultiple implements Serializable {
 

@@ -5,23 +5,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Clase Message.
+ * Clase Mensaje.
  */
 public class Mensaje implements Serializable{
 
     private final String direccionRemitente;
     private final String direccionDestinatario;
-    /**
-     * Fecha de creación del mensaje.
-     */
-    private final long marcaDeTiempo;
+    private final long marcaDeTiempoDeCreacion;
     private final String firma;
     private final List<Object> contenido = new ArrayList<>();
     /**
      * Tipo del contenido del mensaje.
      * 0 -> Transaction, 1 -> Block.
      */
-    private final int tipo;
+    private final int tipoDeContenido;
 
     /**
      * Constructor del Message.
@@ -29,18 +26,18 @@ public class Mensaje implements Serializable{
      * @param direccionRemitente Dirección del emisor del mensaje.
      * @param direccionDestinatario Dirección del destinatario del mensaje.
      * @param firma Firma del bloque.
-     * @param marcaDeTiempo Fecha de creación del mensaje.
-     * @param tipo Tipo del contenido del mensaje.
+     * @param marcaDeTiempoDeCreacion Fecha de creación del mensaje.
+     * @param tipoDeContenido Tipo del contenido del mensaje.
      * @param contenido Contenido del mensaje.
      */
     @SuppressWarnings("unchecked") 
-    public Mensaje(String direccionRemitente, String direccionDestinatario, String firma, long marcaDeTiempo, int tipo, Object contenido) {
+    public Mensaje(String direccionRemitente, String direccionDestinatario, String firma, long marcaDeTiempoDeCreacion, int tipoDeContenido, Object contenido) {
         this.direccionRemitente = direccionRemitente;
         this.direccionDestinatario = direccionDestinatario;
         this.firma = firma;
-        this.marcaDeTiempo = marcaDeTiempo;
-        this.tipo = tipo;
-        if (tipo == 1) {
+        this.marcaDeTiempoDeCreacion = marcaDeTiempoDeCreacion;
+        this.tipoDeContenido = tipoDeContenido;
+        if (tipoDeContenido == 1) {
             if (contenido instanceof List) {
                 this.contenido.add(((List<Object>) contenido).get(0));
             }
@@ -57,12 +54,8 @@ public class Mensaje implements Serializable{
         return direccionDestinatario;
     }
 
-    public long getMarcaDeTiempo() {
-        return marcaDeTiempo;
-    }
-
-    public int getTipo() {
-        return tipo;
+    public int getTipoDeContenido() {
+        return tipoDeContenido;
     }
 
     public String getFirma() {

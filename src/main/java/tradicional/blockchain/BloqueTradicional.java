@@ -1,39 +1,36 @@
-package gatewayVersion.blockchainTradicional.blockchain;
+package tradicional.blockchain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import gatewayVersion.blockchainTradicional.mensajes.Transaccion;
+import tradicional.mensajes.Transaccion;
 import utils.HashUtil;
 
-public class Bloque implements Serializable {
+/**
+ * Clase BloqueTradicional.
+ */
+public class BloqueTradicional implements Serializable {
 
     private final Header header;
     private final Footer footer;
     private final List<Transaccion> transacciones;
-    /**
-     * ID de nodo que extrajo el bloque.
-     */
-    private int idNodo;
-    /**
-     * Dirección del nodo que extrajo el bloque.
-     */
-    private String direccionNodo;
+    private int idNodoMinero;
+    private String direccionNodoMinero;
     private double tiempoDeBusqueda;
 
     /**
      * Constructor de todos los bloques excepto el primero
      * 
-     * @param bloquePrevio Último bloque, en la cadena de bloques.
+     * @param bloqueTradicionalPrevio Último bloque, en la cadena de bloques.
      * @param transacciones Lista de transacciones que se agregarán al nuevo bloque.
      * @param tiempoDeBusqueda Tiempo de busqueda del bloque previo
      * 
      */
-    public Bloque(Bloque bloquePrevio, List<Transaccion> transacciones, double tiempoDeBusqueda) {
+    public BloqueTradicional(BloqueTradicional bloqueTradicionalPrevio, List<Transaccion> transacciones, double tiempoDeBusqueda) {
         this.transacciones = new ArrayList<>(transacciones);
         String stringTransacciones = obtenerStringDeTransacciones();
-        this.header = new Header(bloquePrevio.getFooter().getHash());
+        this.header = new Header(bloqueTradicionalPrevio.getFooter().getHash());
         this.footer = new Footer(HashUtil.SHA256(stringTransacciones + header.hashBloquePrevio));
         this.tiempoDeBusqueda = tiempoDeBusqueda;
     }
@@ -42,7 +39,7 @@ public class Bloque implements Serializable {
      * Constructor del primer bloque.
      * 
      */
-    public Bloque() {
+    public BloqueTradicional() {
         this.header = new Header();
         this.footer = new Footer(HashUtil.SHA256("Master"));
         this.transacciones = new ArrayList<>();
@@ -56,20 +53,20 @@ public class Bloque implements Serializable {
         return footer;
     }
 
-    public int getIdNodo() {
-        return idNodo;
+    public int getIdNodoMinero() {
+        return idNodoMinero;
     }
 
-    public void setIdNodo(int nodeID) {
-        this.idNodo = nodeID;
+    public void setIdNodoMinero(int nodeID) {
+        this.idNodoMinero = nodeID;
     }
 
-    public String getDireccionNodo() {
-        return direccionNodo;
+    public String getDireccionNodoMinero() {
+        return direccionNodoMinero;
     }
 
-    public void setDireccionNodo(String nodeAddress) {
-        this.direccionNodo = nodeAddress;
+    public void setDireccionNodoMinero(String nodeAddress) {
+        this.direccionNodoMinero = nodeAddress;
     }
 
     public List<Transaccion> getTransaction() {

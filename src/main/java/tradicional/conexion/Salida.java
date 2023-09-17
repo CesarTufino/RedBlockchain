@@ -1,4 +1,4 @@
-package gatewayVersion.blockchainTradicional.conexion;
+package tradicional.conexion;
 
 import java.io.*;
 import java.net.*;
@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import constantes.Direccion;
-import gatewayVersion.blockchainTradicional.mensajes.InfoNodo;
-import gatewayVersion.blockchainTradicional.mensajes.Mensaje;
-import gatewayVersion.blockchainTradicional.mensajes.Transaccion;
-import gatewayVersion.blockchainTradicional.nodo.Red;
+import tradicional.mensajes.InfoNodo;
+import tradicional.mensajes.Mensaje;
+import tradicional.mensajes.Transaccion;
+import tradicional.nodo.gatewayVersion.Red;
 
 public class Salida {
     private final int timeout = 1000;

@@ -1,7 +1,6 @@
 package multiple.nodo.gatewayVersion;
 
 import constantes.Direccion;
-import constantes.MaximoDeBloques;
 import constantes.Tipo;
 import multiple.blockchain.BloqueMultiple;
 import multiple.conexion.Salida;
@@ -9,6 +8,7 @@ import multiple.mensajes.InfoNodo;
 import multiple.mensajes.Mensaje;
 import multiple.mensajes.Paquete;
 import multiple.mensajes.Transaccion;
+import utils.RsaUtil;
 
 import java.security.PublicKey;
 import java.security.SecureRandom;
@@ -84,16 +84,20 @@ public class Gateway {
         return puertos.keySet().size() >= 4;
     }
 
-    public synchronized void recibirMensaje(Mensaje mensaje) {
-        int tipoDeMensaje = mensaje.getTipo();
+    public synchronized void recibirMensaje(Mensaje mensaje) throws Exception {
+        int tipoDeMensaje = mensaje.getTipoDeContenido();
         List<Object> contenido = mensaje.getContenido();
+        if (!RsaUtil.verify(contenido.toString(), mensaje.getFirma(),
+                keyTable.get(mensaje.getDireccionRemitente()))){
+            return;
+        }
         if (tipoDeMensaje == 0) {
             // System.out.println("Transaccion recibida");
             Transaccion transaccion = (Transaccion) (contenido.get(0));
             recibirTransaccion(transaccion);
         }
         if (tipoDeMensaje == 1) {
-            System.out.println("Bloque recibido");
+            //System.out.println("Bloque recibido");
             BloqueMultiple bloqueMultiple = (BloqueMultiple) contenido.get(0);
             recibirBloque(bloqueMultiple);
         }
@@ -135,7 +139,6 @@ public class Gateway {
             actualizarTransaccionesEscogidas(false, tipo);
         }
         bloquesEnEspera.put(tipo, new ArrayList<>());
-
     }
 
     public synchronized void recibirTransaccion(Transaccion transaccion) {

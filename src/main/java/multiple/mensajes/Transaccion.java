@@ -71,10 +71,6 @@ public class Transaccion implements Serializable {
         return tipo;
     }
 
-    public boolean isTransaccionConfirmada() {
-        return transaccionConfirmada;
-    }
-
     /**
      * Método para confirmar la transacción.
      */

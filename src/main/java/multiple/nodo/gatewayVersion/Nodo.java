@@ -1,8 +1,5 @@
 package multiple.nodo.gatewayVersion;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -11,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import constantes.Direccion;
-import constantes.MaximoDeBloques;
 import constantes.Tipo;
 import multiple.blockchain.BloqueMultiple;
 import multiple.conexion.Salida;
@@ -122,7 +118,7 @@ public class Nodo {
         try {
             Transaccion transaccion = new Transaccion(tipo, direccion.getDireccionIP(), direccionDestinatario, monto,
                     System.currentTimeMillis(), TARIFA_TRANSACCION, clavePrivada);
-            Mensaje mensaje = new Mensaje(direccion.getDireccionIP(), direccionDestinatario, RsaUtil.sign(transaccion.toString(), clavePrivada),
+            Mensaje mensaje = new Mensaje(direccion.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getDireccionIP(), RsaUtil.sign(transaccion.toString(), clavePrivada),
                     System.currentTimeMillis(), 0, transaccion);
             // System.out.println("Mensaje creado");
             salida.enviarMensaje(Direccion.DIRECCION_GATEWAY.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getPuerto(), mensaje);
@@ -142,7 +138,7 @@ public class Nodo {
     }
 
     public synchronized void recibirMensaje(Mensaje mensaje) {
-        int tipoDeMensaje = mensaje.getTipo();
+        int tipoDeMensaje = mensaje.getTipoDeContenido();
         List<Object> contenido = mensaje.getContenido();
         if (tipoDeMensaje == 1) {
             // System.out.println("Bloque recibido");

@@ -1,22 +1,21 @@
-package tests.testV7;
+package tests.testV5;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import constantes.MaximoDeBloques;
-import constantes.Tipo;
-import multiple.conexion.Entrada;
-import multiple.nodo.gatewayVersion.Nodo;
+import tradicional.conexion.Entrada;
+import tradicional.nodo.gatewayVersion.Nodo;
 import constantes.Direccion;
 
-public class TestRed1Nodo3 {
+public class TestRed1Nodo2 {
 
     public static void main(String[] args) throws IOException {
-        Nodo nodo = new Nodo(3, Direccion.DIRECCION_3, false); // Mi nodo
+        Nodo nodo = new Nodo(2, Direccion.DIRECCION_2); // Mi nodo
         Entrada hiloEntrada = new Entrada(nodo);
         hiloEntrada.start();
-        nodo.buscarRed();
+        // Espera hasta que exitan tres nodos en la red
         while (true) {
             if (nodo.comprobarCantidadMinimaDeNodos())
                 break;
@@ -27,16 +26,16 @@ public class TestRed1Nodo3 {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        // Generación de transacciones
+        /// Generación de transacciones
         for (int i = 0; i < 700; i++) {
-            if (nodo.getRed().getBlockchain().obtenerCantidadDeBloques() - 2 == MaximoDeBloques.MAX.getCantidad()) {
+            if (nodo.getRed().getBlockchain().obtenerCantidadDeBloques() - 1 == MaximoDeBloques.MAX.getCantidad()) {
                 break;
             }
             int a = (int) (((Math.random()) * 2) + 1);
             if (a == 1)
-                nodo.enviarDinero(1.23, Direccion.DIRECCION_1.getDireccionIP(), Tipo.LOGICO1);
+                nodo.enviarDinero(1.23, Direccion.DIRECCION_3.getDireccionIP());
             else
-                nodo.enviarDinero(3.47, Direccion.DIRECCION_2.getDireccionIP(), Tipo.LOGICO2);
+                nodo.enviarDinero(3.47, Direccion.DIRECCION_1.getDireccionIP());
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
@@ -44,10 +43,10 @@ public class TestRed1Nodo3 {
             }
         }
         while (true) {
-            if (nodo.getRed().getBlockchain().obtenerCantidadDeBloques() - 2 == MaximoDeBloques.MAX.getCantidad()) {
+            if (nodo.getRed().getBlockchain().obtenerCantidadDeBloques() - 1 == MaximoDeBloques.MAX.getCantidad()) {
                 try {
                     BufferedWriter archivo = new BufferedWriter(
-                            new FileWriter("Blockchain V7 (Gateway-Probabilidad Definida) - Resultado.txt", true));
+                            new FileWriter("Blockchain V5 (Gateway-Tradicional) - Resultado.txt", true));
                     archivo.write(nodo.getRed().getStats());
                     archivo.newLine();
                     archivo.close();

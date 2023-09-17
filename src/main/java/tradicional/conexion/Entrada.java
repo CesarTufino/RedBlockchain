@@ -1,10 +1,10 @@
-package gatewayVersion.blockchainTradicional.conexion;
+package tradicional.conexion;
 
 import java.io.*;
 import java.net.*;
 
-import gatewayVersion.blockchainTradicional.nodo.Gateway;
-import gatewayVersion.blockchainTradicional.nodo.Nodo;
+import tradicional.nodo.gatewayVersion.Gateway;
+import tradicional.nodo.gatewayVersion.Nodo;
 
 public class Entrada extends Thread {
     private ServerSocket serverSocket;

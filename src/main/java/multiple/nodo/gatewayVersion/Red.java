@@ -26,11 +26,9 @@ public class Red implements Serializable {
      */
     public List<Integer> NB_OF_BLOCK_OF_TYPE2_CREATED = new ArrayList<>();
     /**
-     * Lista de tiempos (lapso que se demora en encontrar el bloque previo de un
-     * blockchain lógico.)
+     * Lista de tiempos (lapso que se demora en encontrar los bloques previos)
      */
     public List<Double> searchTimes = new ArrayList<>();
-
     private HashMap<Tipo, List<Integer>> nodosEscogidos1 = new HashMap<>();
     private HashMap<Tipo, List<Integer>> nodosEscogidos2 = new HashMap<>();
     /**
@@ -129,4 +127,5 @@ public class Red implements Serializable {
     public HashMap<Tipo, List<Integer>> getNodosEscogidos2() {
         return nodosEscogidos2;
     }
+
 }
