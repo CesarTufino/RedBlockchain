@@ -1,6 +1,6 @@
 package multiple.blockchain;
 
-import constantes.Tipo;
+import general.constantes.Tipo;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -27,7 +27,7 @@ public class BlockchainMultiple implements Serializable {
     }
 
     /**
-     * Método que crea el primer bloque de cada blockchain lógico.
+     * Método que crea el primer bloque de cada general.blockchain lógico.
      *
      * @return Primeros bloques.
      */
@@ -38,20 +38,20 @@ public class BlockchainMultiple implements Serializable {
     }
 
     /**
-     * Método que devuelve el último bloque del blockchain físico.
+     * Método que devuelve el último bloque del general.blockchain físico.
      *
-     * @return Último bloque del blockchain físico.
+     * @return Último bloque del general.blockchain físico.
      */
     public BloqueMultiple obtenerUltimoBloque() {
         return bloques.get(bloques.size() - 1);
     }
 
     /**
-     * Método que devuelve el último bloque de un blockchain lógico.
+     * Método que devuelve el último bloque de un general.blockchain lógico.
      *
-     * @param tipo Identificador del blockchain lógico.
+     * @param tipo Identificador del general.blockchain lógico.
      * @param i    Posición desde la que se comienza a buscar.
-     * @return Último bloque del blockchain lógico.
+     * @return Último bloque del general.blockchain lógico.
      */
     public BloqueMultiple buscarBloquePrevioLogico(Tipo tipo, int i) {
         if (i < 0) {
@@ -66,7 +66,7 @@ public class BlockchainMultiple implements Serializable {
     }
 
     /**
-     * Método que agrega un bloque al blockchain físico y
+     * Método que agrega un bloque al general.blockchain físico y
      * guarda la diferencia de tiempo de creación entre el bloque actual y el
      * anterior.
      *
@@ -88,9 +88,9 @@ public class BlockchainMultiple implements Serializable {
     }
 
     /**
-     * Método que devuelve el tamaño del blockchain físico.
+     * Método que devuelve el tamaño del general.blockchain físico.
      *
-     * @return Tamaño del blockchain físico.
+     * @return Tamaño del general.blockchain físico.
      */
     public int obtenerCantidadDeBloques() {
         return bloques.size();

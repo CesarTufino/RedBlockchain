@@ -1,7 +1,6 @@
 package multiple.mensajes;
 
-import constantes.Tipo;
-import multiple.mensajes.Transaccion;
+import general.constantes.Tipo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,9 +10,9 @@ public class Paquete implements Serializable {
 
     private final Tipo tipo;
 
-    private List<Transaccion> transacciones = new ArrayList<>();
+    private List<TransaccionMultiple> transacciones = new ArrayList<>();
 
-    public Paquete(Tipo tipo, List<Transaccion> transacciones) {
+    public Paquete(Tipo tipo, List<TransaccionMultiple> transacciones) {
         this.tipo = tipo;
         this.transacciones = transacciones;
     }
@@ -22,7 +21,7 @@ public class Paquete implements Serializable {
         return tipo;
     }
 
-    public List<Transaccion> getTransacciones() {
+    public List<TransaccionMultiple> getTransacciones() {
         return transacciones;
     }
 }

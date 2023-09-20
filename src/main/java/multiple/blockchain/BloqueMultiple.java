@@ -4,19 +4,20 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import constantes.Tipo;
-import multiple.mensajes.Transaccion;
-import utils.HashUtil;
+import general.blockchain.Footer;
+import general.constantes.Tipo;
+import multiple.mensajes.TransaccionMultiple;
+import general.utils.HashUtil;
 
 /**
  * Clase BloqueMultiple.
  */
 public class BloqueMultiple implements Serializable {
 
-    private final Header header;
+    private final HeaderMultiple headerMultiple;
     private final Footer footer;
     private final Tipo tipo;
-    private final List<Transaccion> transacciones;
+    private final List<TransaccionMultiple> transacciones;
     private int idNodoMinero;
     private String direccionNodoMinero;
     private double tiempoDeBusqueda;
@@ -29,23 +30,23 @@ public class BloqueMultiple implements Serializable {
      * @param transacciones      Lista de transacciones del bloque.
      * @param tiempoDeBusqueda   Tiempo de busqueda de los bloques previos.
      */
-    public BloqueMultiple(BloqueMultiple bloqueMultipleFisicoPrevio, BloqueMultiple bloqueMultipleLogicoPrevio, List<Transaccion> transacciones, double tiempoDeBusqueda, Tipo tipo) {
+    public BloqueMultiple(BloqueMultiple bloqueMultipleFisicoPrevio, BloqueMultiple bloqueMultipleLogicoPrevio, List<TransaccionMultiple> transacciones, double tiempoDeBusqueda, Tipo tipo) {
         this.transacciones = new ArrayList<>(transacciones);
         String stringTransacciones = this.obtenerStringDeTransacciones();
-        this.header = new Header(bloqueMultipleFisicoPrevio.getFooter().getHash(), bloqueMultipleLogicoPrevio.getFooter().getHash());
-        this.footer = new Footer(HashUtil.SHA256(stringTransacciones + header.getHashBloqueLogicoPrevio() + header.getHashBloqueFisicoPrevio()));
+        this.headerMultiple = new HeaderMultiple(bloqueMultipleFisicoPrevio.getFooter().getHash(), bloqueMultipleLogicoPrevio.getFooter().getHash());
+        this.footer = new Footer(HashUtil.SHA256(stringTransacciones + headerMultiple.getHashBloqueLogicoPrevio() + headerMultiple.getHashBloqueFisicoPrevio()));
         this.tipo = tipo;
         this.tiempoDeBusqueda = tiempoDeBusqueda;
     }
 
     /**
      * Constructor del primer bloque.
-     * Usado para crear el primer bloque del primer blockchain lógico.
+     * Usado para crear el primer bloque del primer general.blockchain lógico.
      *
      * @param tipo Tipo de bloque lógico.
      */
     public BloqueMultiple(Tipo tipo) {
-        this.header = new Header();
+        this.headerMultiple = new HeaderMultiple();
         this.footer = new Footer(HashUtil.SHA256("Master"));
         this.transacciones = new ArrayList<>();
         this.tipo = tipo;
@@ -54,21 +55,21 @@ public class BloqueMultiple implements Serializable {
 
     /**
      * Constructor del bloque.
-     * Usado para crear el primer bloque del segundo blockchain lógico.
+     * Usado para crear el primer bloque del segundo general.blockchain lógico.
      *
      * @param tipo         Identificador del tipo de bloque.
      * @param primerBloqueMultiple Primer(anterior) bloque físico.
      */
     public BloqueMultiple(BloqueMultiple primerBloqueMultiple, Tipo tipo) {
         this.transacciones = new ArrayList<>();
-        this.header = new Header(primerBloqueMultiple.getFooter().getHash(), "");
-        this.footer = new Footer(HashUtil.SHA256("Master" + header.getHashBloqueFisicoPrevio()));
+        this.headerMultiple = new HeaderMultiple(primerBloqueMultiple.getFooter().getHash(), "");
+        this.footer = new Footer(HashUtil.SHA256("Master" + headerMultiple.getHashBloqueFisicoPrevio()));
         this.tipo = tipo;
         this.tiempoDeBusqueda = 0;
     }
 
-    public Header getHeader() {
-        return header;
+    public HeaderMultiple getHeader() {
+        return headerMultiple;
     }
 
     public Footer getFooter() {
@@ -95,7 +96,7 @@ public class BloqueMultiple implements Serializable {
         this.direccionNodoMinero = nodeAddress;
     }
 
-    public List<Transaccion> getTransaction() {
+    public List<TransaccionMultiple> getTransaction() {
         return transacciones;
     }
 
@@ -110,14 +111,14 @@ public class BloqueMultiple implements Serializable {
      */
     private String obtenerStringDeTransacciones() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Transaccion transaccion : transacciones) {
-            stringBuilder.append(transaccion.toString());
+        for (TransaccionMultiple transaccionMultiple : transacciones) {
+            stringBuilder.append(transaccionMultiple.toString());
         }
         return stringBuilder.toString();
     }
 
     @Override
     public String toString() {
-        return "\nTipo de bloque: " + tipo + header.toString() + footer.toString() + "\n";
+        return "\nTipo de bloque: " + tipo + headerMultiple.toString() + footer.toString() + "\n";
     }
 }

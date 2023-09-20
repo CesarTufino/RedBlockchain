@@ -4,17 +4,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import tradicional.mensajes.Transaccion;
-import utils.HashUtil;
+import tradicional.mensajes.TransaccionTradicional;
+import general.utils.HashUtil;
 
 /**
  * Clase BloqueTradicional.
  */
 public class BloqueTradicional implements Serializable {
 
-    private final Header header;
+    private final HeaderTradicional headerTradicional;
     private final Footer footer;
-    private final List<Transaccion> transacciones;
+    private final List<TransaccionTradicional> transacciones;
     private int idNodoMinero;
     private String direccionNodoMinero;
     private double tiempoDeBusqueda;
@@ -27,11 +27,11 @@ public class BloqueTradicional implements Serializable {
      * @param tiempoDeBusqueda Tiempo de busqueda del bloque previo
      * 
      */
-    public BloqueTradicional(BloqueTradicional bloqueTradicionalPrevio, List<Transaccion> transacciones, double tiempoDeBusqueda) {
+    public BloqueTradicional(BloqueTradicional bloqueTradicionalPrevio, List<TransaccionTradicional> transacciones, double tiempoDeBusqueda) {
         this.transacciones = new ArrayList<>(transacciones);
         String stringTransacciones = obtenerStringDeTransacciones();
-        this.header = new Header(bloqueTradicionalPrevio.getFooter().getHash());
-        this.footer = new Footer(HashUtil.SHA256(stringTransacciones + header.hashBloquePrevio));
+        this.headerTradicional = new HeaderTradicional(bloqueTradicionalPrevio.getFooter().getHash());
+        this.footer = new Footer(HashUtil.SHA256(stringTransacciones + headerTradicional.hashBloquePrevio));
         this.tiempoDeBusqueda = tiempoDeBusqueda;
     }
 
@@ -40,14 +40,14 @@ public class BloqueTradicional implements Serializable {
      * 
      */
     public BloqueTradicional() {
-        this.header = new Header();
+        this.headerTradicional = new HeaderTradicional();
         this.footer = new Footer(HashUtil.SHA256("Master"));
         this.transacciones = new ArrayList<>();
         this.tiempoDeBusqueda = 0;
     }
 
-    public Header getHeader() {
-        return header;
+    public HeaderTradicional getHeader() {
+        return headerTradicional;
     }
     public Footer getFooter() {
         return footer;
@@ -69,7 +69,7 @@ public class BloqueTradicional implements Serializable {
         this.direccionNodoMinero = nodeAddress;
     }
 
-    public List<Transaccion> getTransaction() {
+    public List<TransaccionTradicional> getTransaction() {
         return transacciones;
     }
 
@@ -84,14 +84,14 @@ public class BloqueTradicional implements Serializable {
      */
     public String obtenerStringDeTransacciones() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Transaccion transaccion : transacciones) {
-            stringBuilder.append(transaccion.toString());
+        for (TransaccionTradicional transaccionTradicional : transacciones) {
+            stringBuilder.append(transaccionTradicional.toString());
         }
         return stringBuilder.toString();
     }
 
     @Override
     public String toString() {
-        return "\n" + header.toString() + footer.toString() + "\n";
+        return "\n" + headerTradicional.toString() + footer.toString() + "\n";
     }
 }

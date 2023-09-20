@@ -1,7 +1,6 @@
 package tradicional.blockchain;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -11,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class BlockchainTradicional implements Serializable {
 
     private List<BloqueTradicional> bloques = new CopyOnWriteArrayList<>();
-    public List<Double> tiempoEntreCreacionDeBloques = new CopyOnWriteArrayList<>();
+    private List<Double> tiempoEntreCreacionDeBloques = new CopyOnWriteArrayList<>();
 
     public BlockchainTradicional() {
         bloques.addAll(crearPrimerBloque());
@@ -22,7 +21,7 @@ public class BlockchainTradicional implements Serializable {
     }
 
     /**
-     * Método que crea el primer bloque del blockchain.
+     * Método que crea el primer bloque del general.blockchain.
      *
      * @return Primer bloque.
      */
@@ -32,16 +31,16 @@ public class BlockchainTradicional implements Serializable {
     }
 
     /**
-     * Método que devuelve el último bloque del blockchain.
+     * Método que devuelve el último bloque del general.blockchain.
      *
-     * @return Último bloque del blockchain.
+     * @return Último bloque del general.blockchain.
      */
     public BloqueTradicional obtenerUltimoBloque() {
         return bloques.get(bloques.size() - 1);
     }
 
     /**
-     * Método que agrega un bloque al blockchain físico y
+     * Método que agrega un bloque al general.blockchain físico y
      * guarda la diferencia de tiempo de creación entre el bloque actual y el
      * anterior.
      *
@@ -49,7 +48,7 @@ public class BlockchainTradicional implements Serializable {
      */
     public void agregarBloque(BloqueTradicional bloqueTradicional) {
         BloqueTradicional prevBlock = obtenerUltimoBloque();
-        tiempoEntreCreacionDeBloques.add((double) (bloqueTradicional.getHeader().getMarcaDeTiempo() - prevBlock.getHeader().getMarcaDeTiempo()) / 1000);
+        tiempoEntreCreacionDeBloques.add((double) (bloqueTradicional.getHeader().getMarcaDeTiempoDeCreacion() - prevBlock.getHeader().getMarcaDeTiempoDeCreacion()) / 1000);
         bloques.add(bloqueTradicional);
     }
 
