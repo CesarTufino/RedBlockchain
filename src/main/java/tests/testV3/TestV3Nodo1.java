@@ -14,7 +14,7 @@ import multiple.nodo.posVersion.seleccionador.SeleccionadorProbabilidadDefinidaP
 public class TestV3Nodo1 {
 
     public static void main(String[] args) throws IOException {
-        NodoMultiplePos nodoMultiplePos = new NodoMultiplePos(1, Direccion.DIRECCION_1, false);
+        NodoMultiplePos nodoMultiplePos = new NodoMultiplePos(1, Direccion.DIRECCION_1);
         // Poner el stake
         nodoMultiplePos.apostar(30, Tipo.LOGICO1);
         nodoMultiplePos.apostar(40, Tipo.LOGICO2);

@@ -37,34 +37,26 @@ public class SeleccionadorTradicionalGateway extends Thread {
         return direccionSeleciconada;
     }
 
+    private long calcularTiempoParaIniciar() {
+        return 10000 - (System.currentTimeMillis() % 10000);
+    }
+
+    private void iniciarIteracion() {
+        System.out.println("Seleccionando...");
+        seleccionar();
+        gatewayTradicional.reiniciarNodosPosibles();
+    }
+
     @Override
     public void run() {
-        // tiempo de espera inicial
         try {
-            long tiempoParaIniciar = 10000 - (System.currentTimeMillis() % 10000);
-            Thread.sleep(tiempoParaIniciar);
+            while (true) {
+                long tiempoParaIniciar = calcularTiempoParaIniciar();
+                Thread.sleep(tiempoParaIniciar);
+                iniciarIteracion();
+            }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-
-        long tiempoInicio;
-        long tiempoActual;
-        long tiempoDelUltimoBloque;
-        while (true) {
-            tiempoInicio = System.currentTimeMillis();
-            System.out.println("Seleccionando...");
-
-            seleccionar();
-            gatewayTradicional.reiniciarNodosPosibles();
-
-            while (true) {
-                tiempoActual = System.currentTimeMillis();
-                tiempoDelUltimoBloque = gatewayTradicional.getTiempoDeCreacionDeUltimoBloque();
-                if ((tiempoActual - tiempoInicio > 10000) &&
-                        (tiempoActual - tiempoDelUltimoBloque  > 10000)) {
-                    break;
-                }
-            }
         }
     }
 }

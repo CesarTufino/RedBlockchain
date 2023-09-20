@@ -20,14 +20,12 @@ public class NodoMultipleGateway extends Nodo {
     private double billetera2;
     private RedMultipleGateway redMultipleGateway;
     private HashMap<Tipo, List<BloqueMultiple>> bloquesEnEspera = new HashMap<>();
-    private final boolean MODO_DOS_BLOQUES_POR_ITERACION;
 
-    public NodoMultipleGateway(int id, Direccion direccion, boolean modoMultiple) {
+    public NodoMultipleGateway(int id, Direccion direccion) {
         super(id, direccion);
         this.bloquesEnEspera.put(Tipo.LOGICO1, new ArrayList<>());
         this.bloquesEnEspera.put(Tipo.LOGICO2, new ArrayList<>());
         this.billetera2 = DINERO_INICIAL;
-        this.MODO_DOS_BLOQUES_POR_ITERACION = modoMultiple;
     }
 
     public RedMultipleGateway getRed() {
@@ -145,14 +143,12 @@ public class NodoMultipleGateway extends Nodo {
         BloqueMultiple segundoBloqueMultiple = bloquesAComparar.get(1);
         if (primerBloqueMultiple.getFooter().getHash().equals(segundoBloqueMultiple.getFooter().getHash())) {
             System.out.println("Creación correcta");
-            if (!MODO_DOS_BLOQUES_POR_ITERACION){
-                if (tipo.equals(Tipo.LOGICO1)) {
-                    redMultipleGateway.getNodosEscogidos1().get(Tipo.LOGICO2).add(-1);
-                    redMultipleGateway.getNodosEscogidos2().get(Tipo.LOGICO2).add(-1);
-                } else {
-                    redMultipleGateway.getNodosEscogidos1().get(Tipo.LOGICO1).add(-1);
-                    redMultipleGateway.getNodosEscogidos2().get(Tipo.LOGICO1).add(-1);
-                }
+            if (tipo.equals(Tipo.LOGICO1)) {
+                redMultipleGateway.getNodosEscogidos1().get(Tipo.LOGICO2).add(-1);
+                redMultipleGateway.getNodosEscogidos2().get(Tipo.LOGICO2).add(-1);
+            } else {
+                redMultipleGateway.getNodosEscogidos1().get(Tipo.LOGICO1).add(-1);
+                redMultipleGateway.getNodosEscogidos2().get(Tipo.LOGICO1).add(-1);
             }
             if (primerBloqueMultiple.getIdNodoMinero() > segundoBloqueMultiple.getIdNodoMinero()) {
                 redMultipleGateway.getNodosEscogidos1().get(tipo).add(segundoBloqueMultiple.getIdNodoMinero());

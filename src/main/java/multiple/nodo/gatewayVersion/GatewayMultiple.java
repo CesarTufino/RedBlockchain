@@ -19,7 +19,6 @@ public class GatewayMultiple extends Gateway {
     private HashMap<Tipo, ArrayList<TransaccionMultiple>> transaccionesPendientes = new HashMap<>();
     private HashMap<Tipo, ArrayList<TransaccionMultiple>> transaccionesEscogidas = new HashMap<>();
     private HashMap<Tipo, List<BloqueMultiple>> bloquesEnEspera = new HashMap<>();
-    private Map<Tipo, Long> tiempoDeCreacionDeUltimoBloque = new HashMap<>();
 
     public GatewayMultiple(Direccion direccion) {
         super(direccion);
@@ -29,16 +28,10 @@ public class GatewayMultiple extends Gateway {
         this.transaccionesEscogidas.put(Tipo.LOGICO2, new ArrayList<>());
         this.bloquesEnEspera.put(Tipo.LOGICO1, new ArrayList<>());
         this.bloquesEnEspera.put(Tipo.LOGICO2, new ArrayList<>());
-        this.tiempoDeCreacionDeUltimoBloque.put(Tipo.LOGICO1, 0L);
-        this.tiempoDeCreacionDeUltimoBloque.put(Tipo.LOGICO2, 0L);
     }
 
     public HashMap<Tipo, ArrayList<TransaccionMultiple>> getTransaccionesPendientes() {
         return transaccionesPendientes;
-    }
-
-    public Map<Tipo, Long> getTiempoDeCreacionDeUltimoBloque() {
-        return tiempoDeCreacionDeUltimoBloque;
     }
 
     public boolean comprobarCantidadMinimaDeNodos() {
@@ -83,11 +76,6 @@ public class GatewayMultiple extends Gateway {
         BloqueMultiple segundoBloqueMultiple = bloquesAComparar.get(1);
         if (primerBloqueMultiple.getFooter().getHash().equals(segundoBloqueMultiple.getFooter().getHash())) {
             System.out.println("Creación correcta");
-            if (primerBloqueMultiple.getIdNodoMinero() > segundoBloqueMultiple.getIdNodoMinero()) {
-                tiempoDeCreacionDeUltimoBloque.put(tipo, segundoBloqueMultiple.getHeader().getMarcaDeTiempoDeCreacion());
-            } else {
-                tiempoDeCreacionDeUltimoBloque.put(tipo, primerBloqueMultiple.getHeader().getMarcaDeTiempoDeCreacion());
-            }
             actualizarTransaccionesPendientes(tipo);
             actualizarTransaccionesEscogidas(true, tipo);
             System.out.println("Cantidad de bloques: " + ++contadorDeBloques);

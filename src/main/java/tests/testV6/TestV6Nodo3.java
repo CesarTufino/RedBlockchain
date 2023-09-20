@@ -13,7 +13,7 @@ import general.constantes.Direccion;
 public class TestV6Nodo3 {
 
     public static void main(String[] args) throws IOException {
-        NodoMultipleGateway nodoMultipleGateway = new NodoMultipleGateway(3, Direccion.DIRECCION_3, true); // Mi general.nodo
+        NodoMultipleGateway nodoMultipleGateway = new NodoMultipleGateway(3, Direccion.DIRECCION_3); // Mi general.nodo
         Entrada hiloEntrada = new Entrada(nodoMultipleGateway);
         hiloEntrada.start();
         nodoMultipleGateway.buscarRed();

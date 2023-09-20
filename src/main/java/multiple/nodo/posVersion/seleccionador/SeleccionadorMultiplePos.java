@@ -49,7 +49,7 @@ public class SeleccionadorMultiplePos extends Thread {
         }
         for (String direccion : probabilidades1.keySet()) {
             sumaAcumulada1 += probabilidades1.get(direccion);
-            if (numeroPseudoaleatorio1 <= sumaAcumulada1) {
+            if (numeroPseudoaleatorio1 <= Math.round(sumaAcumulada1)) {
                 direccionesSeleccionadas[0] = direccion;
                 mapStakeTime1.put(direccion, mapStakeTime1.get(direccion) + 10000);
                 break;
@@ -73,7 +73,7 @@ public class SeleccionadorMultiplePos extends Thread {
         }
         for (String direccion : probabilidades2.keySet()) {
             sumaAcumulada2 += probabilidades2.get(direccion);
-            if (numeroPseudoaleatorio2 <= sumaAcumulada2) {
+            if (numeroPseudoaleatorio2 <= Math.round(sumaAcumulada2)) {
                 direccionesSeleccionadas[1] = direccion;
                 mapStakeTime2.put(direccion, mapStakeTime2.get(direccion) + 10000);
                 break;
@@ -84,50 +84,35 @@ public class SeleccionadorMultiplePos extends Thread {
         return direccionesSeleccionadas;
     }
 
-    @Override
-    public void run() {
-        // tiempo de espera inicial
+    private long calcularTiempoParaIniciar() {
+        return 10000 - (System.currentTimeMillis() % 10000);
+    }
+
+    private void iniciarIteracion() {
+        System.out.println("Seleccionando...");
+
+        String[] seleccionados = seleccionar();
+        mandarACrear(seleccionados[0], Tipo.LOGICO1);
+
         try {
-            long tiempoParaIniciar = 10000 - (System.currentTimeMillis() % 10000);
-            Thread.sleep(tiempoParaIniciar);
+            Thread.sleep(3000);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        long tiempoInicio;
-        long tiempoActual;
-        long tiempoDelUltimoBloqueTipo1;
-        long tiempoDelUltimoBloqueTipo2;
-        BlockchainMultiple blockchainMultiple = nodoMultiplePos.getRed().getBlockchainMultiple();
-        while (true) {
-            tiempoInicio = System.currentTimeMillis();
-            System.out.println("Seleccionando...");
+        mandarACrear(seleccionados[1], Tipo.LOGICO2);
+    }
 
-            String[] seleccionados = seleccionar();
-            mandarACrear(seleccionados[0], Tipo.LOGICO1);
-
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            mandarACrear(seleccionados[1], Tipo.LOGICO2);
-
+    @Override
+    public void run() {
+        try {
             while (true) {
-                tiempoActual = System.currentTimeMillis();
-                tiempoDelUltimoBloqueTipo1 = blockchainMultiple.buscarBloquePrevioLogico(
-                                Tipo.LOGICO1, blockchainMultiple.obtenerCantidadDeBloques() - 1)
-                        .getHeader().getMarcaDeTiempoDeCreacion();
-                tiempoDelUltimoBloqueTipo2 = blockchainMultiple.buscarBloquePrevioLogico(
-                                Tipo.LOGICO2, blockchainMultiple.obtenerCantidadDeBloques() - 1)
-                        .getHeader().getMarcaDeTiempoDeCreacion();
-                if ((tiempoActual - tiempoInicio > 10000) && (
-                        (tiempoActual - tiempoDelUltimoBloqueTipo1 > 10000) ||
-                                (tiempoActual - tiempoDelUltimoBloqueTipo2 > 10000))) {
-                    break;
-                }
+                long tiempoParaIniciar = calcularTiempoParaIniciar();
+                Thread.sleep(tiempoParaIniciar);
+                iniciarIteracion();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -19,12 +19,12 @@ public class RedMultiplePos extends Red implements Serializable {
      **/
     public List<Integer> NB_OF_BLOCK_OF_TYPE1_CREATED = new ArrayList<>();
     /**
-     * Número de bloques del segundo general.blockchain lógico.
+     * Número de bloques del segundo blockchain lógico.
      */
     public List<Integer> NB_OF_BLOCK_OF_TYPE2_CREATED = new ArrayList<>();
     private HashMap<Tipo, List<Integer>> nodosEscogidos = new HashMap<>();
     /**
-     * Número de transacciones de cada general.blockchain lógico.
+     * Número de transacciones de cada blockchain lógico.
      */
     private Map<Tipo, Integer> nbTransParType = new HashMap<>();
     /**
@@ -75,7 +75,7 @@ public class RedMultiplePos extends Red implements Serializable {
         return stats;
     }
 
-    public Map<Tipo, Integer> getNbTransParType() {
+    public synchronized Map<Tipo, Integer> getNbTransParType() {
         return nbTransParType;
     }
 
@@ -111,7 +111,7 @@ public class RedMultiplePos extends Red implements Serializable {
         return exchangeMoney2;
     }
 
-    public double obtenerProporcionBloquesTipo1() {
+    public synchronized double obtenerProporcionBloquesTipo1() {
         double cantidadTransaccionesTipo1 = nbTransParType.get(Tipo.LOGICO1);
         double cantidadTransaccionesTipo2 = nbTransParType.get(Tipo.LOGICO2);
         return (cantidadTransaccionesTipo1 / (cantidadTransaccionesTipo1 + cantidadTransaccionesTipo2)) * 100;

@@ -48,26 +48,24 @@ public class SeleccionadorAleatorioPos extends Thread {
         //System.out.println("P: " + probabilidadBloque);
         if (probabilidadBloque >= numeroPseudoaleatorio1) {
             numeroPseudoaleatorio1 = rnd.nextInt(101);
-            // System.out.println("Número pseudoaleatorio 1,2: " + numeroPseudoaleatorio1);
+            //System.out.println("Número pseudoaleatorio 1,2: " + numeroPseudoaleatorio1);
             for (String direccion : mapStakeAmount1.keySet()) {
                 probabilidades1.put(direccion, (mapStakeAmount1.get(direccion) / suma1) * 100);
             }
             for (String direccion : probabilidades1.keySet()) {
                 sumaAcumulada1 += probabilidades1.get(direccion);
-                if (numeroPseudoaleatorio1 <= sumaAcumulada1) {
+                if (numeroPseudoaleatorio1 <= Math.round(sumaAcumulada1)) {
                     direccionesSeleccionadas[0] = direccion;
+                    mapStakeTime1.put(direccion, mapStakeTime1.get(direccion) + 10000);
                     break;
                 }
             }
             direccionesSeleccionadas[1] = null;
-            mapStakeTime1.put(direccionesSeleccionadas[0], mapStakeTime1.get(direccionesSeleccionadas[0]) + 10000);
             mapStakeTime2.put(direccionesSeleccionadas[0], mapStakeTime2.get(direccionesSeleccionadas[0]) + 10000);
         } else {
             for (String direccion : mapStakeAmount2.keySet()) {
-                if (!direccion.equals(direccionesSeleccionadas[0])) {
-                    suma2 += mapStakeAmount2.get(direccion);
-                    semilla2 += mapStakeAmount2.get(direccion) * mapStakeTime2.get(direccion);
-                }
+                suma2 += mapStakeAmount2.get(direccion);
+                semilla2 += mapStakeAmount2.get(direccion) * mapStakeTime2.get(direccion);
             }
             rnd = new Random(semilla2);
             numeroPseudoaleatorio2 = rnd.nextInt(101);
@@ -78,16 +76,18 @@ public class SeleccionadorAleatorioPos extends Thread {
                     probabilidades2.put(direccion, (mapStakeAmount2.get(direccion) / suma2) * 100);
                 }
             }
+
             for (String direccion : probabilidades2.keySet()) {
                 sumaAcumulada2 += probabilidades2.get(direccion);
-                if (numeroPseudoaleatorio2 <= sumaAcumulada2) {
+                //System.out.println(numeroPseudoaleatorio2 + "/" + sumaAcumulada2);
+                if (numeroPseudoaleatorio2 <= Math.round(sumaAcumulada2)) {
                     direccionesSeleccionadas[1] = direccion;
+                    mapStakeTime2.put(direccion, mapStakeTime2.get(direccion) + 10000);
                     break;
                 }
             }
             direccionesSeleccionadas[0] = null;
             mapStakeTime1.put(direccionesSeleccionadas[1], mapStakeTime1.get(direccionesSeleccionadas[1]) + 10000);
-            mapStakeTime2.put(direccionesSeleccionadas[1], mapStakeTime2.get(direccionesSeleccionadas[1]) + 10000);
         }
 
         System.out.println(
@@ -95,47 +95,38 @@ public class SeleccionadorAleatorioPos extends Thread {
         return direccionesSeleccionadas;
     }
 
-    @Override
-    public void run() {
-        // tiempo de espera inicial
+    private long calcularTiempoParaIniciar() {
+        return 10000 - (System.currentTimeMillis() % 10000);
+    }
+
+    private void iniciarIteracion() {
+        System.out.println("Seleccionando...");
+
+        String[] seleccionados = seleccionar();
+
         try {
-            long tiempoParaIniciar = 10000 - (System.currentTimeMillis() % 10000);
-            Thread.sleep(tiempoParaIniciar);
-        } catch (Exception e) {
-            e.printStackTrace();
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
-        long tiempoInicio;
-        long tiempoActual;
-        long tiempoDelUltimoBloqueTipo1;
-        long tiempoDelUltimoBloqueTipo2;
-        BlockchainMultiple blockchainMultiple = nodoMultiplePos.getRed().getBlockchainMultiple();
-        while (true) {
-            tiempoInicio = System.currentTimeMillis();
-            System.out.println("Seleccionando...");
+        if (seleccionados[0] != null) {
+            mandarACrear(seleccionados[0], Tipo.LOGICO1);
+        } else {
+            mandarACrear(seleccionados[1], Tipo.LOGICO2);
+        }
+    }
 
-            String[] seleccionados = seleccionar();
-
-            if (seleccionados[0] != null) {
-                mandarACrear(seleccionados[0], Tipo.LOGICO1);
-            } else {
-                mandarACrear(seleccionados[1], Tipo.LOGICO2);
-            }
-
+    @Override
+    public void run() {
+        try {
             while (true) {
-                tiempoActual = System.currentTimeMillis();
-                tiempoDelUltimoBloqueTipo1 = blockchainMultiple.buscarBloquePrevioLogico(
-                                Tipo.LOGICO1, blockchainMultiple.obtenerCantidadDeBloques() - 1)
-                        .getHeader().getMarcaDeTiempoDeCreacion();
-                tiempoDelUltimoBloqueTipo2 = blockchainMultiple.buscarBloquePrevioLogico(
-                                Tipo.LOGICO2, blockchainMultiple.obtenerCantidadDeBloques() - 1)
-                        .getHeader().getMarcaDeTiempoDeCreacion();
-                if ((tiempoActual - tiempoInicio > 10000) &&
-                        (tiempoActual - tiempoDelUltimoBloqueTipo1 > 10000) &&
-                        (tiempoActual - tiempoDelUltimoBloqueTipo2 > 10000)) {
-                    break;
-                }
+                long tiempoParaIniciar = calcularTiempoParaIniciar();
+                Thread.sleep(tiempoParaIniciar);
+                iniciarIteracion();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

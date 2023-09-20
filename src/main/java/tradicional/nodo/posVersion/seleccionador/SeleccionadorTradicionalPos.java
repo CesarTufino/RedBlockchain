@@ -45,7 +45,7 @@ public class SeleccionadorTradicionalPos extends Thread {
         }
         for (String direccion : probabilidades1.keySet()) {
             sumaAcumulada1 += probabilidades1.get(direccion);
-            if (numeroPseudoaleatorio1 <= sumaAcumulada1) {
+            if (numeroPseudoaleatorio1 <= Math.round(sumaAcumulada1)) {
                 direccionesSeleccionada = direccion;
                 mapStakeTime1.put(direccion, mapStakeTime1.get(direccion) + 10000);
                 break;
@@ -57,37 +57,26 @@ public class SeleccionadorTradicionalPos extends Thread {
         return direccionesSeleccionada;
     }
 
+    private long calcularTiempoParaIniciar() {
+        return 10000 - (System.currentTimeMillis() % 10000);
+    }
+
+    private void iniciarIteracion() {
+        System.out.println("Seleccionando...");
+        String seleccionado = seleccionar();
+        mandarACrear(seleccionado);
+    }
+
     @Override
     public void run() {
-        // tiempo de espera inicial
         try {
-            long tiempoParaIniciar = 10000 - (System.currentTimeMillis() % 10000);
-            Thread.sleep(tiempoParaIniciar);
+            while (true) {
+                long tiempoParaIniciar = calcularTiempoParaIniciar();
+                Thread.sleep(tiempoParaIniciar);
+                iniciarIteracion();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        long tiempoInicio;
-        long tiempoActual;
-        long tiempoDelUltimoBloque;
-        BlockchainTradicional blockchainTradicional = nodoTradicionalPos.getRed().getBlockchainTradicional();
-        while (true) {
-            tiempoInicio = System.currentTimeMillis();
-            System.out.println("Seleccionando...");
-
-            String seleccionado = seleccionar();
-            mandarACrear(seleccionado);
-            
-            while (true) {
-                tiempoActual = System.currentTimeMillis();
-                tiempoDelUltimoBloque = blockchainTradicional.obtenerUltimoBloque()
-                        .getHeader().getMarcaDeTiempoDeCreacion();
-                if ((tiempoActual - tiempoInicio > 10000) &&
-                        (tiempoActual - tiempoDelUltimoBloque > 10000) ) {
-                    break;
-                }
-            }
-        }
     }
-
 }

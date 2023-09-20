@@ -27,14 +27,12 @@ public class NodoMultiplePos extends Nodo {
     private ArrayList<TransaccionMultiple> transaccionesPendientes = new ArrayList<>();
     private ArrayList<TransaccionMultiple> transaccionesFraudulentas = new ArrayList<>();
     private RedMultiplePos redMultiplePos = null;
-    private final boolean MODO_DOS_BLOQUES_POR_ITERACION;
 
-    public NodoMultiplePos(int id, Direccion direccion, boolean modoMultiple) {
+    public NodoMultiplePos(int id, Direccion direccion) {
         super(id, direccion);
         this.montoDeApuesta1 = 0;
         this.montoDeApuesta2 = 0;
         this.billetera2 = DINERO_INICIAL;
-        this.MODO_DOS_BLOQUES_POR_ITERACION = modoMultiple;
     }
 
     public RedMultiplePos getRed() {
@@ -163,12 +161,10 @@ public class NodoMultiplePos extends Nodo {
                 Tipo tipo = bloque.getTipo();
                 actualizarNBOfBlockOfType(tipo);
                 redMultiplePos.getNodosEscogidos().get(tipo).add(bloque.getIdNodoMinero());
-                if (!MODO_DOS_BLOQUES_POR_ITERACION){
-                    if (tipo.equals(Tipo.LOGICO1)) {
-                        redMultiplePos.getNodosEscogidos().get(Tipo.LOGICO2).add(-1);
-                    } else{
-                        redMultiplePos.getNodosEscogidos().get(Tipo.LOGICO1).add(-1);
-                    }
+                if (tipo.equals(Tipo.LOGICO1)) {
+                    redMultiplePos.getNodosEscogidos().get(Tipo.LOGICO2).add(-1);
+                } else {
+                    redMultiplePos.getNodosEscogidos().get(Tipo.LOGICO1).add(-1);
                 }
                 redMultiplePos.agregarBloque(bloque);
                 System.out.println("\n///-----------------------------------///");
@@ -182,7 +178,7 @@ public class NodoMultiplePos extends Nodo {
         }
     }
 
-    public void actualizarListaDeTransacciones(BloqueMultiple bloque) {
+    public synchronized void actualizarListaDeTransacciones(BloqueMultiple bloque) {
         List<TransaccionMultiple> transacciones = bloque.getTransaction();
         for (TransaccionMultiple transaccionMultipleDeBloque : transacciones) {
             transaccionesPendientes.remove(transaccionMultipleDeBloque);

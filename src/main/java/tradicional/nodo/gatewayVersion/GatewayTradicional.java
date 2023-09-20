@@ -17,15 +17,9 @@ public class GatewayTradicional extends Gateway {
     private ArrayList<TransaccionTradicional> transaccionesPendientes = new ArrayList<>();
     private ArrayList<TransaccionTradicional> transaccionesEscogidas = new ArrayList<>();
     private List<BloqueTradicional> bloquesEnEspera = new ArrayList<>();
-    private long tiempoDeCreacionDeUltimoBloque;
 
     public GatewayTradicional(Direccion direccion) {
         super(direccion);
-        this.tiempoDeCreacionDeUltimoBloque = 0;
-    }
-
-    public long getTiempoDeCreacionDeUltimoBloque() {
-        return tiempoDeCreacionDeUltimoBloque;
     }
 
     public boolean comprobarCantidadMinimaDeNodos() {
@@ -68,11 +62,6 @@ public class GatewayTradicional extends Gateway {
         BloqueTradicional segundoBloqueTradicional = bloquesEnEspera.get(1);
         if (primerBloqueTradicional.getFooter().getHash().equals(segundoBloqueTradicional.getFooter().getHash())){
             System.out.println("Creación correcta");
-            if (primerBloqueTradicional.getIdNodoMinero() > segundoBloqueTradicional.getIdNodoMinero()) {
-                tiempoDeCreacionDeUltimoBloque = segundoBloqueTradicional.getHeader().getMarcaDeTiempoDeCreacion();
-            } else{
-                tiempoDeCreacionDeUltimoBloque = primerBloqueTradicional.getHeader().getMarcaDeTiempoDeCreacion();
-            }
             actualizarTransaccionesPendientes();
             actualizarTransaccionesEscogidas(true);
             System.out.println("Cantidad de bloques: " + ++contadorDeBloques);

@@ -14,7 +14,7 @@ import multiple.nodo.posVersion.seleccionador.SeleccionadorProbabilidadDefinidaP
 public class TestV3Nodo3 {
 
     public static void main(String[] args) throws IOException {
-        NodoMultiplePos nodoMultiplePos = new NodoMultiplePos(3, Direccion.DIRECCION_3, false);
+        NodoMultiplePos nodoMultiplePos = new NodoMultiplePos(3, Direccion.DIRECCION_3);
         // Poner el stake
         nodoMultiplePos.apostar(20, Tipo.LOGICO1);
         nodoMultiplePos.apostar(50, Tipo.LOGICO2);
@@ -56,7 +56,7 @@ public class TestV3Nodo3 {
             if (nodoMultiplePos.getRed().getBlockchainMultiple().obtenerCantidadDeBloques() - 2 == MaximoDeBloques.MAX.getCantidad()) {
                 try {
                     BufferedWriter archivo = new BufferedWriter(
-                            new FileWriter("Blockchain V2 (POS-Multiple) - Resultado.txt", true));
+                            new FileWriter("Blockchain V3 (POS-Probabilidad Definida) - Resultado.txt", true));
                     archivo.write(nodoMultiplePos.getRed().getStats());
                     archivo.newLine();
                     archivo.close();

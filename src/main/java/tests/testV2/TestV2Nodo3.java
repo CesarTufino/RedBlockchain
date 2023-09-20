@@ -14,7 +14,7 @@ import general.constantes.Direccion;
 public class TestV2Nodo3 {
 
     public static void main(String[] args) throws IOException {
-        NodoMultiplePos nodoMultiplePos = new NodoMultiplePos(3, Direccion.DIRECCION_3, true);
+        NodoMultiplePos nodoMultiplePos = new NodoMultiplePos(3, Direccion.DIRECCION_3);
         // Poner el stake
         nodoMultiplePos.apostar(20, Tipo.LOGICO1);
         nodoMultiplePos.apostar(50, Tipo.LOGICO2);

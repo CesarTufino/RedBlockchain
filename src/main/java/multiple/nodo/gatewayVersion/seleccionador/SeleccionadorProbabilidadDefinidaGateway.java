@@ -30,46 +30,36 @@ public class SeleccionadorProbabilidadDefinidaGateway extends Thread {
         gatewayMultiple.mandarCrearBloque(direccionNodoSeleccionado2, gatewayMultiple.getPuertos().get(direccionNodoSeleccionado2), paquete);
     }
 
+    private long calcularTiempoParaIniciar() {
+        return 10000 - (System.currentTimeMillis() % 10000);
+    }
+
+    private void iniciarIteracion() {
+        System.out.println("Seleccionando...");
+
+        SecureRandom secureRandom = new SecureRandom();
+        int semilla = secureRandom.nextInt();
+        Random rnd = new Random(semilla);
+        int numeroPseudoaleatorio = rnd.nextInt(100);
+
+        if (numeroPseudoaleatorio < PROBABILIDAD_BLOQUES_TIPO_1) {
+            seleccionar(Tipo.LOGICO1);
+        } else {
+            seleccionar(Tipo.LOGICO2);
+        }
+        gatewayMultiple.reiniciarNodosPosibles();
+    }
+
     @Override
     public void run() {
-        // tiempo de espera inicial
         try {
-            long tiempoParaIniciar = 10000 - (System.currentTimeMillis() % 10000);
-            Thread.sleep(tiempoParaIniciar);
+            while (true) {
+                long tiempoParaIniciar = calcularTiempoParaIniciar();
+                Thread.sleep(tiempoParaIniciar);
+                iniciarIteracion();
+            }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-
-        long tiempoInicio;
-        long tiempoActual;
-        long tiempoDelUltimoBloqueTipo1;
-        long tiempoDelUltimoBloqueTipo2;
-        while (true) {
-            tiempoInicio = System.currentTimeMillis();
-            System.out.println("Seleccionando...");
-
-            SecureRandom secureRandom = new SecureRandom();
-            int semilla = secureRandom.nextInt();
-            Random rnd = new Random(semilla);
-            int numeroPseudoaleatorio = rnd.nextInt(100);
-
-            if (numeroPseudoaleatorio < PROBABILIDAD_BLOQUES_TIPO_1) {
-                seleccionar(Tipo.LOGICO1);
-            } else {
-                seleccionar(Tipo.LOGICO2);
-            }
-            gatewayMultiple.reiniciarNodosPosibles();
-
-            while (true) {
-                tiempoActual = System.currentTimeMillis();
-                tiempoDelUltimoBloqueTipo1 = gatewayMultiple.getTiempoDeCreacionDeUltimoBloque().get(Tipo.LOGICO1);
-                tiempoDelUltimoBloqueTipo2 = gatewayMultiple.getTiempoDeCreacionDeUltimoBloque().get(Tipo.LOGICO2);
-                if ((tiempoActual - tiempoInicio > 10000) &&
-                        (tiempoActual - tiempoDelUltimoBloqueTipo1  > 10000) &&
-                        (tiempoActual - tiempoDelUltimoBloqueTipo2 > 10000)) {
-                    break;
-                }
-            }
         }
     }
 
