@@ -6,6 +6,7 @@ import java.util.List;
 
 import general.constantes.Direccion;
 import general.constantes.Tipo;
+import general.constantes.MinimoDeNodos;
 import multiple.blockchain.BloqueMultiple;
 import general.mensajes.InfoNodo;
 import general.mensajes.Mensaje;
@@ -65,6 +66,10 @@ public class NodoMultipleGateway extends Nodo {
 
     public void enviarInfoRed(Direccion direccion) {
         salida.enviarInfoRed(redMultipleGateway, direccion.getDireccionIP(), direccion.getPuerto());
+    }
+
+    public boolean comprobarCantidadMinimaDeNodos() {
+        return redMultipleGateway.obtenerCantidadDeNodos() >= MinimoDeNodos.MIN_GATEWAY_MULTIPLE.getCantidad();
     }
 
     public void enviarDinero(double monto, String direccionDestinatario, Tipo tipo) {
@@ -230,10 +235,6 @@ public class NodoMultipleGateway extends Nodo {
         } else {
             redMultipleGateway.NB_OF_BLOCK_OF_TYPE2_CREATED.add(redMultipleGateway.NB_OF_BLOCK_OF_TYPE2_CREATED.size() + 1);
         }
-    }
-
-    public boolean comprobarCantidadMinimaDeNodos() {
-        return redMultipleGateway.obtenerCantidadDeNodos() >= 4;
     }
 
     /**

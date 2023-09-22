@@ -6,6 +6,7 @@ import java.util.List;
 import general.constantes.Direccion;
 import general.nodo.Nodo;
 import general.nodo.Red;
+import general.constantes.MinimoDeNodos;
 import tradicional.blockchain.BloqueTradicional;
 import general.mensajes.InfoNodo;
 import general.mensajes.Mensaje;
@@ -58,6 +59,10 @@ public class NodoTradicionalGateway extends Nodo {
 
     public void enviarInfoRed(Direccion direccion) {
         salida.enviarInfoRed(redTradicionalGateway, direccion.getDireccionIP(), direccion.getPuerto());
+    }
+
+    public boolean comprobarCantidadMinimaDeNodos() {
+        return redTradicionalGateway.obtenerCantidadDeNodos() >= MinimoDeNodos.MIN_GATEWAY_TRADICIONAL.getCantidad();
     }
 
     public void enviarDinero(double monto, String direccionDestinatario) {
@@ -193,10 +198,6 @@ public class NodoTradicionalGateway extends Nodo {
         redTradicionalGateway.getNB_OF_BLOCK_CREATED().add(redTradicionalGateway.getNB_OF_BLOCK_CREATED().size() + 1);
         // Último en ejecutarse
 
-    }
-
-    public boolean comprobarCantidadMinimaDeNodos() {
-        return redTradicionalGateway.obtenerCantidadDeNodos() >= 3;
     }
 
     /**

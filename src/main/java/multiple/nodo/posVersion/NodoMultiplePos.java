@@ -6,6 +6,7 @@ import java.util.List;
 
 import general.constantes.Direccion;
 import general.constantes.Tipo;
+import general.constantes.MinimoDeNodos;
 import multiple.blockchain.BlockchainMultiple;
 import multiple.blockchain.BloqueMultiple;
 import general.mensajes.InfoNodo;
@@ -72,6 +73,10 @@ public class NodoMultiplePos extends Nodo {
 
     public void enviarInfoRed(Direccion direccion) {
         salida.enviarInfoRed(redMultiplePos, direccion.getDireccionIP(), direccion.getPuerto());
+    }
+
+    public boolean comprobarCantidadMinimaDeNodos() {
+        return redMultiplePos.obtenerCantidadDeNodos() >= MinimoDeNodos.MIN_POS.getCantidad();
     }
 
     public void enviarDinero(double monto, String direccionDestinatario, Tipo tipo) {
@@ -264,11 +269,6 @@ public class NodoMultiplePos extends Nodo {
         }
         // Último en ejecutarse
 
-    }
-
-    public boolean comprobarCantidadMinimaDeNodos() {
-        // System.out.println(infoRed.comprobarCantidadDeNodos());
-        return redMultiplePos.obtenerCantidadDeNodos() >= 3;
     }
 
     /**

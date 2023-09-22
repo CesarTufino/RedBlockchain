@@ -2,6 +2,7 @@ package multiple.nodo.gatewayVersion;
 
 import general.constantes.Direccion;
 import general.constantes.Tipo;
+import general.constantes.MinimoDeNodos;
 import multiple.blockchain.BloqueMultiple;
 import general.mensajes.InfoNodo;
 import general.mensajes.Mensaje;
@@ -35,7 +36,7 @@ public class GatewayMultiple extends Gateway {
     }
 
     public boolean comprobarCantidadMinimaDeNodos() {
-        return puertos.keySet().size() >= 4;
+        return puertos.keySet().size() >= MinimoDeNodos.MIN_GATEWAY_MULTIPLE.getCantidad();
     }
 
     public synchronized void recibirMensaje(Mensaje mensaje) throws Exception {

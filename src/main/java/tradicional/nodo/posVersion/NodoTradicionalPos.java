@@ -1,6 +1,7 @@
 package tradicional.nodo.posVersion;
 
 import general.constantes.Direccion;
+import general.constantes.MinimoDeNodos;
 import general.mensajes.InfoNodo;
 import general.mensajes.Mensaje;
 import general.nodo.Nodo;
@@ -64,6 +65,10 @@ public class NodoTradicionalPos extends Nodo {
 
     public void enviarInfoRed(Direccion direccion) {
         salida.enviarInfoRed(redTradicionalPos, direccion.getDireccionIP(), direccion.getPuerto());
+    }
+
+    public boolean comprobarCantidadMinimaDeNodos() {
+        return redTradicionalPos.obtenerCantidadDeNodos() >= MinimoDeNodos.MIN_POS.getCantidad();
     }
 
     public void enviarDinero(double monto, String direccionDestinatario) {
@@ -216,11 +221,6 @@ public class NodoTradicionalPos extends Nodo {
         redTradicionalPos.getNB_OF_BLOCK_CREATED().add(redTradicionalPos.getNB_OF_BLOCK_CREATED().size() + 1);
         // Último en ejecutarse
 
-    }
-
-    public boolean comprobarCantidadMinimaDeNodos() {
-        // System.out.println(infoRed.comprobarCantidadDeNodos());
-        return redTradicionalPos.obtenerCantidadDeNodos() >= 3;
     }
 
     /**

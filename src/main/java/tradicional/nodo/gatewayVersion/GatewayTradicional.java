@@ -2,6 +2,7 @@ package tradicional.nodo.gatewayVersion;
 
 import general.constantes.Direccion;
 import general.nodo.Gateway;
+import general.constantes.MinimoDeNodos;
 import tradicional.blockchain.BloqueTradicional;
 import general.mensajes.InfoNodo;
 import general.mensajes.Mensaje;
@@ -23,7 +24,7 @@ public class GatewayTradicional extends Gateway {
     }
 
     public boolean comprobarCantidadMinimaDeNodos() {
-        return puertos.keySet().size() >= 3;
+        return puertos.keySet().size() >= MinimoDeNodos.MIN_GATEWAY_TRADICIONAL.getCantidad();
     }
 
     public synchronized void recibirMensaje(Mensaje mensaje) throws Exception {
