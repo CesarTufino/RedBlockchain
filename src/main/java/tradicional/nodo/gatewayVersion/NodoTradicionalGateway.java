@@ -13,6 +13,10 @@ import general.mensajes.Mensaje;
 import tradicional.mensajes.TransaccionTradicional;
 import general.utils.*;
 
+/**
+ * La clase NodoTradicionalGateway representa los dispositivos finales que generan transaciones, crean bloques y
+ * almacenan una copia del blockchain tradicional con gateway.
+ */
 public class NodoTradicionalGateway extends Nodo {
 
     private RedTradicionalGateway redTradicionalGateway;
@@ -22,14 +26,29 @@ public class NodoTradicionalGateway extends Nodo {
         super(id, direccion);
     }
 
+    /**
+     * Obtiene la red.
+     * @return red.
+     */
+    @Override
     public RedTradicionalGateway getRed() {
         return redTradicionalGateway;
     }
 
+    /**
+     * Establece una instancia de la red RedTradicionalGateway.
+     * @param red
+     */
+    @Override
     public void setRed(Red red) {
         this.redTradicionalGateway = (RedTradicionalGateway) red;
     }
 
+    /**
+     * Busaca la red intentando enviar su dirección a todos los nodos de las direcciones de la enumeración Direccion.
+     * En caso de encontrar la red, realiza una copia, envía su información a los nodos conectados y al gateway, y
+     * añade su información a su propia copia de la red.
+     */
     public void buscarRed() {
         for (Direccion direccionNodo : Direccion.getNodos()) {
             if (!direccionNodo.getDireccionIP().equals(direccion.getDireccionIP())) {
@@ -57,14 +76,28 @@ public class NodoTradicionalGateway extends Nodo {
         salida.enviarInfoNodo(Direccion.DIRECCION_GATEWAY.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getPuerto(), infoNodo);
     }
 
+    /**
+     * Envía la red de este nodo a otro nodo que envió su dirección para pedir la información actual de la red.
+     * @param direccion dirección del nodo que pidió la información de la red.
+     */
+    @Override
     public void enviarInfoRed(Direccion direccion) {
         salida.enviarInfoRed(redTradicionalGateway, direccion.getDireccionIP(), direccion.getPuerto());
     }
 
+    /**
+     * Comprueba la cantidad de nodos mínimos para el inicio de una ejecución.
+     * @return true si existe la cantidad de nodos mínimos.
+     */
     public boolean comprobarCantidadMinimaDeNodos() {
         return redTradicionalGateway.obtenerCantidadDeNodos() >= MinimoDeNodos.MIN_GATEWAY_TRADICIONAL.getCantidad();
     }
 
+    /**
+     * Crea una transacción, crea un mensaje con esa transacción y se lo envía al gateway.
+     * @param monto dinero de la transacción.
+     * @param direccionDestinatario dirección IP del nodo destinatario.
+     */
     public void enviarDinero(double monto, String direccionDestinatario) {
         System.out.println("Inicio de transacción");
         if (billetera1 - monto * (1 + TARIFA_TRANSACCION) < 0) {
@@ -83,10 +116,19 @@ public class NodoTradicionalGateway extends Nodo {
         }
     }
 
+    /**
+     * Actualiza el dinero en la billetera.
+     * @param monto dinero que se agrega o reduce de la billetera.
+     */
     public void recibirDinero(double monto) {
         billetera1 += monto;
     }
 
+    /**
+     * Recibe el mensaje y proceso su contenido.
+     * @param mensaje mensaje recibido.
+     */
+    @Override
     public synchronized void recibirMensaje(Mensaje mensaje) {
         int tipoDeMensaje = mensaje.getTipoDeContenido();
         Object contenido = mensaje.getContenido();
@@ -99,11 +141,24 @@ public class NodoTradicionalGateway extends Nodo {
         }
     }
 
+    /**
+     * Verifica la firma de una transacción.
+     * @param transaccionTradicional transacción.
+     * @return true si la verificación se realiza correctamente.
+     * @throws Exception si la verificación lanza una excepción.
+     */
     public boolean verificarTransaccion(TransaccionTradicional transaccionTradicional) throws Exception {
         return RsaUtil.verify(transaccionTradicional.toString(), transaccionTradicional.getFirma(),
                 redTradicionalGateway.obtenerClavePublicaPorDireccion(transaccionTradicional.getDireccionRemitente()));
     }
 
+    /**
+     * Agrega el bloque a la lista de bloques en espera. En caso de agregar dos bloques se llamará al método que realiza
+     * la comparación de bloques.
+     * @param bloqueTradicional bloque recibido.
+     * @param firma firma del mensaje con el bloque recibido.
+     * @param direccionDelNodo dirección del nodo que envió el mensaje.
+     */
     public synchronized void recibirBloque(BloqueTradicional bloqueTradicional, String firma, String direccionDelNodo) {
         try {
             if (RsaUtil.verify(HashUtil.SHA256(bloqueTradicional.toString()), firma,
@@ -119,6 +174,11 @@ public class NodoTradicionalGateway extends Nodo {
         }
     }
 
+    /**
+     * Compara los hashes de dos bloques. En caso de que los hashes sean iguales, se agrega el bloque del nodo con el
+     * menor id y se vacia el buffer de bloques en espera. Se almacena el id del nodo con el menor id como nodo
+     * escogido.
+     */
     private void compararBloques() {
         BloqueTradicional primerBloqueTradicional = bloquesEnEspera.get(0);
         BloqueTradicional segundoBloqueTradicional = bloquesEnEspera.get(1);
@@ -140,6 +200,11 @@ public class NodoTradicionalGateway extends Nodo {
         System.out.println(redTradicionalGateway.getStats());
     }
 
+    /**
+     * Agrega el bloque recibido al blockchain de la red, también se llama a los métodos para actualizar el tiempo de
+     * busqueda y el número de bloques.
+     * @param bloqueTradicional bloque recibido.
+     */
     public synchronized void agregarBloque(BloqueTradicional bloqueTradicional) {
         if (!bloqueTradicional.getDireccionNodoMinero().equals("Master"))
             updateAllWallet(bloqueTradicional);
@@ -151,6 +216,11 @@ public class NodoTradicionalGateway extends Nodo {
         System.out.println("///-----------------------------------///\n");
     }
 
+    /**
+     * Instancia un bloque y lo envía a todos los nodos de la red y al gateway.
+     * @param transaccionesDelBloque transacciones que se van a utilizar en el bloque.
+     * @throws Exception si no se verifican las transacciones.
+     */
     public void generarBloque(List<TransaccionTradicional> transaccionesDelBloque) throws Exception {
         // System.out.println("---------------------------------------------------");
         for (TransaccionTradicional transaccionTradicional : transaccionesDelBloque) {
@@ -190,10 +260,17 @@ public class NodoTradicionalGateway extends Nodo {
         // System.out.println("---------------------------------------------------");
     }
 
+    /**
+     * Actualiza el tiempo de busqueda de cada bloque en la red.
+     * @param st tiempo de busqueda del último bloque.
+     */
     public void actualizarST(double st) {
         redTradicionalGateway.getSearchTimes().add(st);
     }
 
+    /**
+     * Actualiza el número de bloques de la red.
+     */
     public void actualizarNBOfBlock() {
         redTradicionalGateway.getNB_OF_BLOCK_CREATED().add(redTradicionalGateway.getNB_OF_BLOCK_CREATED().size() + 1);
         // Último en ejecutarse
@@ -201,9 +278,8 @@ public class NodoTradicionalGateway extends Nodo {
     }
 
     /**
-     * Método que actualiza las billeteras de todos los nodos que participaron.
-     *
-     * @param bloqueTradicional Bloque.
+     * Actualiza las billeteras de todos los nodos que participaron en las transacciones procesadas en un bloque.
+     * @param bloqueTradicional bloque recibido.
      */
     private void updateAllWallet(BloqueTradicional bloqueTradicional) {
         double totalFee = 0;
@@ -232,6 +308,10 @@ public class NodoTradicionalGateway extends Nodo {
         actualizarExchangeMoney(montoTotal);
     }
 
+    /**
+     * Acutaliza el la lista de valores totales de las transacciones procesadas por un bloque.
+     * @param monto monto total de las transacciones procesadas.
+     */
     public void actualizarExchangeMoney(double monto) {
         redTradicionalGateway.getExchangeMoney1().add(monto);
     }

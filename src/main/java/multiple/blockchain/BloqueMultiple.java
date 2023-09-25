@@ -10,10 +10,10 @@ import multiple.mensajes.TransaccionMultiple;
 import general.utils.HashUtil;
 
 /**
- * Clase BloqueMultiple.
+ * La clase BloqueMultiple representa un bloque que guarda información de un grupo de transacciones mediante hashes y
+ * pertenece a un tipo de blockchain lógico.
  */
 public class BloqueMultiple implements Serializable {
-
     private final HeaderMultiple headerMultiple;
     private final Footer footer;
     private final Tipo tipo;
@@ -24,11 +24,10 @@ public class BloqueMultiple implements Serializable {
 
     /**
      * Constructor de todos los bloques excepto del primero.
-     *
-     * @param bloqueMultipleFisicoPrevio Último bloque físico en la cadena de bloques.
-     * @param bloqueMultipleLogicoPrevio Último bloque lógico en la cadena de bloques.
-     * @param transacciones      Lista de transacciones del bloque.
-     * @param tiempoDeBusqueda   Tiempo de busqueda de los bloques previos.
+     * @param bloqueMultipleFisicoPrevio último bloque físico en la cadena de bloques.
+     * @param bloqueMultipleLogicoPrevio último bloque lógico en la cadena de bloques.
+     * @param transacciones      lista de transacciones del bloque.
+     * @param tiempoDeBusqueda   tiempo de busqueda de los bloques previos.
      */
     public BloqueMultiple(BloqueMultiple bloqueMultipleFisicoPrevio, BloqueMultiple bloqueMultipleLogicoPrevio, List<TransaccionMultiple> transacciones, double tiempoDeBusqueda, Tipo tipo) {
         this.transacciones = new ArrayList<>(transacciones);
@@ -40,10 +39,8 @@ public class BloqueMultiple implements Serializable {
     }
 
     /**
-     * Constructor del primer bloque.
-     * Usado para crear el primer bloque del primer general.blockchain lógico.
-     *
-     * @param tipo Tipo de bloque lógico.
+     * Constructor del primer bloque del primer blockchain lógico.
+     * @param tipo tipo de bloque lógico.
      */
     public BloqueMultiple(Tipo tipo) {
         this.headerMultiple = new HeaderMultiple();
@@ -54,11 +51,9 @@ public class BloqueMultiple implements Serializable {
     }
 
     /**
-     * Constructor del bloque.
-     * Usado para crear el primer bloque del segundo general.blockchain lógico.
-     *
-     * @param tipo         Identificador del tipo de bloque.
-     * @param primerBloqueMultiple Primer(anterior) bloque físico.
+     * Constructor del primer bloque del segundo blockchain lógico.
+     * @param tipo         tipo de bloque lógico.
+     * @param primerBloqueMultiple primer (anterior) bloque físico.
      */
     public BloqueMultiple(BloqueMultiple primerBloqueMultiple, Tipo tipo) {
         this.transacciones = new ArrayList<>();
@@ -68,46 +63,81 @@ public class BloqueMultiple implements Serializable {
         this.tiempoDeBusqueda = 0;
     }
 
+    /**
+     * Obtiene el header del bloque.
+     * @return header del bloque.
+     */
     public HeaderMultiple getHeader() {
         return headerMultiple;
     }
 
+    /**
+     * Obtiene el footer del bloque.
+     * @return footer del bloque.
+     */
     public Footer getFooter() {
         return footer;
     }
 
+    /**
+     * Obtiene el tipo del bloque.
+     * @return tipo del bloque.
+     */
     public Tipo getTipo() {
         return tipo;
     }
 
+    /**
+     * Obtiene el id del nodo que creó el bloque.
+     * @return id del nodo minero.
+     */
     public int getIdNodoMinero() {
         return idNodoMinero;
     }
 
+    /**
+     * Establece el id de nodo que creó el bloque.
+     * @param nodeID id de nodo que creó el bloque.
+     */
     public void setIdNodoMinero(int nodeID) {
         this.idNodoMinero = nodeID;
     }
 
+    /**
+     * Obtiene la dirección del nodo que creó el bloque.
+     * @return dirección del nodo minero.
+     */
     public String getDireccionNodoMinero() {
         return direccionNodoMinero;
     }
 
+    /**
+     * Establece la dirección de nodo que creó el bloque.
+     * @param nodeAddress dirección de nodo que creó el bloque.
+     */
     public void setDireccionNodoMinero(String nodeAddress) {
         this.direccionNodoMinero = nodeAddress;
     }
 
+    /**
+     * Obtiene la lista de transacciones que contiene el bloque.
+     * @return lista de transacciones.
+     */
     public List<TransaccionMultiple> getTransaction() {
         return transacciones;
     }
 
+    /**
+     * Obtiene el el tiempo que demoró la busqueda de los bloques previos.
+     * @return tiempo de busqueda.
+     */
     public double getTiempoDeBusqueda() {
         return tiempoDeBusqueda;
     }
 
     /**
-     * Método para transformar en String toda la información de la transacción.
-     *
-     * @return Toda la información de la transacción en un String.
+     * Transforma en String toda la información de las transacciones.
+     * @return string de las transacciones.
      */
     private String obtenerStringDeTransacciones() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -117,8 +147,13 @@ public class BloqueMultiple implements Serializable {
         return stringBuilder.toString();
     }
 
+    /**
+     * Obtiene una cadena con la información del bloque.
+     * @return Una cadena con la información del bloque.
+     */
     @Override
     public String toString() {
         return "\nTipo de bloque: " + tipo + headerMultiple.toString() + footer.toString() + "\n";
     }
+
 }

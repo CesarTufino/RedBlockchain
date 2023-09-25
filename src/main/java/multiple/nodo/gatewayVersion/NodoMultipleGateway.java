@@ -16,8 +16,11 @@ import general.nodo.Nodo;
 import general.nodo.Red;
 import general.utils.*;
 
+/**
+ * La clase NodoMultipleGateway representa los dispositivos finales que generan transaciones, crean bloques y almacenan
+ * una copia del blockchain multiple con gateway.
+ */
 public class NodoMultipleGateway extends Nodo {
-
     private double billetera2;
     private RedMultipleGateway redMultipleGateway;
     private HashMap<Tipo, List<BloqueMultiple>> bloquesEnEspera = new HashMap<>();
@@ -29,14 +32,29 @@ public class NodoMultipleGateway extends Nodo {
         this.billetera2 = DINERO_INICIAL;
     }
 
+    /**
+     * Obtiene la red.
+     * @return red.
+     */
+    @Override
     public RedMultipleGateway getRed() {
         return redMultipleGateway;
     }
 
+    /**
+     * Establece una instancia de la red RedMultipleGateway.
+     * @param red
+     */
+    @Override
     public void setRed(Red red) {
         this.redMultipleGateway = (RedMultipleGateway) red;
     }
 
+    /**
+     * Busaca la red intentando enviar su dirección a todos los nodos de las direcciones de la enumeración Direccion.
+     * En caso de encontrar la red, realiza una copia, envía su información a los nodos conectados y al gateway, y
+     * añade su información a su propia copia de la red.
+     */
     public void buscarRed() {
         for (Direccion direccionNodo : Direccion.getNodos()) {
             if (!direccionNodo.getDireccionIP().equals(direccion.getDireccionIP())) {
@@ -64,14 +82,29 @@ public class NodoMultipleGateway extends Nodo {
         salida.enviarInfoNodo(Direccion.DIRECCION_GATEWAY.getDireccionIP(), Direccion.DIRECCION_GATEWAY.getPuerto(), infoNodo);
     }
 
+    /**
+     * Envía la red de este nodo a otro nodo que envió su dirección para pedir la información actual de la red.
+     * @param direccion dirección del nodo que pidió la información de la red.
+     */
+    @Override
     public void enviarInfoRed(Direccion direccion) {
         salida.enviarInfoRed(redMultipleGateway, direccion.getDireccionIP(), direccion.getPuerto());
     }
 
+    /**
+     * Comprueba la cantidad de nodos mínimos para el inicio de una ejecución.
+     * @return true si existe la cantidad de nodos mínimos.
+     */
     public boolean comprobarCantidadMinimaDeNodos() {
         return redMultipleGateway.obtenerCantidadDeNodos() >= MinimoDeNodos.MIN_GATEWAY_MULTIPLE.getCantidad();
     }
 
+    /**
+     * Crea una transacción, crea un mensaje con esa transacción y se lo envía al gateway.
+     * @param monto dinero de la transacción.
+     * @param direccionDestinatario dirección IP del nodo destinatario.
+     * @param tipo tipo de la transacción.
+     */
     public void enviarDinero(double monto, String direccionDestinatario, Tipo tipo) {
         System.out.println("Inicio de transacción");
         if (tipo.equals(Tipo.LOGICO1)) {
@@ -98,6 +131,11 @@ public class NodoMultipleGateway extends Nodo {
         }
     }
 
+    /**
+     * Actualiza el dinero en las billeteras de cada tipo.
+     * @param monto dinero que se agrega o reduce de la billetera.
+     * @param tipo tipo de blockchain.
+     */
     public void recibirDinero(double monto, Tipo tipo) {
         if (tipo.equals(Tipo.LOGICO1)) {
             billetera1 += monto;
@@ -108,6 +146,11 @@ public class NodoMultipleGateway extends Nodo {
         }
     }
 
+    /**
+     * Recibe el mensaje y proceso su contenido.
+     * @param mensaje mensaje recibido.
+     */
+    @Override
     public synchronized void recibirMensaje(Mensaje mensaje) {
         int tipoDeMensaje = mensaje.getTipoDeContenido();
         Object contenido = mensaje.getContenido();
@@ -120,11 +163,24 @@ public class NodoMultipleGateway extends Nodo {
         }
     }
 
+    /**
+     * Verifica la firma de una transacción.
+     * @param transaccionMultiple transacción.
+     * @return true si la verificación se realiza correctamente.
+     * @throws Exception si la verificación lanza una excepción.
+     */
     public boolean verificarTransaccion(TransaccionMultiple transaccionMultiple) throws Exception {
         return RsaUtil.verify(transaccionMultiple.toString(), transaccionMultiple.getFirma(),
                 redMultipleGateway.obtenerClavePublicaPorDireccion(transaccionMultiple.getDireccionRemitente()));
     }
 
+    /**
+     * Agrega el bloque a la lista de bloques del HashMap de bloques en espera. En caso de agregar dos bloques del mismo
+     * tipo se llamará al método que realiza la comparación de bloques.
+     * @param bloqueMultiple bloque recibido.
+     * @param firma firma del mensaje con el bloque recibido.
+     * @param direccionDelNodo dirección del nodo que envió el mensaje.
+     */
     public synchronized void recibirBloque(BloqueMultiple bloqueMultiple, String firma, String direccionDelNodo) {
         try {
             if (RsaUtil.verify(HashUtil.SHA256(bloqueMultiple.toString()), firma,
@@ -142,6 +198,12 @@ public class NodoMultipleGateway extends Nodo {
         }
     }
 
+    /**
+     * Compara los hashes de dos bloques del tipo especificado. En caso de que los hashes sean iguales, se agrega
+     * el bloque del nodo con el menor id y se vacia el buffer de bloques en espera del tipo epecificado. Se almacena
+     * el id del nodo con el menor id como nodo escogido.
+     * @param tipo tipo de blockchain especificado.
+     */
     private void compararBloques(Tipo tipo) {
         List<BloqueMultiple> bloquesAComparar = bloquesEnEspera.get(tipo);
         BloqueMultiple primerBloqueMultiple = bloquesAComparar.get(0);
@@ -171,6 +233,11 @@ public class NodoMultipleGateway extends Nodo {
         bloquesEnEspera.put(tipo, new ArrayList<>());
     }
 
+    /**
+     * Agrega el bloque recibido al blockchain de la red, también se llama a los métodos para actualizar el tiempo de
+     * busqueda y el número de bloques por tipo.
+     * @param bloqueMultiple bloque recibido.
+     */
     public synchronized void agregarBloque(BloqueMultiple bloqueMultiple) {
         if (!bloqueMultiple.getDireccionNodoMinero().equals("Master"))
             updateAllWallet(bloqueMultiple);
@@ -182,6 +249,12 @@ public class NodoMultipleGateway extends Nodo {
         System.out.println("///-----------------------------------///\n");
     }
 
+    /**
+     * Instancia un bloque y lo envía a todos los nodos de la red y al gateway.
+     * @param tipo tipo de blockchain.
+     * @param posiblesTransacciones transacciones que se van a utilizar en el bloque.
+     * @throws Exception si no se verifican las transacciones.
+     */
     public void generarBloque(Tipo tipo, List<TransaccionMultiple> posiblesTransacciones) throws Exception {
         System.out.println("--- Creando bloque " + tipo + " ---");
         for (TransaccionMultiple transaccionMultiple : posiblesTransacciones) {
@@ -225,10 +298,18 @@ public class NodoMultipleGateway extends Nodo {
         // System.out.println("---------------------------------------------------");
     }
 
+    /**
+     * Actualiza el tiempo de busqueda de cada bloque en la red.
+     * @param st tiempo de busqueda del último bloque.
+     */
     public void actualizarST(double st) {
         redMultipleGateway.getSearchTimes().add(st);
     }
 
+    /**
+     * Actualiza el número de bloques por tipo de la red.
+     * @param tipo tipo de la lista de número de bloques que se va a actualizar.
+     */
     public void actualizarNBOfBlockOfType(Tipo tipo) {
         if (tipo.equals(Tipo.LOGICO1)) {
             redMultipleGateway.NB_OF_BLOCK_OF_TYPE1_CREATED.add(redMultipleGateway.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + 1);
@@ -238,9 +319,8 @@ public class NodoMultipleGateway extends Nodo {
     }
 
     /**
-     * Método que actualiza las billeteras de todos los nodos que participaron.
-     *
-     * @param bloqueMultiple Bloque.
+     * Actualiza las billeteras de todos los nodos que participaron en las transacciones procesadas en un bloque.
+     * @param bloqueMultiple bloque recibido.
      */
     private void updateAllWallet(BloqueMultiple bloqueMultiple) {
         double totalFee = 0;
@@ -270,6 +350,11 @@ public class NodoMultipleGateway extends Nodo {
         actualizarExchangeMoneyPorTipo(tipo, montoTotal);
     }
 
+    /**
+     * Acutaliza el la lista de valores totales de las transacciones procesadas por un bloque.
+     * @param tipo tipo de las transacciones.
+     * @param amount monto total de las transacciones procesadas.
+     */
     public void actualizarExchangeMoneyPorTipo(Tipo tipo, double amount) {
         if (tipo.equals(Tipo.LOGICO1)) {
             redMultipleGateway.getExchangeMoney1().add(amount);

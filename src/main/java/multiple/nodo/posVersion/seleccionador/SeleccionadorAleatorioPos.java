@@ -9,20 +9,33 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * La clase SeleccionadorAleatorioGateway se encarga de realizar las iteraciones de selección de un nodo, mediante un
+ * algoritmo POS, para la creación de un bloque de un tipo al azar cada 10 segundos.
+ */
 public class SeleccionadorAleatorioPos extends Thread {
-
     private NodoMultiplePos nodoMultiplePos;
 
     public SeleccionadorAleatorioPos(NodoMultiplePos nodoMultiplePos) {
         this.nodoMultiplePos = nodoMultiplePos;
     }
 
+    /**
+     * Llama al método para que el nodo cree un bloque del tipo especificado si la dirección de este nodo coincide con
+     * la dirección dada.
+     * @param direccion dirección del nodo que debe crear el bloque.
+     * @param tipo tipo de bloque que se va a crear.
+     */
     public void mandarACrear(String direccion, Tipo tipo) {
         if (direccion.equals(nodoMultiplePos.getDireccion().getDireccionIP())) {
             nodoMultiplePos.generarBloque(tipo);
         }
     }
 
+    /**
+     * Selecciona un nodo para que cree un bloque de un tipo al azar.
+     * @return un arreglo con el nodo seleccionado y un null.
+     */
     private String[] seleccionar() {
         RedMultiplePos red = nodoMultiplePos.getRed();
         String[] direccionesSeleccionadas = new String[2];
@@ -95,10 +108,17 @@ public class SeleccionadorAleatorioPos extends Thread {
         return direccionesSeleccionadas;
     }
 
+    /**
+     * Calcula el tiempo que falta para que hayan transcurrido 10 segundos reloj.
+     * @return tiempo restante para que hayan transcurrido 10 segundos reloj.
+     */
     private long calcularTiempoParaIniciar() {
         return 10000 - (System.currentTimeMillis() % 10000);
     }
 
+    /**
+     * Realiza una iteración, donde se escoge al azar un nodo y un tipo de blockchain para el nuevo bloque.
+     */
     private void iniciarIteracion() {
         System.out.println("Seleccionando...");
 
@@ -117,6 +137,9 @@ public class SeleccionadorAleatorioPos extends Thread {
         }
     }
 
+    /**
+     * Llama cada 10 segundos, mediante un bucle, al método que realiza la iteración de creación de bloque.
+     */
     @Override
     public void run() {
         try {

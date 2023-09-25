@@ -5,15 +5,14 @@ import java.security.*;
 import java.util.Base64;
 
 /**
- * Clase para generar pares de claves (publicas y privadas) con métodos para generar y verificar firmas.
+ * La clase RsaUtil contiene métodos para generar pares de claves (publicas y privadas) y generar y verificar firmas.
  */
 public class RsaUtil {
 
     /**
-     * Método para generar un par de claves.
-     *
-     * @return Par de claves de 512 bits.
-     * @throws Exception Excepción.
+     * Genera un par de claves de 512 bits.
+     * @return par de claves de 512 bits.
+     * @throws Exception si no se puede obtener una instancia de KeyPair.
      */
     public static KeyPair generateKeyPair() throws Exception {
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
@@ -22,12 +21,11 @@ public class RsaUtil {
     }
 
     /**
-     * Método de generación de firma por clave privada.
-     *
-     * @param plainText Texto plano que necesita ser encriptado.
-     * @param privateKey La clave privada del emisor.
-     * @return Texto cifrado.
-     * @throws Exception Excepción.
+     * Genera una firma por clave privada.
+     * @param plainText texto plano que necesita ser encriptado.
+     * @param privateKey clave privada del emisor.
+     * @return texto cifrado.
+     * @throws Exception si no se puede obtener una instancia de Signature.
      */
     public static String sign(String plainText, PrivateKey privateKey) throws Exception {
         Signature privateSignature = Signature.getInstance("SHA256withRSA");
@@ -38,13 +36,12 @@ public class RsaUtil {
     }
 
     /**
-     * Método de verificación de firma por clave pública.
-     *
-     * @param plainText Texto plano que necesita ser validado.
-     * @param signature El texto cifrado perteneciente al texto plano.
-     * @param publicKey La clave pública del emisor.
-     * @return Si fue enviado por el propio remitente.
-     * @throws Exception Excepción.
+     * Verifica una firma por clave pública.
+     * @param plainText texto plano que necesita ser validado.
+     * @param signature texto cifrado perteneciente al texto plano.
+     * @param publicKey vlave pública del emisor.
+     * @return true si fue enviado por el propio remitente.
+     * @throws Exception si no se puede obtener una instancia de Signature.
      */
     public static boolean verify(String plainText, String signature, PublicKey publicKey) throws Exception {
         Signature publicSignature = Signature.getInstance("SHA256withRSA");
@@ -53,6 +50,5 @@ public class RsaUtil {
         byte[] signatureBytes = Base64.getDecoder().decode(signature);
         return publicSignature.verify(signatureBytes);
     }
-
 
 }

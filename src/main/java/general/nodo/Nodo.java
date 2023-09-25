@@ -9,8 +9,11 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+/**
+ * La clase Nodo representa los dispositivos finales que generan transaciones, crean bloques y almacenan una copia del
+ * blockchain.
+ */
 public abstract class Nodo {
-
     protected Salida salida;
     protected PublicKey clavePublica;
     protected PrivateKey clavePrivada;
@@ -35,16 +38,36 @@ public abstract class Nodo {
         this.salida = new Salida();
     }
 
+    /**
+     * Obtiene la dirección del nodo.
+     * @return dirección del nodo.
+     */
     public Direccion getDireccion() {
         return direccion;
     }
 
+    /**
+     * Recibe el mensaje y proceso su contenido.
+     * @param mensaje mensaje recibido.
+     */
     public abstract void recibirMensaje(Mensaje mensaje);
 
+    /**
+     * Envía la red de este nodo a otro nodo que envió su dirección para pedir la información actual de la red.
+     * @param direccion dirección del nodo que pidió la información de la red.
+     */
     public abstract void enviarInfoRed(Direccion direccion);
 
+    /**
+     * Obtiene la red.
+     * @return red.
+     */
     public abstract Red getRed();
 
+    /**
+     * Establece una instancia de la red.
+     * @param red
+     */
     public abstract void setRed(Red red);
 
 }

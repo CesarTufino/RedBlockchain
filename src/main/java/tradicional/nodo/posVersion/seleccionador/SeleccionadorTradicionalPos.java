@@ -8,21 +8,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * La clase SeleccionadorAleatorioGateway se encarga de realizar las iteraciones de selección de un nodo, mediante un
+ * algoritmo POS, para la creación de un bloque cada 10 segundos.
+ */
 public class SeleccionadorTradicionalPos extends Thread {
-
     private NodoTradicionalPos nodoTradicionalPos;
-    private final double PROBABILIDAD_BLOQUES_TIPO_1 = 95;
 
     public SeleccionadorTradicionalPos(NodoTradicionalPos nodoTradicionalPos) {
         this.nodoTradicionalPos = nodoTradicionalPos;
     }
 
+    /**
+     * Llama al método para que el nodo cree un bloque si la dirección de este nodo coincide con la dirección dada.
+     * @param direccion dirección del nodo que debe crear el bloque.
+     */
     public void mandarACrear(String direccion) {
         if (direccion.equals(nodoTradicionalPos.getDireccion().getDireccionIP())) {
             nodoTradicionalPos.generarBloque();
         }
     }
 
+    /**
+     * Selecciona un nodo para que cree un bloque.
+     * @return nodo seleccionado.
+     */
     private String seleccionar() {
         String direccionesSeleccionada = "";
         RedTradicionalPos red = nodoTradicionalPos.getRed();
@@ -57,16 +67,26 @@ public class SeleccionadorTradicionalPos extends Thread {
         return direccionesSeleccionada;
     }
 
+    /**
+     * Calcula el tiempo que falta para que hayan transcurrido 10 segundos reloj.
+     * @return tiempo restante para que hayan transcurrido 10 segundos reloj.
+     */
     private long calcularTiempoParaIniciar() {
         return 10000 - (System.currentTimeMillis() % 10000);
     }
 
+    /**
+     * Realiza una iteración, donde se escoge al azar un nodo para el nuevo bloque.
+     */
     private void iniciarIteracion() {
         System.out.println("Seleccionando...");
         String seleccionado = seleccionar();
         mandarACrear(seleccionado);
     }
 
+    /**
+     * Llama cada 10 segundos, mediante un bucle, al método que realiza la iteración de creación de bloque.
+     */
     @Override
     public void run() {
         try {

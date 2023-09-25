@@ -9,20 +9,33 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * La clase SeleccionadorAleatorioGateway se encarga de realizar las iteraciones de selección de dos nodos, mediante un
+ * algoritmo POS, para la creación de un bloque de cada tipo cada 10 segundos.
+ */
 public class SeleccionadorMultiplePos extends Thread {
-
     private NodoMultiplePos nodoMultiplePos;
 
     public SeleccionadorMultiplePos(NodoMultiplePos nodoMultiplePos) {
         this.nodoMultiplePos = nodoMultiplePos;
     }
 
+    /**
+     * Llama al método para que el nodo cree un bloque del tipo especificado si la dirección de este nodo coincide con
+     * la dirección dada.
+     * @param direccion dirección del nodo que debe crear el bloque.
+     * @param tipo tipo de bloque que se va a crear.
+     */
     public void mandarACrear(String direccion, Tipo tipo) {
         if (direccion.equals(nodoMultiplePos.getDireccion().getDireccionIP())) {
             nodoMultiplePos.generarBloque(tipo);
         }
     }
 
+    /**
+     * Selecciona dos nodo para que creen un bloque de cada tipo.
+     * @return un arreglo con los nodos seleccionados.
+     */
     private String[] seleccionar() {
         RedMultiplePos red = nodoMultiplePos.getRed();
         String[] direccionesSeleccionadas = new String[2];
@@ -84,10 +97,17 @@ public class SeleccionadorMultiplePos extends Thread {
         return direccionesSeleccionadas;
     }
 
+    /**
+     * Calcula el tiempo que falta para que hayan transcurrido 10 segundos reloj.
+     * @return tiempo restante para que hayan transcurrido 10 segundos reloj.
+     */
     private long calcularTiempoParaIniciar() {
         return 10000 - (System.currentTimeMillis() % 10000);
     }
 
+    /**
+     * Realiza una iteración, donde se escoge al azar dos nodos para los dos nuevos bloques.
+     */
     private void iniciarIteracion() {
         System.out.println("Seleccionando...");
 
@@ -103,6 +123,9 @@ public class SeleccionadorMultiplePos extends Thread {
         mandarACrear(seleccionados[1], Tipo.LOGICO2);
     }
 
+    /**
+     * Llama cada 10 segundos, mediante un bucle, al método que realiza la iteración de creación de bloques.
+     */
     @Override
     public void run() {
         try {

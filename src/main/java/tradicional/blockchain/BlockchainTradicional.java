@@ -5,10 +5,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Clase BlockchainTradicional
+ * La clase BlockchainTradicional representa la cadena de bloques de un blockchain.
  */
 public class BlockchainTradicional implements Serializable {
-
     private List<BloqueTradicional> bloques = new CopyOnWriteArrayList<>();
     private List<Double> tiempoEntreCreacionDeBloques = new CopyOnWriteArrayList<>();
 
@@ -16,14 +15,17 @@ public class BlockchainTradicional implements Serializable {
         bloques.addAll(crearPrimerBloque());
     }
 
+    /**
+     * Obtiene la lista de los tiempos entre creación de bloques.
+     * @return lista de los tiempos entre creación de bloques.
+     */
     public List<Double> getTiempoEntreCreacionDeBloques() {
         return tiempoEntreCreacionDeBloques;
     }
 
     /**
-     * Método que crea el primer bloque del general.blockchain.
-     *
-     * @return Primer bloque.
+     * Crea el primer bloque del blockchain.
+     * @return primer bloque del blockchain.
      */
     public List<BloqueTradicional> crearPrimerBloque() {
         BloqueTradicional primerBloqueTradicional = new BloqueTradicional();
@@ -31,28 +33,31 @@ public class BlockchainTradicional implements Serializable {
     }
 
     /**
-     * Método que devuelve el último bloque del general.blockchain.
-     *
-     * @return Último bloque del general.blockchain.
+     * Obtiene el último bloque del blockchain.
+     * @return último bloque del blockchain.
      */
     public BloqueTradicional obtenerUltimoBloque() {
         return bloques.get(bloques.size() - 1);
     }
 
     /**
-     * Método que agrega un bloque al general.blockchain físico y
-     * guarda la diferencia de tiempo de creación entre el bloque actual y el
+     * Agrega un bloque al blockchain y guarda la diferencia de tiempo de creación entre el bloque actual y el
      * anterior.
-     *
-     * @param bloqueTradicional Bloque que se va a añadir.
+     * @param bloqueTradicional Bloque que se va a agregar.
      */
     public void agregarBloque(BloqueTradicional bloqueTradicional) {
         BloqueTradicional prevBlock = obtenerUltimoBloque();
-        tiempoEntreCreacionDeBloques.add((double) (bloqueTradicional.getHeader().getMarcaDeTiempoDeCreacion() - prevBlock.getHeader().getMarcaDeTiempoDeCreacion()) / 1000);
+        tiempoEntreCreacionDeBloques.add((double) (bloqueTradicional.getHeader().getMarcaDeTiempoDeCreacion() -
+                prevBlock.getHeader().getMarcaDeTiempoDeCreacion()) / 1000);
         bloques.add(bloqueTradicional);
     }
 
+    /**
+     * Obtiene el tamaño del blockchain.
+     * @return tamaño del blockchain.
+     */
     public int obtenerCantidadDeBloques(){
         return bloques.size();
     }
+
 }

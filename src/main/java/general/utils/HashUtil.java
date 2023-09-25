@@ -5,15 +5,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Clase para obtener el hash de un texto.
+ * La clase HashUtil contiene métodos para obtener el hash de un texto y transformar un byte en hexadecimal.
  */
 public class HashUtil {
 
     /**
-     * Método que obtiene el hash de un texto plano.
-     *
-     * @param str Texto plano.
-     * @return Hash del texto.
+     * Obtiene el hash de un texto plano.
+     * @param str texto plano.
+     * @return hash del texto.
      */
     public static String SHA256(String str) {
         MessageDigest messageDigest;
@@ -30,9 +29,8 @@ public class HashUtil {
 
     /**
      * Método que transforma byte en hexadecimal.
-     *
-     * @param bytes Bytes.
-     * @return Equivalente hexadecimal de los bytes.
+     * @param bytes bytes.
+     * @return equivalente hexadecimal de los bytes.
      */
     private static String byte2Hex(byte[] bytes) {
         StringBuilder stringBuffer = new StringBuilder();
@@ -46,4 +44,5 @@ public class HashUtil {
         }
         return stringBuffer.toString();
     }
+
 }

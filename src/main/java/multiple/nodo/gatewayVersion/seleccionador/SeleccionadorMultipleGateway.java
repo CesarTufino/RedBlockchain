@@ -7,14 +7,22 @@ import multiple.nodo.gatewayVersion.GatewayMultiple;
 
 import java.util.List;
 
+/**
+ * La clase SeleccionadorAleatorioGateway se encarga de realizar las iteraciones de selección de cuatro nodos para la
+ * creación de un bloque de cada tipo cada 10 segundos.
+ */
 public class SeleccionadorMultipleGateway extends Thread {
-
     private GatewayMultiple gatewayMultiple;
 
     public SeleccionadorMultipleGateway(GatewayMultiple gatewayMultiple) {
         this.gatewayMultiple = gatewayMultiple;
     }
 
+    /**
+     * Selecciona dos nodos y envía un paquete de transacciones para que los nodos creen un bloque del tipo
+     * especificado.
+     * @param tipo tipo del bloque que se va a crear.
+     */
     public void seleccionar(Tipo tipo) {
         String direccionNodoSeleccionado1 = gatewayMultiple.obtenerDireccionNodoPosible();
         String direccionNodoSeleccionado2 = gatewayMultiple.obtenerDireccionNodoPosible();
@@ -27,10 +35,17 @@ public class SeleccionadorMultipleGateway extends Thread {
         gatewayMultiple.mandarCrearBloque(direccionNodoSeleccionado2, gatewayMultiple.getPuertos().get(direccionNodoSeleccionado2), paquete);
     }
 
+    /**
+     * Calcula el tiempo que falta para que hayan transcurrido 10 segundos reloj.
+     * @return tiempo restante para que hayan transcurrido 10 segundos reloj.
+     */
     private long calcularTiempoParaIniciar() {
         return 10000 - (System.currentTimeMillis() % 10000);
     }
 
+    /**
+     * Realiza una iteración, donde se escoge al azar cuatro nodos para los dos nuevos bloques.
+     */
     private void iniciarIteracion() {
         System.out.println("Seleccionando...");
 
@@ -46,6 +61,9 @@ public class SeleccionadorMultipleGateway extends Thread {
         gatewayMultiple.reiniciarNodosPosibles();
     }
 
+    /**
+     * Llama cada 10 segundos, mediante un bucle, al método que realiza la iteración de creación de bloques.
+     */
     @Override
     public void run() {
         try {

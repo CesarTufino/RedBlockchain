@@ -3,7 +3,7 @@ package general.mensajes;
 import java.io.Serializable;
 
 /**
- * Clase Mensaje.
+ * La clase Mensaje representa la información protegida que se envía a través de la red.
  */
 public class Mensaje implements Serializable{
 
@@ -18,17 +18,6 @@ public class Mensaje implements Serializable{
      */
     private final int tipoDeContenido;
 
-    /**
-     * Constructor del Message.
-     *
-     * @param direccionRemitente Dirección del emisor del mensaje.
-     * @param direccionDestinatario Dirección del destinatario del mensaje.
-     * @param firma Firma del bloque.
-     * @param marcaDeTiempoDeCreacion Fecha de creación del mensaje.
-     * @param tipoDeContenido Tipo del contenido del mensaje.
-     * @param contenido Contenido del mensaje.
-     */
-    @SuppressWarnings("unchecked") 
     public Mensaje(String direccionRemitente, String direccionDestinatario, String firma, long marcaDeTiempoDeCreacion, int tipoDeContenido, Object contenido) {
         this.direccionRemitente = direccionRemitente;
         this.direccionDestinatario = direccionDestinatario;
@@ -38,23 +27,36 @@ public class Mensaje implements Serializable{
         this.contenido = contenido;
     }
 
+    /**
+     * Obtiene la dirección del remitente del mensaje.
+     * @return dirección del remitente.
+     */
     public String getDireccionRemitente() {
         return direccionRemitente;
     }
 
-    public String getDireccionDestinatario() {
-        return direccionDestinatario;
-    }
-
+    /**
+     * Obtiene el tipo del contenido del mensaje.
+     * @return tipo del contenido.
+     */
     public int getTipoDeContenido() {
         return tipoDeContenido;
     }
 
+    /**
+     * Obtiene la dirección del remitente del mensaje.
+     * @return dirección del remitente.
+     */
     public String getFirma() {
         return firma;
     }
 
+    /**
+     * Obtiene la dirección del remitente del mensaje.
+     * @return dirección del remitente.
+     */
     public Object getContenido() {
         return contenido;
     }
+
 }

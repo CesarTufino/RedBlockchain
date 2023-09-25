@@ -17,6 +17,10 @@ import general.nodo.Red;
 import general.utils.HashUtil;
 import general.utils.RsaUtil;
 
+/**
+ * La clase NodoMultiplePos representa los dispositivos finales que generan transaciones, crean bloques y almacenan una
+ * copia del blockchain multiple con algoritmo POS.
+ */
 public class NodoMultiplePos extends Nodo {
 
     private double billetera2;
@@ -36,14 +40,29 @@ public class NodoMultiplePos extends Nodo {
         this.billetera2 = DINERO_INICIAL;
     }
 
+    /**
+     * Obtiene la red.
+     * @return red.
+     */
+    @Override
     public RedMultiplePos getRed() {
         return redMultiplePos;
     }
 
+    /**
+     * Establece una instancia de la red RedMultiplePos.
+     * @param red
+     */
+    @Override
     public void setRed(Red red) {
         this.redMultiplePos = (RedMultiplePos) red;
     }
 
+    /**
+     * Busaca la red intentando enviar su dirección a todos los nodos de las direcciones de la enumeración Direccion.
+     * En caso de encontrar la red, realiza una copia, envía su información a los nodos conectados y añade su
+     * información a su propia copia de la red.
+     */
     public void buscarRed() {
         for (Direccion direccionNodo : Direccion.getNodos()) {
             if (!direccionNodo.getDireccionIP().equals(direccion.getDireccionIP())) {
@@ -71,14 +90,29 @@ public class NodoMultiplePos extends Nodo {
         redMultiplePos.addNode(infoNodo);
     }
 
+    /**
+     * Envía la red de este nodo a otro nodo que envió su dirección para pedir la información actual de la red.
+     * @param direccion dirección del nodo que pidió la información de la red.
+     */
+    @Override
     public void enviarInfoRed(Direccion direccion) {
         salida.enviarInfoRed(redMultiplePos, direccion.getDireccionIP(), direccion.getPuerto());
     }
 
+    /**
+     * Comprueba la cantidad de nodos mínimos para el inicio de una ejecución.
+     * @return true si existe la cantidad de nodos mínimos.
+     */
     public boolean comprobarCantidadMinimaDeNodos() {
         return redMultiplePos.obtenerCantidadDeNodos() >= MinimoDeNodos.MIN_POS.getCantidad();
     }
 
+    /**
+     * Crea una transacción, crea un mensaje con esa transacción y se lo envía a todos los nodos de la red.
+     * @param monto dinero de la transacción.
+     * @param direccionDestinatario dirección IP del nodo destinatario.
+     * @param tipo tipo de la transacción.
+     */
     public void enviarDinero(double monto, String direccionDestinatario, Tipo tipo) {
         System.out.println("Inicio de transacción " + tipo);
         if (tipo.equals(Tipo.LOGICO1)) {
@@ -106,6 +140,11 @@ public class NodoMultiplePos extends Nodo {
 
     }
 
+    /**
+     * Actualiza el dinero en las billeteras de cada tipo.
+     * @param monto dinero que se agrega o reduce de la billetera.
+     * @param tipo tipo de blockchain.
+     */
     public void recibirDinero(double monto, Tipo tipo) {
         // System.out.println("Cantidad recibida: " + amount);
         if (tipo.equals(Tipo.LOGICO1)) {
@@ -117,6 +156,11 @@ public class NodoMultiplePos extends Nodo {
         }
     }
 
+    /**
+     * Recibe el mensaje y proceso su contenido.
+     * @param mensaje mensaje recibido.
+     */
+    @Override
     public void recibirMensaje(Mensaje mensaje) {
         int tipoDeMensaje = mensaje.getTipoDeContenido();
         Object contenido = mensaje.getContenido();
@@ -135,6 +179,10 @@ public class NodoMultiplePos extends Nodo {
         }
     }
 
+    /**
+     * Agrega la transacción a la lista de transacciones pendientes si la transacción se verifica correctamente.
+     * @param transaccionMultiple transacción recibida.
+     */
     public synchronized void recibirTransaccion(TransaccionMultiple transaccionMultiple) {
         boolean estadoDeLaTransaccion = false;
         try {
@@ -150,11 +198,24 @@ public class NodoMultiplePos extends Nodo {
         }
     }
 
+    /**
+     * Verifica la firma de una transacción.
+     * @param transaccionMultiple transacción.
+     * @return true si la verificación se realiza correctamente.
+     * @throws Exception si la verificación lanza una excepción.
+     */
     public boolean verificarTransaccion(TransaccionMultiple transaccionMultiple) throws Exception {
         return RsaUtil.verify(transaccionMultiple.toString(), transaccionMultiple.getFirma(),
                 redMultiplePos.obtenerClavePublicaPorDireccion(transaccionMultiple.getDireccionRemitente()));
     }
 
+    /**
+     * Agrega el bloque al blockchain de la red, también se llama a los métodos para actualizar el tiempo de busqueda y
+     * el número de bloques por tipo.
+     * @param bloque bloque recibido.
+     * @param firma firma del mensaje con el bloque recibido.
+     * @param direccionDelNodo dirección del nodo que envió el mensaje.
+     */
     public synchronized void recibirBloque(BloqueMultiple bloque, String firma, String direccionDelNodo) {
         actualizarListaDeTransacciones(bloque);
         try {
@@ -183,6 +244,10 @@ public class NodoMultiplePos extends Nodo {
         }
     }
 
+    /**
+     * Elimina todas las transacciones del bloque procesado de la lista d transacciones pendientes.
+     * @param bloque bloque procesado.
+     */
     public synchronized void actualizarListaDeTransacciones(BloqueMultiple bloque) {
         List<TransaccionMultiple> transacciones = bloque.getTransaction();
         for (TransaccionMultiple transaccionMultipleDeBloque : transacciones) {
@@ -191,6 +256,11 @@ public class NodoMultiplePos extends Nodo {
         }
     }
 
+    /**
+     * Instancia un bloque y lo envía a todos los nodos de la red.
+     * @param tipo tipo de blockchain.
+     * @throws Exception si no se verifican las transacciones.
+     */
     public void generarBloque(Tipo tipo) {
         System.out.println("--- Creando bloque " + tipo + " ---");
         List<TransaccionMultiple> transaccionesDelBloque = new ArrayList<>();
@@ -230,6 +300,11 @@ public class NodoMultiplePos extends Nodo {
         // System.out.println("---------------------------------------------------");
     }
 
+    /**
+     * Establece el monto de apuesta del nodo para un tipo de blockchain.
+     * @param monto monto de apuesta del nodo.
+     * @param tipo tipo de blockchain.
+     */
     public void apostar(double monto, Tipo tipo) {
         if (tipo.equals(Tipo.LOGICO1)) {
             if (billetera1 < monto) {
@@ -251,16 +326,29 @@ public class NodoMultiplePos extends Nodo {
         System.out.println(id + " deposita " + monto + "  como apuesta para " + tipo);
     }
 
+    /**
+     * Actualiza el número de transacciones pendientes de un tipo de blockchain en la red.
+     * @param tipo tipo de blockchain.
+     * @param cantidad cantidad que se va incrementar.
+     */
     public void actualizarNbTransPorTipo(Tipo tipo, int cantidad) {
         HashMap<Tipo, Integer> nbTransParType = (HashMap<Tipo, Integer>) redMultiplePos.getNbTransParType();
         nbTransParType.put(tipo, nbTransParType.get(tipo) + cantidad);
         //red.setNbTransParType();
     }
 
+    /**
+     * Actualiza el tiempo de busqueda de cada bloque en la red.
+     * @param st tiempo de busqueda del último bloque.
+     */
     public void actualizarST(double st) {
         redMultiplePos.getSearchTimes().add(st);
     }
 
+    /**
+     * Actualiza el número de bloques por tipo de la red.
+     * @param tipo tipo de la lista de número de bloques que se va a actualizar.
+     */
     public void actualizarNBOfBlockOfType(Tipo tipo) {
         if (tipo.equals(Tipo.LOGICO1)) {
             redMultiplePos.NB_OF_BLOCK_OF_TYPE1_CREATED.add(redMultiplePos.NB_OF_BLOCK_OF_TYPE1_CREATED.size() + 1);
@@ -272,9 +360,8 @@ public class NodoMultiplePos extends Nodo {
     }
 
     /**
-     * Método que actualiza las billeteras de todos los nodos que participaron.
-     *
-     * @param bloque Bloque.
+     * Actualiza las billeteras de todos los nodos que participaron en las transacciones procesadas en un bloque.
+     * @param bloque bloque recibido.
      */
     private void updateAllWallet(BloqueMultiple bloque) {
         double totalFee = 0;
@@ -305,6 +392,11 @@ public class NodoMultiplePos extends Nodo {
         actualizarExchangeMoneyPorTipo(tipo, montoTotal);
     }
 
+    /**
+     * Acutaliza el la lista de valores totales de las transacciones procesadas por un bloque.
+     * @param tipo tipo de las transacciones.
+     * @param amount monto total de las transacciones procesadas.
+     */
     public void actualizarExchangeMoneyPorTipo(Tipo tipo, double amount) {
         if (tipo.equals(Tipo.LOGICO1)) {
             redMultiplePos.getExchangeMoney1().add(amount);

@@ -11,6 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * La clase RedTradicionalGateway representa la información que se encuentra en todos los nodos de la red blockchain
+ * tradicional con algoritmo POS.
+ */
 public class RedTradicionalPos extends Red implements Serializable {
 
     /**
@@ -32,34 +36,67 @@ public class RedTradicionalPos extends Red implements Serializable {
         this.NB_OF_BLOCK_CREATED.add(1);
     }
 
-    public int getNbTrans() {
-        return nbTrans;
-    }
-
-    public void setNbTrans(int nbTrans) {
-        this.nbTrans = nbTrans;
-    }
-
-    public List<Integer> getNodosEscogidos(){
-        return nodosEscogidos;
-    }
-
-    public List<Integer> getNB_OF_BLOCK_CREATED() {
-        return NB_OF_BLOCK_CREATED;
-    }
-
+    /**
+     * Obtiene el blockchain de la red.
+     * @return blockchain de la red.
+     */
     public BlockchainTradicional getBlockchainTradicional() {
         return blockchainTradicional;
     }
 
+    /**
+     * Obtiene el número de transacciones pendientes.
+     * @return número de transacciones pendientes.
+     */
+    public int getNbTrans() {
+        return nbTrans;
+    }
+
+    /**
+     * Establece el número de transacciones pendientes.
+     * @param nbTrans número de transacciones pendientes.
+     */
+    public void setNbTrans(int nbTrans) {
+        this.nbTrans = nbTrans;
+    }
+
+    /**
+     * Obtiene la lista con los nodos escogidos de cada iteración.
+     * @return lista con los nodos escogidos.
+     */
+    public List<Integer> getNodosEscogidos(){
+        return nodosEscogidos;
+    }
+
+    /**
+     * Obtiene el número de bloques creados en el blockchain.
+     * @return número de bloques creados en el blockchain.
+     */
+    public List<Integer> getNB_OF_BLOCK_CREATED() {
+        return NB_OF_BLOCK_CREATED;
+    }
+
+    /**
+     *
+     * Obtiene el mapeo de las direcciones con las apuestas.
+     * @return mapeo de las direcciones con las apuestas.
+     */
     public Map<String, Double> getMapStakeAmount1() {
         return mapStakeAmount1;
     }
 
+    /**
+     * Obtiene el mapeo de las direcciones con los tiempos de apuestas.
+     * @return mapeo de las direcciones con los tiempos de apuestas.
+     */
     public Map<String, Long> getMapStakeTime1() {
         return mapStakeTime1;
     }
 
+    /**
+     * Obtiene los resultados finales de una ejecución de la red blockchain.
+     * @return resultados finales.
+     */
     @Override
     public String getStats() {
         String stats = "";
@@ -72,6 +109,10 @@ public class RedTradicionalPos extends Red implements Serializable {
         return stats;
     }
 
+    /**
+     * Agrega la información de un nodo a la red.
+     * @param infoNodo información de un nodo.
+     */
     @Override
     public void addNode(InfoNodo infoNodo) {
         String direccion = infoNodo.getDireccion();
@@ -87,7 +128,12 @@ public class RedTradicionalPos extends Red implements Serializable {
         //System.out.println("nodos totales: " + obtenerCantidadDeNodos());
     }
 
+    /**
+     * Agrega un bloque al blockchain de la red.
+     * @param bloqueTradicional nuevo bloque.
+     */
     public void agregarBloque(BloqueTradicional bloqueTradicional) {
         blockchainTradicional.agregarBloque(bloqueTradicional);
     }
+
 }

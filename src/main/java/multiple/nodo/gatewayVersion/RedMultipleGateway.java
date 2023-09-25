@@ -13,26 +13,32 @@ import general.mensajes.InfoNodo;
 import general.nodo.Red;
 
 /**
- *  Clase red
+ * La clase RedMultipleGateway representa la información que se encuentra en todos los nodos de la red blockchain
+ * multiple con gateway.
  */
 public class RedMultipleGateway extends Red implements Serializable {
-
     /**
-     * Número de bloques del primer general.blockchain lógico.
+     * Número de bloques del primer blockchain lógico.
      **/
     public List<Integer> NB_OF_BLOCK_OF_TYPE1_CREATED = new ArrayList<>();
     /**
-     * Número de bloques del segundo general.blockchain lógico.
+     * Número de bloques del segundo blockchain lógico.
      */
     public List<Integer> NB_OF_BLOCK_OF_TYPE2_CREATED = new ArrayList<>();
+    /**
+     * Listas de los primeros nodos escogidos en cada iteración.
+     */
     private HashMap<Tipo, List<Integer>> nodosEscogidos1 = new HashMap<>();
+    /**
+     * Listas de los segundos nodos escogidos en cada iteración.
+     */
     private HashMap<Tipo, List<Integer>> nodosEscogidos2 = new HashMap<>();
     /**
-     * Número de transacciones de cada general.blockchain lógico.
+     * Número de transacciones de cada blockchain lógico.
      */
     private Map<Tipo, Integer> nbTransParType = new HashMap<>();
     /**
-     * Intercambios de dinero del segundo general.blockchain lógico.
+     * Intercambios de dinero del segundo blockchain lógico.
      */
     private List<Double> exchangeMoney2 = new ArrayList<>();
     private BlockchainMultiple blockchainMultiple;
@@ -49,6 +55,11 @@ public class RedMultipleGateway extends Red implements Serializable {
         this.NB_OF_BLOCK_OF_TYPE2_CREATED.add(1);
     }
 
+    /**
+     * Agrega la información de un nodo a la red.
+     * @param infoNodo información de un nodo.
+     */
+    @Override
     public void addNode(InfoNodo infoNodo) {
         String direccion = infoNodo.getDireccion();
 
@@ -61,6 +72,11 @@ public class RedMultipleGateway extends Red implements Serializable {
         //System.out.println("nodos totales: " + obtenerCantidadDeNodos());
     }
 
+    /**
+     * Obtiene los resultados finales de una ejecución de la red blockchain.
+     * @return resultados finales.
+     */
+    @Override
     public String getStats() {
         String stats = "";
         stats += "\n////////////////////////////////////////////";
@@ -77,22 +93,42 @@ public class RedMultipleGateway extends Red implements Serializable {
         return stats;
     }
 
+    /**
+     * Obtiene el blockchain de la red.
+     * @return blockchain de la red.
+     */
     public BlockchainMultiple getBlockchain() {
         return blockchainMultiple;
     }
 
+    /**
+     * Agrega un bloque al blockchain de la red.
+     * @param bloqueMultiple nuevo bloque.
+     */
     public void agregarBloque(BloqueMultiple bloqueMultiple) {
         blockchainMultiple.agregarBloque(bloqueMultiple);
     }
 
+    /**
+     * Obtiene el HashMap con los primeros nodos escogidos de cada iteración.
+     * @return HashMap con los primeros nodos escogidos.
+     */
     public HashMap<Tipo, List<Integer>> getNodosEscogidos1() {
         return nodosEscogidos1;
     }
 
+    /**
+     * Obtiene el HashMap con los segundos nodos escogidos de cada iteración.
+     * @return HashMap con los segundos nodos escogidos.
+     */
     public HashMap<Tipo, List<Integer>> getNodosEscogidos2() {
         return nodosEscogidos2;
     }
 
+    /**
+     * Obtiene una lista con los totales de dinero intercambiado del segundo tipo de blockchain en cada iteración.
+     * @return lista con los totales de dinero intercambiado del segundo tipo de blockchain en cada iteración.
+     */
     public List<Double> getExchangeMoney2() {
         return exchangeMoney2;
     }

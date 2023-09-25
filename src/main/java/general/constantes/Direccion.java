@@ -3,8 +3,10 @@ package general.constantes;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * La enumeración Direccion contiene las direcciones IP y los puertos que pueden emplear los nodos y el gateway.
+ */
 public enum Direccion {
-
     DIRECCION_1("26.20.111.124", 12341),
     DIRECCION_2("26.182.121.49", 12342),
     DIRECCION_3("26.132.202.57", 12343),
@@ -19,14 +21,27 @@ public enum Direccion {
         this.puerto = puerto;
     }
 
+    /**
+     * Retorna la dirección IP de esta dirección.
+     * @return la dirección IP de esta dirección.
+     */
     public String getDireccionIP() {
         return direccionIP;
     }
 
+    /**
+     * Retorna el puerto de esta dirección.
+     * @return el puerto de esta dirección.
+     */
     public int getPuerto() {
         return puerto;
     }
 
+    /**
+     * Obtiene una lista de las direcciones que se utilizan para los nodos, por lo cual no se incluye la dirección del
+     * gateway.
+     * @return lista de direcciones de los nodos.
+     */
     public static List<Direccion> getNodos() {
         List<Direccion> listaDirecciones = new ArrayList<>();
         for (Direccion direccion : Direccion.values()) {
@@ -35,15 +50,6 @@ public enum Direccion {
             }
         }
         return listaDirecciones;
-    }
-
-    public static int getPuertoPorDireccion(String direccionIP) {
-        for (Direccion direccion : Direccion.values()) {
-            if (direccion.getDireccionIP().equals(direccionIP)) {
-                return direccion.getPuerto();
-            }
-        }
-        return -1;
     }
 
 }
